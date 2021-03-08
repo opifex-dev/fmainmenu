@@ -147,8 +147,6 @@ FayLib.IGC.DefineKey(addonName, "MenuSetup", {
 	},
 }, true)
 
-
-
 -- STEP 2 - load existing configuration or save new default configuration
 FayLib.IGC.LoadConfig(addonName, "config", "fmainmenu")
 FMainMenu.EverySpawn = FayLib.IGC.GetKey(addonName, "EverySpawn")
@@ -180,6 +178,8 @@ end)
 
 
 --[[
+-- this will have to be dealt with in the config GUI
+
 -- Distance to square is used, so lets square it now
 FMainMenu.Config.PlayerVoiceDistance = FMainMenu.Config.PlayerVoiceDistance * FMainMenu.Config.PlayerVoiceDistance
 

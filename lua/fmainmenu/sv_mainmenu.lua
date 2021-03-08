@@ -198,9 +198,7 @@ end )
 --Detect player spawn for menu
 hook.Add( "PlayerSpawn", "FMainMenu_PS", function( ply )
 	if ply:IsBot() then return end
-	print(1)
     if FMainMenu.EverySpawn then
-		print(2)
 		spawnPlayerFunc(ply)
 	end
 end )

@@ -30,13 +30,15 @@ end)
 
 FMainMenu.RefreshDetect = true
 hook.Add("IGCConfigUpdate", "FMainMenu_IGCCU", function(addonName)
-	FMainMenu.EverySpawn = FayLib.IGC.GetSharedKey(addonName, "EverySpawn")
-	FMainMenu.firstJoinSeed = FayLib.IGC.GetSharedKey(addonName, "firstJoinSeed")
-	
-	if string.lower(FayLib.IGC.GetSharedKey(addonName, "LangSetting")) == "en" then
-		include( "fmainmenu/lang/cl_lang_"..string.lower(FayLib.IGC.GetSharedKey(addonName, "LangSetting"))..".lua" )
-	else -- assume English if no valid code given
-		include( "fmainmenu/lang/cl_lang_en.lua" )
+	if FayLib.IGC.IsSharedReady() then
+		FMainMenu.EverySpawn = FayLib.IGC.GetSharedKey(addonName, "EverySpawn")
+		FMainMenu.firstJoinSeed = FayLib.IGC.GetSharedKey(addonName, "firstJoinSeed")
+		
+		if string.lower(FayLib.IGC.GetSharedKey(addonName, "LangSetting")) == "en" then
+			include( "fmainmenu/lang/cl_lang_"..string.lower(FayLib.IGC.GetSharedKey(addonName, "LangSetting"))..".lua" )
+		else -- assume English if no valid code given
+			include( "fmainmenu/lang/cl_lang_en.lua" )
+		end
 	end
 	
 	FMainMenu.RefreshDetect = true
