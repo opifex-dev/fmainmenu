@@ -12,6 +12,8 @@ If you want to read through the file anyways to see what's going on, then have f
 
 local addonName = "fmainmenu" --easy reference instead of copy-pasting over and over
 
+
+
 -- STEP 1 - configuration value definitions and defaults
 -- Camera Settings
 FayLib.IGC.DefineKey(addonName, "CameraPosition", {
@@ -105,6 +107,9 @@ FayLib.IGC.DefineKey(addonName, "commonPanelColor", Color(45,45,45,200), true)
 FayLib.IGC.DefineKey(addonName, "commonButtonColor", Color(75,75,75, 255), true)
 FayLib.IGC.DefineKey(addonName, "commonTextColor", Color(255,255,255,255), true)
 
+--Configuration GUI Settings
+FayLib.IGC.DefineKey(addonName, "configCanEdit", "superadmin", false)
+
 -- Advanced Settings
 FayLib.IGC.DefineKey(addonName, "firstJoinSeed", "", true)
 FayLib.IGC.DefineKey(addonName, "MenuOverride", false, true)
@@ -147,22 +152,21 @@ FayLib.IGC.DefineKey(addonName, "MenuSetup", {
 	},
 }, true)
 
+
+
 -- STEP 2 - load existing configuration or save new default configuration
 FayLib.IGC.LoadConfig(addonName, "config", "fmainmenu")
 FMainMenu.EverySpawn = FayLib.IGC.GetKey(addonName, "EverySpawn")
 
---Language Loader
-if SERVER then 
-	if string.lower(FayLib.IGC.GetKey(addonName, "LangSetting")) == "en" then
-		AddCSLuaFile( "fmainmenu/lang/cl_lang_"..string.lower(FayLib.IGC.GetKey(addonName, "LangSetting"))..".lua" )
-	else -- assume English if no valid code given
-		AddCSLuaFile( "fmainmenu/lang/cl_lang_en.lua" )
-	end
-end
+-- Setup CAMI Privs
+CAMI.RegisterPrivilege( { Name = "FMainMenu_CanEditMenu",    MinAccess = FayLib.IGC.GetKey(addonName, "configCanEdit") or "superadmin" } )
 
+--Language Loader
 if string.lower(FayLib.IGC.GetKey(addonName, "LangSetting")) == "en" then
+	AddCSLuaFile( "fmainmenu/lang/cl_lang_"..string.lower(FayLib.IGC.GetKey(addonName, "LangSetting"))..".lua" )
 	include( "fmainmenu/lang/cl_lang_"..string.lower(FayLib.IGC.GetKey(addonName, "LangSetting"))..".lua" )
 else -- assume English if no valid code given
+	AddCSLuaFile( "fmainmenu/lang/cl_lang_en.lua" )
 	include( "fmainmenu/lang/cl_lang_en.lua" )
 end
 
@@ -178,7 +182,7 @@ end)
 
 
 --[[
--- this will have to be dealt with in the config GUI
+-- this will have to be dealt with in the config GUI at config update time
 
 -- Distance to square is used, so lets square it now
 FMainMenu.Config.PlayerVoiceDistance = FMainMenu.Config.PlayerVoiceDistance * FMainMenu.Config.PlayerVoiceDistance

@@ -5,30 +5,16 @@ local m_border = nil
 local blockerColor = Color(0,0,0,0)
 local addonName = "fmainmenu"
 
---Create fonts that will be used in the menu
-hook.Add("IGCSharedConfigReady", "FMainMenu_Panels_SharedReady", function()
-	surface.CreateFont( "FMM_LogoFont", {
-		font = FayLib.IGC.GetSharedKey(addonName, "logoFont"),
-		extended = false,
-		size = FayLib.IGC.GetSharedKey(addonName, "logoFontSize"),
-		weight = 500,
-		blursize = 0,
-		scanlines = 0,
-		antialias = true,
-		underline = false,
-		italic = false,
-		strikeout = false,
-		symbol = false,
-		rotary = false,
-		shadow = FayLib.IGC.GetSharedKey(addonName, "logoShadow"),
-		additive = false,
-		outline = false,
-	})
+FMainMenu.CurrentLogoFont = FMainMenu.CurrentLogoFont || "FMM_LogoFont"
+FMainMenu.CurrentTextButtonFont = FMainMenu.CurrentTextButtonFont || "FMM_ButtonFont"
+FMainMenu.FontCounter = FMainMenu.FontCounter || 0
 
-	surface.CreateFont( "FMM_ButtonFont", {
-		font = FayLib.IGC.GetSharedKey(addonName, "textButtonFont"),
+--Create fonts that will be used in the menu
+local function createNewFont(fontName, fontBase, fontSize, fontShadow)
+	surface.CreateFont( fontName, {
+		font = fontBase,
 		extended = false,
-		size = FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"),
+		size = fontSize,
 		weight = 500,
 		blursize = 0,
 		scanlines = 0,
@@ -38,10 +24,41 @@ hook.Add("IGCSharedConfigReady", "FMainMenu_Panels_SharedReady", function()
 		strikeout = false,
 		symbol = false,
 		rotary = false,
-		shadow = FayLib.IGC.GetSharedKey(addonName, "textButtonShadow"),
+		shadow = fontShadow,
 		additive = false,
 		outline = false,
 	})
+end
+
+hook.Add("IGCSharedConfigReady", "FMainMenu_Panels_SharedReady", function()
+	createNewFont("FMM_LogoFont", 
+		FayLib.IGC.GetSharedKey(addonName, "logoFont"), 
+		FayLib.IGC.GetSharedKey(addonName, "logoFontSize"), 
+		FayLib.IGC.GetSharedKey(addonName, "logoShadow"))
+	
+	createNewFont("FMM_ButtonFont", 
+		FayLib.IGC.GetSharedKey(addonName, "textButtonFont"), 
+		FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"), 
+		FayLib.IGC.GetSharedKey(addonName, "textButtonShadow"))
+end)
+
+hook.Add("IGCSharedConfigUpdate", "FMainMenu_Panels_SharedConfigUpdate", function(addonConfigName)
+	if addonConfigName == addonName then
+		FMainMenu.FontCounter = FMainMenu.FontCounter + 1
+		
+		createNewFont("FMM_LogoFont"..tostring(FMainMenu.FontCounter), 
+			FayLib.IGC.GetSharedKey(addonName, "logoFont"), 
+			FayLib.IGC.GetSharedKey(addonName, "logoFontSize"), 
+			FayLib.IGC.GetSharedKey(addonName, "logoShadow"))
+		
+		createNewFont("FMM_ButtonFont"..tostring(FMainMenu.FontCounter), 
+			FayLib.IGC.GetSharedKey(addonName, "textButtonFont"), 
+			FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"), 
+			FayLib.IGC.GetSharedKey(addonName, "textButtonShadow"))
+		
+		FMainMenu.CurrentLogoFont = "FMM_LogoFont"..tostring(FMainMenu.FontCounter)
+		FMainMenu.CurrentTextButtonFont = "FMM_ButtonFont"..tostring(FMainMenu.FontCounter)
+	end
 end)
 
 local function buttonSetup(button, text, fontName)
@@ -57,14 +74,14 @@ end
 -- Creates Menu Button (functionality set manually)
 function FMainMenu.Panels.CreateButton(text)
 	local TextButton = vgui.Create("DButton", m_border)
-	buttonSetup(TextButton, text, "FMM_ButtonFont")
+	buttonSetup(TextButton, text, FMainMenu.CurrentTextButtonFont)
 	return TextButton
 end
 
 -- Creates Menu URL Button (opens URL when clicked)
 function FMainMenu.Panels.CreateURLButton(text, URL)
 	local URLButton = vgui.Create("DButton", m_border)
-	buttonSetup(URLButton, text, "FMM_ButtonFont")
+	buttonSetup(URLButton, text, FMainMenu.CurrentTextButtonFont)
 	URLButton.IntURL = URL
 	URLButton.DoClick = function()
 		surface.PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
@@ -194,11 +211,11 @@ function FMainMenu.Panels.SetupBasics()
 		else
 			logo:SetPos(ScrW() * 0.04, FayLib.IGC.GetSharedKey(addonName, "logoFontSize"))
 		end
-		logo:SetFont("FMM_LogoFont")
+		logo:SetFont(FMainMenu.CurrentLogoFont)
 		logo:SetTextColor(FayLib.IGC.GetSharedKey(addonName, "textLogoColor"))
 		logo:SetContentAlignment( 1 )
 		function logo:Paint()
-			draw.SimpleTextOutlined( FayLib.IGC.GetSharedKey(addonName, "logoContent"), "FMM_LogoFont", 0, 0, FayLib.IGC.GetSharedKey(addonName, "textLogoColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, FayLib.IGC.GetSharedKey(addonName, "logoOutlineThickness"), FayLib.IGC.GetSharedKey(addonName, "logoOutlineColor") )
+			draw.SimpleTextOutlined( FayLib.IGC.GetSharedKey(addonName, "logoContent"), FMainMenu.CurrentLogoFont, 0, 0, FayLib.IGC.GetSharedKey(addonName, "textLogoColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, FayLib.IGC.GetSharedKey(addonName, "logoOutlineThickness"), FayLib.IGC.GetSharedKey(addonName, "logoOutlineColor") )
 		end
 	else
 		local logo = vgui.Create("DHTML", m_border)

@@ -8,6 +8,9 @@ local addonName = "fmainmenu"
 
 util.AddNetworkString("FMainMenu_CloseMainMenu")
 util.AddNetworkString("FMainMenu_VarChange")
+util.AddNetworkString("FMainMenu_Config_OpenMenu")
+util.AddNetworkString("FMainMenu_Config_ReqVar")
+util.AddNetworkString("FMainMenu_Config_UpdateVar")
 
 --Response to player attempting to leave menu
 net.Receive( "FMainMenu_CloseMainMenu", function( len, ply )
@@ -54,6 +57,7 @@ local function setupCam()
 		cameraAng = Angle(42.586422, -40.820980, 0.000000)
 		FMainMenu.Log(FMainMenu.Lang.LogNoCamAng, true)
 	end
+	print(cameraAng)
 	cam:SetAngles( cameraAng )
 	cam:Spawn()
 	cam:Activate()
@@ -486,7 +490,7 @@ end )
 hook.Add( "TTTBeginRound", "FMainMenu_TTTBeginRound", function( )
 	for _,ply in ipairs(player.GetHumans()) do
 		if ply:GetNWBool("FMainMenu_InMenu",false) then
-			net.Start("FMainMenu_CloseMainMenu")
+			net.Start("FMainMenu_CanEditMenu")
 				net.WriteString( FMainMenu.Lang.TTTRoundStarted )
 			net.Send(ply)
 		end
@@ -502,3 +506,69 @@ hook.Add( "loadCustomDarkRPItems", "FMainMenu_LCDRPI", function( ) --DarkRP Work
 		GAMEMODE.Config.babygod = false -- disable default DarkRP implementation, so we can do our own
 	end
 end )
+
+--[[
+	CONFIGURATION
+]]--
+
+net.Receive( "FMainMenu_Config_OpenMenu", function( len, ply )
+	CAMI.PlayerHasAccess(ply, "FMainMenu_CanEditMenu", function(hasPriv, reason) 
+		if hasPriv then
+			net.Start("FMainMenu_Config_OpenMenu")
+				if ply:GetNWBool("FMainMenu_InMenu",false) then
+					net.WriteBool(true)
+				end
+			net.Send(ply)
+		end
+	end)
+end)
+
+net.Receive( "FMainMenu_Config_ReqVar", function( len, ply )
+	local variableNames = net.ReadTable()
+	CAMI.PlayerHasAccess(ply, "FMainMenu_CanEditMenu", function(hasPriv, reason) 
+		if hasPriv then
+			local sendTable = {}
+			local counter = 1
+			for _,varName in ipairs(variableNames) do
+				if(FayLib.IGC.GetKey(addonName, varName) == nil) then return end
+				sendTable[counter] = FayLib.IGC.GetKey(addonName, varName)
+				counter = counter + 1
+			end
+			
+			net.Start("FMainMenu_Config_ReqVar")
+				net.WriteString(util.TableToJSON(sendTable))
+			net.Send(ply)
+		end
+	end)
+end)
+
+net.Receive( "FMainMenu_Config_UpdateVar", function( len, ply )
+	local variableNames = net.ReadTable()
+	local receivedStr = net.ReadString()
+	local varTable = util.JSONToTable( receivedStr )
+	
+	-- add fix for "Colors will not have the color metatable" bug
+	local keyList = table.GetKeys(varTable)
+	for i=1,#keyList do
+		if type(varTable[keyList[i]]) == "table" then
+			local innerTable = varTable[keyList[i]]
+			local innerKeyList = table.GetKeys(innerTable)
+			if(#innerKeyList == 4 && innerTable.a ~= nil && innerTable.r ~= nil && innerTable.g ~= nil && innerTable.b ~= nil) then
+				varTable[keyList[i]] = Color(innerTable.r, innerTable.g, innerTable.b, innerTable.a)
+			end
+		end
+	end
+	
+	CAMI.PlayerHasAccess(ply, "FMainMenu_CanEditMenu", function(hasPriv, reason) 
+		if hasPriv then
+			local counter = 1
+			for _,varName in ipairs(variableNames) do
+				if(FayLib.IGC.GetKey(addonName, varName) == nil) then return end
+				FayLib.IGC.SetKey(addonName, varName, varTable[counter])
+				counter = counter + 1
+			end
+			
+			FayLib.IGC.SaveConfig(addonName, "config", "fmainmenu")
+		end
+	end)
+end)
