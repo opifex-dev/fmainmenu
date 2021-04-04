@@ -46,3 +46,8 @@ FMainMenu.Lang.ConfigPropertiesAdvancedSpawnPropDesc = "Whether the advanced spa
 FMainMenu.Lang.ConfigPropertiesAdvancedSpawnOptLabel = "Advanced Spawn: "
 FMainMenu.Lang.ConfigPropertiesAdvancedSpawnPosLabel = "Position (Current Map): "
 FMainMenu.Lang.ConfigPropertiesAdvancedSpawnCaptureLabel = "Capture Current Location"
+
+FMainMenu.Lang.ConfigPropertiesHearOtherPlayersPropName = "Hear Other Players"
+FMainMenu.Lang.ConfigPropertiesHearOtherPlayersPropDesc = "Whether the player should hear\nother players talking from the menu"
+FMainMenu.Lang.ConfigPropertiesHearOtherPlayersLabel = "Hear Other Players: "
+FMainMenu.Lang.ConfigPropertiesHearOtherPlayersDistanceLabel = "Max Distance: "

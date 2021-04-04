@@ -662,6 +662,126 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			setPropPanel(propertyPanel)
 		end
 		
+		-- Hear Other Players
+		local configSheetOneCameraHearOtherPlayersButton = vgui.Create("fmainmenu_config_editor_button", configSheetOne)
+		configSheetOneCameraHearOtherPlayersButton:SetText(FMainMenu.Lang.ConfigPropertiesHearOtherPlayersPropName)
+		configSheetOneCameraHearOtherPlayersButton:SetSize(200,25)
+		configSheetOneCameraHearOtherPlayersButton:AlignLeft(4)
+		configSheetOneCameraHearOtherPlayersButton:AlignTop(95)
+		configSheetOneCameraHearOtherPlayersButton.DoClick = function(button)
+			local propertyCode = 4
+			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
+			FMainMenu.configPropertyWindow.propertyCode = propertyCode
+		
+			--Property Panel Setup
+			local propertyPanel = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.configPropertyWindow)
+			propertyPanel:SetSize( 240, 255 )
+			propertyPanel:SetPos(5,25)
+			local propertyPanelLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelLabel:SetText(FMainMenu.Lang.ConfigPropertiesHearOtherPlayersPropName)
+			propertyPanelLabel:SetFont("HudHintTextLarge")
+			local propertyPanelDescLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelDescLabel:SetText(FMainMenu.Lang.ConfigPropertiesHearOtherPlayersPropDesc)
+			propertyPanelDescLabel:SetPos(1, 24)
+			propertyPanelDescLabel:SetSize(225, 36)
+			
+			-- Hear Other Players Toggle
+			local toggleLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			toggleLabel:SetText(FMainMenu.Lang.ConfigPropertiesHearOtherPlayersLabel)
+			toggleLabel:SetPos(0, 70)
+			local toggleOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			toggleOption:SetSize( 50, 18 )
+			toggleOption:SetPos( 118, 70 )
+			toggleOption:SetValue( "False" )
+			toggleOption:AddChoice( "True" )
+			toggleOption:AddChoice( "False" )	
+			
+			-- Maximum Voice Distance
+			local distanceLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			distanceLabel:SetText(FMainMenu.Lang.ConfigPropertiesHearOtherPlayersDistanceLabel)
+			distanceLabel:SetPos(0, 91)
+			local distanceBox = vgui.Create("fmainmenu_config_editor_textentry", propertyPanel)
+			distanceBox:SetSize( 75, 18 )
+			distanceBox:SetPos( 88, 91 )
+			
+			-- Used to detect changes in the on-screen form from the server-side variable
+			local function isVarChanged()
+				local mapName = game.GetMap()
+				local serverVar = ""
+				if propertyPanel.lastRecVariable[1] then 
+					serverVar = "True"
+				else
+					serverVar = "False"
+				end
+				
+				if toggleOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				if tonumber(distanceBox:GetText()) == nil || tonumber(distanceBox:GetText()) != propertyPanel.lastRecVariable[2] then
+					setUnsaved(true)
+					return
+				end
+				
+				setUnsaved(false)
+			end
+			
+			-- OnChange functions for unsaved changes detection and preview updating
+			function toggleOption:OnSelect( index, value, data )
+				isVarChanged()
+			end
+			
+			function distanceBox:OnChange()
+				isVarChanged()
+			end
+			
+			-- Called when server responds with current server-side variables
+			local function onGetVar(varTable)
+				propertyPanel.lastRecVariable = varTable
+				if varTable[1] then 
+					toggleOption:SetValue("True") 
+				else
+					toggleOption:SetValue("False")
+				end
+				distanceBox:SetText(varTable[2])
+				setUnsaved(false)
+			end
+			
+			-- Send the request for said server-side variables
+			requestVariables(onGetVar, {"HearOtherPlayers","PlayerVoiceDistance"})
+			
+			-- Called when someone wants to commit changes to a property
+			local function saveFunc()
+				local mapName = game.GetMap()
+				if toggleOption:GetValue() == "True" then
+					propertyPanel.lastRecVariable[1] = true
+				elseif toggleOption:GetValue() == "False" then
+					propertyPanel.lastRecVariable[1] = false
+				else
+					return
+				end
+				
+				if(tonumber(distanceBox:GetText()) == nil) then return end
+
+				propertyPanel.lastRecVariable[2] = tonumber(distanceBox:GetText())
+				
+				updateVariables(propertyPanel.lastRecVariable, {"HearOtherPlayers","PlayerVoiceDistance"})
+				setUnsaved(false)
+			end
+			
+			-- Called when someone wants to revert changes to a property
+			local function revertFunc()
+				requestVariables(onGetVar, {"HearOtherPlayers","PlayerVoiceDistance"})
+			end
+			
+			-- Setup the save and revert buttons
+			setupGeneralPropPanels(FMainMenu.configPropertyWindow, saveFunc, revertFunc)
+			
+			--Set completed panel as active property
+			setPropPanel(propertyPanel)
+		end
+		
 		configSheet:AddSheet( FMainMenu.Lang.ConfigPropertiesCategoriesCamera, configSheetOne, nil )
 		
 		local configSheetTwo = vgui.Create("fmainmenu_config_editor_panel", configSheet)
