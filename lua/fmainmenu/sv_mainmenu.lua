@@ -11,6 +11,8 @@ util.AddNetworkString("FMainMenu_VarChange")
 util.AddNetworkString("FMainMenu_Config_OpenMenu")
 util.AddNetworkString("FMainMenu_Config_ReqVar")
 util.AddNetworkString("FMainMenu_Config_UpdateVar")
+util.AddNetworkString("FMainMenu_Config_UpdateTempVariable")
+util.AddNetworkString("FMainMenu_Config_CloseMenu")
 
 --Response to player attempting to leave menu
 net.Receive( "FMainMenu_CloseMainMenu", function( len, ply )
@@ -37,7 +39,7 @@ end )
 
 --Sets up physical camera object for players' views to be set to
 local function setupCam()
-	cam = ents.Create("prop_physics")
+	cam = ents.Create("prop_dynamic")
 	cam:SetModel("models/brokenglass_piece.mdl")
 	cam:SetRenderMode(RENDERMODE_TRANSCOLOR)
 	cam:SetColor(camColor)
@@ -57,7 +59,6 @@ local function setupCam()
 		cameraAng = Angle(42.586422, -40.820980, 0.000000)
 		FMainMenu.Log(FMainMenu.Lang.LogNoCamAng, true)
 	end
-	print(cameraAng)
 	cam:SetAngles( cameraAng )
 	cam:Spawn()
 	cam:Activate()
@@ -510,19 +511,67 @@ end )
 --[[
 	CONFIGURATION
 ]]--
+local playerTempConfigs = {}
+local playerTempCams = {}
 
+local function camUpdate(ply)
+	if playerTempCams[ply:UserID()] != nil then
+		playerTempCams[ply:UserID()]:Remove()
+	end
+	playerTempCams[ply:UserID()] = ents.Create("prop_dynamic")
+	local innerCam = playerTempCams[ply:UserID()]
+	innerCam:SetModel("models/brokenglass_piece.mdl")
+	innerCam:SetRenderMode(RENDERMODE_TRANSCOLOR)
+	innerCam:SetColor(camColor)
+	innerCam:DrawShadow( false )
+	local cameraPos = ""
+	if playerTempConfigs[ply:UserID()]["_CameraPosition"][game.GetMap()] then
+		cameraPos = playerTempConfigs[ply:UserID()]["_CameraPosition"][game.GetMap()] + Vector(0,0,64)
+	else
+		cameraPos = Vector(-1286.149658, 1187.535156, -11371.772461)
+	end
+	innerCam:SetPos( cameraPos )
+	local cameraAng = ""
+	if playerTempConfigs[ply:UserID()]["_CameraAngle"][game.GetMap()] then
+		cameraAng = playerTempConfigs[ply:UserID()]["_CameraAngle"][game.GetMap()]
+	else
+		cameraAng = Angle(42.586422, -40.820980, 0.000000)
+	end
+	innerCam:SetAngles( cameraAng )
+	innerCam:Spawn()
+	innerCam:Activate()
+	innerCam:SetMoveType(MOVETYPE_NONE)
+	innerCam:SetSolid(SOLID_NONE)
+	ply:SetViewEntity(innerCam)
+end
+
+local tVarUpdateHandler = {
+	["CameraPosition"] = function(ply)
+		camUpdate(ply)
+	end,
+	["CameraAngle"] = function(ply)
+		camUpdate(ply)
+	end,
+}
+
+-- If player has access to config, then instruct client editor to open
 net.Receive( "FMainMenu_Config_OpenMenu", function( len, ply )
 	CAMI.PlayerHasAccess(ply, "FMainMenu_CanEditMenu", function(hasPriv, reason) 
 		if hasPriv then
+			playerTempConfigs[ply:UserID()] = table.Copy(FayLib["IGC"]["Config"]["Server"][addonName])
 			net.Start("FMainMenu_Config_OpenMenu")
 				if ply:GetNWBool("FMainMenu_InMenu",false) then
 					net.WriteBool(true)
 				end
 			net.Send(ply)
+			for _,updFunc in pairs(tVarUpdateHandler) do
+				updFunc(ply)
+			end
 		end
 	end)
 end)
 
+-- If player has access to config, then send server-side variables they request
 net.Receive( "FMainMenu_Config_ReqVar", function( len, ply )
 	local variableNames = net.ReadTable()
 	CAMI.PlayerHasAccess(ply, "FMainMenu_CanEditMenu", function(hasPriv, reason) 
@@ -559,6 +608,7 @@ net.Receive( "FMainMenu_Config_UpdateVar", function( len, ply )
 		end
 	end
 	
+	-- If player has access to config, then save changes to config
 	CAMI.PlayerHasAccess(ply, "FMainMenu_CanEditMenu", function(hasPriv, reason) 
 		if hasPriv then
 			local counter = 1
@@ -569,6 +619,49 @@ net.Receive( "FMainMenu_Config_UpdateVar", function( len, ply )
 			end
 			
 			FayLib.IGC.SaveConfig(addonName, "config", "fmainmenu")
+			FayLib.IGC.SyncShared(addonName)
+		end
+	end)
+end)
+
+-- If player has access to config, then adjust relative live-preview settings
+net.Receive( "FMainMenu_Config_UpdateTempVariable", function(len, ply) 
+	CAMI.PlayerHasAccess(ply, "FMainMenu_CanEditMenu", function(hasPriv, reason) 
+		if hasPriv then
+			local varNames = net.ReadTable()
+			local varTable = util.JSONToTable(net.ReadString())
+			
+			-- add fix for "Colors will not have the color metatable" bug
+			local keyList = table.GetKeys(varTable)
+			for i=1,#keyList do
+				if type(varTable[keyList[i]]) == "table" then
+					local innerTable = varTable[keyList[i]]
+					local innerKeyList = table.GetKeys(innerTable)
+					if(#innerKeyList == 4 && innerTable.a ~= nil && innerTable.r ~= nil && innerTable.g ~= nil && innerTable.b ~= nil) then
+						varTable[keyList[i]] = Color(innerTable.r, innerTable.g, innerTable.b, innerTable.a)
+					end
+				end
+			end
+			
+			local counter = 1
+			for _,varName in ipairs(varNames) do
+				if playerTempConfigs[ply:UserID()]["_"..varName] then
+					playerTempConfigs[ply:UserID()]["_"..varName] = varTable[counter]
+					tVarUpdateHandler[varName](ply)
+				end
+				
+				counter = counter + 1
+			end
+		end
+	end)
+end)
+
+-- Remove player from live-preview when closing config editor
+net.Receive( "FMainMenu_Config_CloseMenu", function( len, ply )
+	CAMI.PlayerHasAccess(ply, "FMainMenu_CanEditMenu", function(hasPriv, reason) 
+		if hasPriv then
+			playerTempConfigs[ply:UserID()] = nil
+			ply:SetViewEntity(ply)
 		end
 	end)
 end)
