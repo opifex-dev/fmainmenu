@@ -14,6 +14,8 @@ util.AddNetworkString("FMainMenu_Config_UpdateVar")
 util.AddNetworkString("FMainMenu_Config_UpdateTempVariable")
 util.AddNetworkString("FMainMenu_Config_CloseMenu")
 
+util.PrecacheModel( "models/props_phx/construct/wood/wood_dome360.mdl" )
+
 --Response to player attempting to leave menu
 net.Receive( "FMainMenu_CloseMainMenu", function( len, ply )
 	if ply:GetNWBool("FMainMenu_InMenu",false) then
@@ -515,7 +517,7 @@ local playerTempConfigs = {}
 local playerTempCams = {}
 
 local function camUpdate(ply)
-	if playerTempCams[ply:UserID()] != nil then
+	if playerTempCams[ply:UserID()] != nil && playerTempCams[ply:UserID()]:IsValid() then
 		playerTempCams[ply:UserID()]:Remove()
 	end
 	playerTempCams[ply:UserID()] = ents.Create("prop_dynamic")

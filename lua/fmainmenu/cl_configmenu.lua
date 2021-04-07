@@ -2,7 +2,13 @@ FMainMenu.CurConfigMenu = FMainMenu.CurConfigMenu || nil
 FMainMenu.configPropertyWindow = FMainMenu.configPropertyWindow || nil
 
 -- Function that helps to easily create the bottom buttons of the property editor
-local function setupGeneralPropPanels(configPropertyWindow, saveFunc, revertFunc)
+local function setupGeneralPropPanels(configPropertyWindow, saveFunc, revertFunc, onClosePropFunc)
+	-- Run related closing functions
+	if FMainMenu.configPropertyWindow.onCloseProp != nil then
+		FMainMenu.configPropertyWindow.onCloseProp()
+		FMainMenu.configPropertyWindow.onCloseProp = nil
+	end
+
 	-- General Panel
 	local separatePanel = vgui.Create("fmainmenu_config_editor_panel", configPropertyWindow)
 	separatePanel:SetSize( 240, 10 )
@@ -29,6 +35,10 @@ local function setupGeneralPropPanels(configPropertyWindow, saveFunc, revertFunc
 	propPanelRevertButton:AlignTop(35)
 	propPanelRevertButton.DoClick = function(button)
 		revertFunc()
+	end
+	
+	if onClosePropFunc != nil then
+		FMainMenu.configPropertyWindow.onCloseProp = onClosePropFunc
 	end
 end
 
@@ -81,7 +91,7 @@ end)
 
 -- If player is allowed, open editor
 net.Receive( "FMainMenu_Config_OpenMenu", function( len )
-	-- Editor cannot open when the player is currently in the main menu (live preview related)
+	-- Editor cannot open when the player is currently in the main menu (live preview restrictions)
 	if net.ReadBool() then
 		FMainMenu.Log(FMainMenu.Lang.ConfigLeaveMenu, false)
 		return
@@ -157,7 +167,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		local cameraSetupButtonLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetOne)
 		cameraSetupButtonLiveIndicator:SetSize( 15, 15 )
 		cameraSetupButtonLiveIndicator:AlignRight(12)
-		cameraSetupButtonLiveIndicator:AlignTop(9.5)
+		cameraSetupButtonLiveIndicator:AlignTop(10)
 		cameraSetupButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
 		local configSheetOneCameraSetupButton = vgui.Create("fmainmenu_config_editor_button", configSheetOne)
 		configSheetOneCameraSetupButton:SetText(FMainMenu.Lang.ConfigPropertiesCameraSetupPropName)
@@ -663,6 +673,11 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		end
 		
 		-- Hear Other Players
+		local cameraHearOtherPlayersButtonLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetOne)
+		cameraHearOtherPlayersButtonLiveIndicator:SetSize( 15, 15 )
+		cameraHearOtherPlayersButtonLiveIndicator:AlignRight(12)
+		cameraHearOtherPlayersButtonLiveIndicator:AlignTop(100)
+		cameraHearOtherPlayersButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
 		local configSheetOneCameraHearOtherPlayersButton = vgui.Create("fmainmenu_config_editor_button", configSheetOne)
 		configSheetOneCameraHearOtherPlayersButton:SetText(FMainMenu.Lang.ConfigPropertiesHearOtherPlayersPropName)
 		configSheetOneCameraHearOtherPlayersButton:SetSize(200,25)
@@ -704,6 +719,42 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			distanceBox:SetSize( 75, 18 )
 			distanceBox:SetPos( 88, 91 )
 			
+			-- Live Preview Sphere
+			local function createSphereHalf()
+				local sphereHalf = ents.CreateClientProp("models/props_phx/construct/wood/wood_dome360.mdl")
+				sphereHalf:SetMaterial("models/debug/debugwhite")
+				sphereHalf:SetColor(Color(0, 255, 0, 155))
+				sphereHalf:GetPhysicsObject():EnableMotion( false )
+				sphereHalf:SetCollisionGroup( COLLISION_GROUP_IN_VEHICLE )
+				sphereHalf:DrawShadow( false )
+				sphereHalf:SetRenderMode( RENDERMODE_TRANSCOLOR )
+				sphereHalf:DestroyShadow()
+				
+				return sphereHalf
+			end
+			
+			local topHalfSphere = createSphereHalf()
+			topHalfSphere:SetAngles( Angle(0, 0, 180) )
+			local bottomHalfSphere = createSphereHalf()
+			
+			local function updatePreview()
+				if toggleOption:GetText() == "False" then
+					topHalfSphere:SetModelScale( 0.001 )
+					bottomHalfSphere:SetModelScale( 0.0001 )
+					return 
+				end
+				local boxText = distanceBox:GetText()
+				if tonumber(boxText) == nil then return end
+				topHalfSphere:SetModelScale( boxText/96 )
+				bottomHalfSphere:SetModelScale( boxText/96 )
+			end
+			
+			-- Property panel closing code, used to clean up live preview
+			local function onCloseProp()
+				topHalfSphere:Remove()
+				bottomHalfSphere:Remove()
+			end
+			
 			-- Used to detect changes in the on-screen form from the server-side variable
 			local function isVarChanged()
 				local mapName = game.GetMap()
@@ -713,6 +764,8 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 				else
 					serverVar = "False"
 				end
+				
+				updatePreview()
 				
 				if toggleOption:GetText() != serverVar then
 					setUnsaved(true)
@@ -738,6 +791,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			
 			-- Called when server responds with current server-side variables
 			local function onGetVar(varTable)
+				local mapName = game.GetMap()
 				propertyPanel.lastRecVariable = varTable
 				if varTable[1] then 
 					toggleOption:SetValue("True") 
@@ -745,11 +799,14 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 					toggleOption:SetValue("False")
 				end
 				distanceBox:SetText(varTable[2])
+				topHalfSphere:SetPos(varTable[3][mapName] + Vector(0,0,64.5))
+				bottomHalfSphere:SetPos(varTable[3][mapName] + Vector(0,0,63.5))
 				setUnsaved(false)
+				updatePreview()
 			end
 			
 			-- Send the request for said server-side variables
-			requestVariables(onGetVar, {"HearOtherPlayers","PlayerVoiceDistance"})
+			requestVariables(onGetVar, {"HearOtherPlayers","PlayerVoiceDistance", "CameraPosition"})
 			
 			-- Called when someone wants to commit changes to a property
 			local function saveFunc()
@@ -772,11 +829,11 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			
 			-- Called when someone wants to revert changes to a property
 			local function revertFunc()
-				requestVariables(onGetVar, {"HearOtherPlayers","PlayerVoiceDistance"})
+				requestVariables(onGetVar, {"HearOtherPlayers","PlayerVoiceDistance", "CameraPosition"})
 			end
 			
 			-- Setup the save and revert buttons
-			setupGeneralPropPanels(FMainMenu.configPropertyWindow, saveFunc, revertFunc)
+			setupGeneralPropPanels(FMainMenu.configPropertyWindow, saveFunc, revertFunc, onCloseProp)
 			
 			--Set completed panel as active property
 			setPropPanel(propertyPanel)
@@ -832,6 +889,9 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			net.Start("FMainMenu_Config_CloseMenu")
 			net.SendToServer()
 			mainBlocker:Remove()
+			if FMainMenu.configPropertyWindow.onCloseProp !=  nil then
+				FMainMenu.configPropertyWindow.onCloseProp()
+			end
 			FMainMenu.configPropertyWindow:Remove()
 			FMainMenu.configPropertyWindow = nil
 			FMainMenu.CurConfigMenu:Close()
