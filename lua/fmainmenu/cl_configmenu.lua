@@ -2,13 +2,7 @@ FMainMenu.CurConfigMenu = FMainMenu.CurConfigMenu || nil
 FMainMenu.configPropertyWindow = FMainMenu.configPropertyWindow || nil
 
 -- Function that helps to easily create the bottom buttons of the property editor
-local function setupGeneralPropPanels(configPropertyWindow, saveFunc, revertFunc, onClosePropFunc)
-	-- Run related closing functions
-	if FMainMenu.configPropertyWindow.onCloseProp != nil then
-		FMainMenu.configPropertyWindow.onCloseProp()
-		FMainMenu.configPropertyWindow.onCloseProp = nil
-	end
-
+local function setupGeneralPropPanels(configPropertyWindow, saveFunc, revertFunc)
 	-- General Panel
 	local separatePanel = vgui.Create("fmainmenu_config_editor_panel", configPropertyWindow)
 	separatePanel:SetSize( 240, 10 )
@@ -36,10 +30,6 @@ local function setupGeneralPropPanels(configPropertyWindow, saveFunc, revertFunc
 	propPanelRevertButton.DoClick = function(button)
 		revertFunc()
 	end
-	
-	if onClosePropFunc != nil then
-		FMainMenu.configPropertyWindow.onCloseProp = onClosePropFunc
-	end
 end
 
 -- Send the request to commit config changes
@@ -51,12 +41,26 @@ local function updateVariables(varTable, varList)
 end
 
 -- Update active property in editor
-local function setPropPanel(newPanel)
+local function setPropPanel(newPanel, onClosePropFunc)
+	-- Run related closing functions for previous panel
+	if FMainMenu.configPropertyWindow.onCloseProp != nil then
+		FMainMenu.configPropertyWindow.onCloseProp()
+		FMainMenu.configPropertyWindow.onCloseProp = nil
+	end
+	
+	-- Remove old panel
 	if (FMainMenu.configPropertyWindow.currentProp != nil) then
 		FMainMenu.configPropertyWindow.currentProp:Remove()
 	end
 	
+	-- Set new panel as current property
 	FMainMenu.configPropertyWindow.currentProp = newPanel
+	
+	-- Assign new closing function, if provided
+	if onClosePropFunc != nil then
+		FMainMenu.configPropertyWindow.onCloseProp = onClosePropFunc
+	end
+	
 	FMainMenu.configPropertyWindow:MakePopup()
 end
 
@@ -115,7 +119,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		
 		FMainMenu.configPropertyWindow = vgui.Create( "fmainmenu_config_editornoclose" )
 		FMainMenu.configPropertyWindow:SetSize( 250, 360 )
-		FMainMenu.configPropertyWindow:SetPos(screenWidth-250, screenHeight/2 + 180)
+		FMainMenu.configPropertyWindow:SetPos(screenWidth-250, screenHeight-360)
 		FMainMenu.configPropertyWindow:SetTitle(FMainMenu.Lang.ConfigPropertiesWindowTitle)
 		FMainMenu.configPropertyWindow.propertyCode = 0
 		FMainMenu.configPropertyWindow:SetZPos(10)
@@ -138,7 +142,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		
 		FMainMenu.CurConfigMenu = vgui.Create( "fmainmenu_config_editornoclose" )
 		FMainMenu.CurConfigMenu:SetSize( 250, 250 )
-		FMainMenu.CurConfigMenu:SetPos(screenWidth-250, screenHeight/2-75)
+		FMainMenu.CurConfigMenu:SetPos(screenWidth-250, screenHeight-620)
 		FMainMenu.CurConfigMenu:SetTitle(FMainMenu.Lang.ConfigPropertiesSelectorTitle)
 		FMainMenu.CurConfigMenu.unsavedVar = false
 		FMainMenu.CurConfigMenu:SetZPos(10)
@@ -150,7 +154,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		
 		local configUnsavedBlocker = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.CurConfigMenu)
 		configUnsavedBlocker:SetSize( 240, 190 )
-		configUnsavedBlocker:SetBGColor(Color(0,0,0,125))
+		configUnsavedBlocker:SetBGColor(Color(0,0,0,155))
 		configUnsavedBlocker:AlignRight(5)
 		configUnsavedBlocker:AlignTop(55)
 		configUnsavedBlocker:SetVisible(false)
@@ -238,37 +242,41 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			cameraPositionRotBoxZ:SetPos( 80, 195 )
 			
 			-- Used to detect changes in the on-screen form from the server-side variable
+			local function checkTextBox(boxText, serverSide)
+				return (tonumber(boxText) == nil || math.Round(tonumber(boxText), 3) != math.Round(serverSide, 3))
+			end
+			
 			local function isVarChanged()
 				local mapName = game.GetMap()
 				
 				LocalPlayer():SetNoDraw( false )
 				
-				if tonumber(cameraPositionPosBoxX:GetText()) == nil || math.Round(tonumber(cameraPositionPosBoxX:GetText()), 3) != math.Round(cameraPosition.lastRecVariable[1][mapName].x, 3) then
+				if checkTextBox(cameraPositionPosBoxX:GetText(), cameraPosition.lastRecVariable[1][mapName].x) then
 					setUnsaved(true)
 					return
 				end
 				
-				if tonumber(cameraPositionPosBoxY:GetText()) == nil || math.Round(tonumber(cameraPositionPosBoxY:GetText()), 3) != math.Round(cameraPosition.lastRecVariable[1][mapName].y, 3) then
+				if checkTextBox(cameraPositionPosBoxY:GetText(), cameraPosition.lastRecVariable[1][mapName].y) then
 					setUnsaved(true)
 					return
 				end
 				
-				if tonumber(cameraPositionPosBoxZ:GetText()) == nil || math.Round(tonumber(cameraPositionPosBoxZ:GetText()), 3) != math.Round(cameraPosition.lastRecVariable[1][mapName].z, 3) then
+				if checkTextBox(cameraPositionPosBoxZ:GetText(), cameraPosition.lastRecVariable[1][mapName].z) then
 					setUnsaved(true)
 					return
 				end
 				
-				if tonumber(cameraPositionRotBoxX:GetText()) == nil || math.Round(tonumber(cameraPositionRotBoxX:GetText()), 3) != math.Round(cameraPosition.lastRecVariable[2][mapName].x, 3) then
+				if checkTextBox(cameraPositionRotBoxX:GetText(), cameraPosition.lastRecVariable[2][mapName].x) then
 					setUnsaved(true)
 					return
 				end
 				
-				if tonumber(cameraPositionRotBoxY:GetText()) == nil || math.Round(tonumber(cameraPositionRotBoxY:GetText()), 3) != math.Round(cameraPosition.lastRecVariable[2][mapName].y, 3) then
+				if checkTextBox(cameraPositionRotBoxY:GetText(), cameraPosition.lastRecVariable[2][mapName].y) then
 					setUnsaved(true)
 					return
 				end
 				
-				if tonumber(cameraPositionRotBoxZ:GetText()) == nil || math.Round(tonumber(cameraPositionRotBoxZ:GetText()), 3) != math.Round(cameraPosition.lastRecVariable[2][mapName].z, 3) then
+				if checkTextBox(cameraPositionRotBoxZ:GetText(), cameraPosition.lastRecVariable[2][mapName].z) then
 					setUnsaved(true)
 					return
 				end
@@ -572,6 +580,10 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			end
 			
 			-- Used to detect changes in the on-screen form from the server-side variable
+			local function checkTextBox(boxText, serverSide)
+				return (tonumber(boxText) == nil || math.Round(tonumber(boxText), 3) != math.Round(serverSide, 3))
+			end
+			
 			local function isVarChanged()
 				local mapName = game.GetMap()
 				local serverVar = ""
@@ -586,17 +598,17 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 					return
 				end
 				
-				if tonumber(cameraPositionPosBoxX:GetText()) == nil || math.Round(tonumber(cameraPositionPosBoxX:GetText()), 3) != math.Round(propertyPanel.lastRecVariable[2][mapName].x, 3) then
+				if checkTextBox(cameraPositionPosBoxX:GetText(), propertyPanel.lastRecVariable[2][mapName].x) then
 					setUnsaved(true)
 					return
 				end
 				
-				if tonumber(cameraPositionPosBoxY:GetText()) == nil || math.Round(tonumber(cameraPositionPosBoxY:GetText()), 3) != math.Round(propertyPanel.lastRecVariable[2][mapName].y, 3) then
+				if checkTextBox(cameraPositionPosBoxY:GetText(), propertyPanel.lastRecVariable[2][mapName].y) then
 					setUnsaved(true)
 					return
 				end
 				
-				if tonumber(cameraPositionPosBoxZ:GetText()) == nil || math.Round(tonumber(cameraPositionPosBoxZ:GetText()), 3) != math.Round(propertyPanel.lastRecVariable[2][mapName].z, 3) then
+				if checkTextBox(cameraPositionPosBoxZ:GetText(), propertyPanel.lastRecVariable[2][mapName].z) then
 					setUnsaved(true)
 					return
 				end
@@ -739,8 +751,8 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			
 			local function updatePreview()
 				if toggleOption:GetText() == "False" then
-					topHalfSphere:SetModelScale( 0.001 )
-					bottomHalfSphere:SetModelScale( 0.0001 )
+					topHalfSphere:SetModelScale( 0 )
+					bottomHalfSphere:SetModelScale( 0 )
 					return 
 				end
 				local boxText = distanceBox:GetText()
@@ -765,8 +777,6 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 					serverVar = "False"
 				end
 				
-				updatePreview()
-				
 				if toggleOption:GetText() != serverVar then
 					setUnsaved(true)
 					return
@@ -783,10 +793,12 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			-- OnChange functions for unsaved changes detection and preview updating
 			function toggleOption:OnSelect( index, value, data )
 				isVarChanged()
+				updatePreview()
 			end
 			
 			function distanceBox:OnChange()
 				isVarChanged()
+				updatePreview()
 			end
 			
 			-- Called when server responds with current server-side variables
@@ -833,29 +845,42 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			end
 			
 			-- Setup the save and revert buttons
-			setupGeneralPropPanels(FMainMenu.configPropertyWindow, saveFunc, revertFunc, onCloseProp)
+			setupGeneralPropPanels(FMainMenu.configPropertyWindow, saveFunc, revertFunc)
 			
 			--Set completed panel as active property
-			setPropPanel(propertyPanel)
+			setPropPanel(propertyPanel, onCloseProp)
 		end
 		
 		configSheet:AddSheet( FMainMenu.Lang.ConfigPropertiesCategoriesCamera, configSheetOne, nil )
 		
+		
+		
 		local configSheetTwo = vgui.Create("fmainmenu_config_editor_panel", configSheet)
 		configSheetTwo:SetSize( 240, 230 )
+		
+		
+		
 		configSheet:AddSheet( FMainMenu.Lang.ConfigPropertiesCategoriesMenu, configSheetTwo, nil )
+		
+		
 		
 		local configSheetThree = vgui.Create("fmainmenu_config_editor_panel", configSheet)
 		configSheetThree:SetSize( 240, 230 )
 		configSheet:AddSheet( FMainMenu.Lang.ConfigPropertiesCategoriesHooks, configSheetThree, nil )
 		
+		
+		
 		local configSheetFour = vgui.Create("fmainmenu_config_editor_panel", configSheet)
 		configSheetFour:SetSize( 240, 230 )
 		configSheet:AddSheet( FMainMenu.Lang.ConfigPropertiesCategoriesDerma, configSheetFour, nil )
 		
+		
+		
 		local configSheetFive = vgui.Create("fmainmenu_config_editor_panel", configSheet)
 		configSheetFive:SetSize( 240, 230 )
 		configSheet:AddSheet( FMainMenu.Lang.ConfigPropertiesCategoriesAccess, configSheetFive, nil )
+		
+		
 		
 		local configSheetSix = vgui.Create("fmainmenu_config_editor_panel", configSheet)
 		configSheetSix:SetSize( 240, 230 )
