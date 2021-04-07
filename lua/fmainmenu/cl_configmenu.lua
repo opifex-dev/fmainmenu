@@ -79,13 +79,22 @@ net.Receive( "FMainMenu_Config_ReqVar", function( len )
 	local receivedVarTable = util.JSONToTable( receivedStr )
 	
 	-- add fix for "Colors will not have the color metatable" bug
-	local keyList = table.GetKeys(receivedVarTable)
-	for i=1,#keyList do
-		if type(receivedVarTable[keyList[i]]) == "table" then
-			local innerTable = receivedVarTable[keyList[i]]
+	for i=1,#receivedVarTable do
+		if type(receivedVarTable[i]) == "table" then
+			local innerTable = receivedVarTable[i]
 			local innerKeyList = table.GetKeys(innerTable)
 			if(#innerKeyList == 4 && innerTable.a ~= nil && innerTable.r ~= nil && innerTable.g ~= nil && innerTable.b ~= nil) then
 				receivedVarTable[keyList[i]] = Color(innerTable.r, innerTable.g, innerTable.b, innerTable.a)
+			end
+		end
+	end
+	
+	-- fix for any map-based variables not existing
+	local mapName = game.GetMap()
+	for i=1,#receivedVarTable do
+		if type(receivedVarTable[i]) == "table" then
+			if (receivedVarTable[i][mapName] == nil && receivedVarTable[i]["gm_flatgrass"] != nil) then
+				receivedVarTable[i][mapName] = receivedVarTable[i]["gm_flatgrass"]
 			end
 		end
 	end
@@ -364,6 +373,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			-- Called when server responds with current server-side variables
 			local function onGetVar(varTable)
 				local mapName = game.GetMap()
+				
 				cameraPosition.lastRecVariable = varTable
 				cameraPositionPosBoxX:SetText(math.Round( varTable[1][mapName].x, 3))
 				cameraPositionPosBoxY:SetText(math.Round( varTable[1][mapName].y, 3))
@@ -636,6 +646,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			-- Called when server responds with current server-side variables
 			local function onGetVar(varTable)
 				local mapName = game.GetMap()
+				
 				propertyPanel.lastRecVariable = varTable
 				if varTable[1] then 
 					cameraEverySpawnOption:SetValue("True") 
@@ -804,6 +815,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			-- Called when server responds with current server-side variables
 			local function onGetVar(varTable)
 				local mapName = game.GetMap()
+				
 				propertyPanel.lastRecVariable = varTable
 				if varTable[1] then 
 					toggleOption:SetValue("True") 
@@ -993,6 +1005,7 @@ local hide = {
 	["CHudChat"] = true,
 }
 
+-- Hide interfering GUI elements when editor is open
 hook.Add( "HUDShouldDraw", "HideHUD_FMainMenu_ConfigEditor", function( name )
 	if ( hide[ name ] and FMainMenu.CurConfigMenu ) then
 		return false
