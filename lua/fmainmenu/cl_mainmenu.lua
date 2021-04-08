@@ -20,7 +20,7 @@ local function refreshMM()
 	if GAMEMODE then
 		if GAMEMODE.RoundStage != nil && GAMEMODE.LootCollected != nil && GAMEMODE.RoundSettings != nil && FMainMenu.EverySpawn then
 			FMainMenu.EverySpawn = false
-			FMainMenu.Log(FMainMenu.Lang.LogMurderEverySpawn, false)
+			FMainMenu.Log(FMainMenu.GetPhrase("LogMurderEverySpawn"), false)
 		end
 	end
 end
@@ -148,7 +148,7 @@ local function openMenu()
 			modules[entry.Type](entry.Content)
 		end
 	else
-		local playButton = FMainMenu.Panels.CreateButton(FMainMenu.Lang.PlayButtonText)
+		local playButton = FMainMenu.Panels.CreateButton(FMainMenu.GetPhrase("PlayButtonText"))
 		playButton:SetPos(xPos, curYPos)
 		curYPos = curYPos + 72
 		playButton.DoClick = function()
@@ -167,7 +167,7 @@ local function openMenu()
 		end
 		
 		if FayLib.IGC.GetSharedKey(addonName, "dcButton") then
-			local quitButton = FMainMenu.Panels.CreateButton(FMainMenu.Lang.DisconnectButtonText)
+			local quitButton = FMainMenu.Panels.CreateButton(FMainMenu.GetPhrase("DisconnectButtonText"))
 			quitButton:SetPos(xPos, curYPos)
 			quitButton.DoClick = function()
 				surface.PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
@@ -271,7 +271,7 @@ hook.Add("FMainMenu_OpenMenuInitial", "FMainMenu_IPE", function( )
 	if GAMEMODE then
 		if GAMEMODE.RoundStage != nil && GAMEMODE.LootCollected != nil && GAMEMODE.RoundSettings != nil && FMainMenu.EverySpawn then
 			FMainMenu.EverySpawn = false
-			FMainMenu.Log(FMainMenu.Lang.LogMurderEverySpawn, false)
+			FMainMenu.Log(FMainMenu.GetPhrase("LogMurderEverySpawn"), false)
 		end
 	end
 
@@ -319,19 +319,4 @@ hook.Add("PlayerBindPress", "FMainMenu_PBPress", function( ply, bind, pressed )
     if LocalPlayer():GetNWBool("FMainMenu_InMenu",false) then
 		return true
 	end
-end)
-
---Helper console command for getting positions and angles
-concommand.Add( "fmainmenu_getpos", function()  
-	local ply = LocalPlayer()
-	local plyPOS = ply:GetPos()
-	local plyANG = ply:GetAngles()
-	FMainMenu.Log(FMainMenu.Lang.LogHelperHeader, false)
-	print("")
-	print(FMainMenu.Lang.LogPosHead)
-	print("[\""..game.GetMap().."\"] = Vector("..plyPOS.x..", "..plyPOS.y..", "..plyPOS.z.."),")
-	print("")
-	print(FMainMenu.Lang.LogAngHead)
-	print("[\""..game.GetMap().."\"] = Angle("..plyANG.x..", "..plyANG.y..", "..plyANG.z.."),")
-	print("")
 end)

@@ -51,7 +51,7 @@ local function setupCam()
 		cameraPos = FayLib.IGC.GetKey(addonName, "CameraPosition")[game.GetMap()] + Vector(0,0,64)
 	else
 		cameraPos = Vector(-1286.149658, 1187.535156, -11371.772461)
-		FMainMenu.Log(FMainMenu.Lang.LogNoCamPos, true)
+		FMainMenu.Log(FMainMenu.GetPhrase("LogNoCamPos"), true)
 	end
 	cam:SetPos( cameraPos )
 	local cameraAng = ""
@@ -59,7 +59,7 @@ local function setupCam()
 		cameraAng = FayLib.IGC.GetKey(addonName, "CameraAngle")[game.GetMap()]
 	else
 		cameraAng = Angle(42.586422, -40.820980, 0.000000)
-		FMainMenu.Log(FMainMenu.Lang.LogNoCamAng, true)
+		FMainMenu.Log(FMainMenu.GetPhrase("LogNoCamAng"), true)
 	end
 	cam:SetAngles( cameraAng )
 	cam:Spawn()
@@ -77,7 +77,7 @@ local function refreshMM()
 	if GAMEMODE then
 		if GAMEMODE.RoundStage != nil && GAMEMODE.RoundCount != nil && FMainMenu.EverySpawn then
 			FMainMenu.EverySpawn = false
-			FMainMenu.Log(FMainMenu.Lang.LogMurderEverySpawn, false)
+			FMainMenu.Log(FMainMenu.GetPhrase("LogMurderEverySpawn"), false)
 		end
 	end
 end
@@ -176,7 +176,7 @@ local function spawnPlayerFunc(ply)
 			pPOS = FayLib.IGC.GetKey(addonName, "AdvancedSpawnPos")[game.GetMap()] + Vector(0,0,64)
 		else
 			pPOS = Vector(-172.215729, -24.837690, -12064.818359)
-			FMainMenu.Log(FMainMenu.Lang.LogNoAdvSpawnPos, true)
+			FMainMenu.Log(FMainMenu.GetPhrase("LogNoAdvSpawnPos"), true)
 		end
 		timer.Simple(0,function()
 			ply:SetPos(pPOS - Vector(0,0,64))
@@ -219,7 +219,7 @@ hook.Add( "InitPostEntity", "FMainMenu_IPE", function()
 		local murderTrigger = false
 		if FMainMenu.EverySpawn then
 			FMainMenu.EverySpawn = false
-			FMainMenu.Log(FMainMenu.Lang.LogMurderEverySpawn, false)
+			FMainMenu.Log(FMainMenu.GetPhrase("LogMurderEverySpawn"), false)
 		end
 		hook.Add( "Think", "FMainMenu_Murder_Think", function()
 			if GAMEMODE:GetRound() == GAMEMODE.Round.Playing && murderCache != GAMEMODE.Round.Playing && !murderTrigger then
@@ -227,7 +227,7 @@ hook.Add( "InitPostEntity", "FMainMenu_IPE", function()
 				for _,ply in ipairs(player.GetHumans()) do
 					if ply:GetNWBool("FMainMenu_InMenu",false) then
 						net.Start("FMainMenu_CloseMainMenu")
-							net.WriteString( FMainMenu.Lang.MurderRoundStarted )
+							net.WriteString( FMainMenu.GetPhrase("MurderRoundStarted") )
 						net.Send(ply)
 					end
 				end
@@ -494,7 +494,7 @@ hook.Add( "TTTBeginRound", "FMainMenu_TTTBeginRound", function( )
 	for _,ply in ipairs(player.GetHumans()) do
 		if ply:GetNWBool("FMainMenu_InMenu",false) then
 			net.Start("FMainMenu_CanEditMenu")
-				net.WriteString( FMainMenu.Lang.TTTRoundStarted )
+				net.WriteString( FMainMenu.GetPhrase("TTTRoundStarted") )
 			net.Send(ply)
 		end
 	end

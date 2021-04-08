@@ -9,6 +9,22 @@ function FMainMenu.Log(msg, warning)
 	print(newMSG..msg)
 end
 
+function FMainMenu.GetPhrase(phraseName)
+	if FMainMenu.Lang != nil && FMainMenu.LangPresets != nil && FMainMenu.LangPresets["en"] != nil then
+		if FMainMenu.Lang[phraseName] != nil then
+			return FMainMenu.Lang[phraseName]
+		end
+		
+		if FMainMenu.LangPresets["en"][phraseName] != nil then
+			FMainMenu.Log("Failed to fetch language phrase \""..phraseName.."\"! The language specified in your config does not contain the requested phrase. This could be due to multiple things, but is most likely the result of an incomplete translation.", true)
+			return FMainMenu.LangPresets["en"][phraseName]
+		end
+	end
+	
+	FMainMenu.Log("Failed to fetch language! This should never happen, please contact Fay!", true)
+	return "FMainMenu Language Error"
+end
+
 FMainMenu.Log("Begin Load", false)
 
 --Load required lua files in proper order

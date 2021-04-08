@@ -14,7 +14,7 @@ local function setupGeneralPropPanels(configPropertyWindow, saveFunc, revertFunc
 	propertyGeneralPanel:SetPos(5,290)
 	
 	local propPanelSaveButton = vgui.Create("fmainmenu_config_editor_button", propertyGeneralPanel)
-	propPanelSaveButton:SetText(FMainMenu.Lang.ConfigPropertiesSavePropButton)
+	propPanelSaveButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesSavePropButton"))
 	propPanelSaveButton:SetSize(200,25)
 	propPanelSaveButton:AlignLeft(20)
 	propPanelSaveButton:AlignTop(5)
@@ -23,7 +23,7 @@ local function setupGeneralPropPanels(configPropertyWindow, saveFunc, revertFunc
 	end
 	
 	local propPanelRevertButton = vgui.Create("fmainmenu_config_editor_button", propertyGeneralPanel)
-	propPanelRevertButton:SetText(FMainMenu.Lang.ConfigPropertiesRevertPropButton)
+	propPanelRevertButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesRevertPropButton"))
 	propPanelRevertButton:SetSize(200,25)
 	propPanelRevertButton:AlignLeft(20)
 	propPanelRevertButton:AlignTop(35)
@@ -106,7 +106,7 @@ end)
 net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 	-- Editor cannot open when the player is currently in the main menu (live preview restrictions)
 	if net.ReadBool() then
-		FMainMenu.Log(FMainMenu.Lang.ConfigLeaveMenu, false)
+		FMainMenu.Log(FMainMenu.GetPhrase("ConfigLeaveMenu"), false)
 		return
 	end
 	
@@ -129,7 +129,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		FMainMenu.configPropertyWindow = vgui.Create( "fmainmenu_config_editornoclose" )
 		FMainMenu.configPropertyWindow:SetSize( 250, 360 )
 		FMainMenu.configPropertyWindow:SetPos(screenWidth-250, screenHeight-360)
-		FMainMenu.configPropertyWindow:SetTitle(FMainMenu.Lang.ConfigPropertiesWindowTitle)
+		FMainMenu.configPropertyWindow:SetTitle(FMainMenu.GetPhrase("ConfigPropertiesWindowTitle"))
 		FMainMenu.configPropertyWindow.propertyCode = 0
 		FMainMenu.configPropertyWindow:SetZPos(10)
 		
@@ -138,7 +138,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		FMainMenu.configPropertyWindow.currentProp:SetPos(5,25)
 		
 		local configPropertyWindowDefLabel = vgui.Create("fmainmenu_config_editor_label", FMainMenu.configPropertyWindow.currentProp)
-		configPropertyWindowDefLabel:SetText(FMainMenu.Lang.ConfigPropertiesNoneSelected)
+		configPropertyWindowDefLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesNoneSelected"))
 		configPropertyWindowDefLabel:SetSize(240, 25)
 		configPropertyWindowDefLabel:SetFont("HudHintTextLarge")
 		configPropertyWindowDefLabel:SetContentAlignment(5)
@@ -152,7 +152,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		FMainMenu.CurConfigMenu = vgui.Create( "fmainmenu_config_editornoclose" )
 		FMainMenu.CurConfigMenu:SetSize( 250, 250 )
 		FMainMenu.CurConfigMenu:SetPos(screenWidth-250, screenHeight-620)
-		FMainMenu.CurConfigMenu:SetTitle(FMainMenu.Lang.ConfigPropertiesSelectorTitle)
+		FMainMenu.CurConfigMenu:SetTitle(FMainMenu.GetPhrase("ConfigPropertiesSelectorTitle"))
 		FMainMenu.CurConfigMenu.unsavedVar = false
 		FMainMenu.CurConfigMenu:SetZPos(10)
 		
@@ -183,12 +183,12 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		cameraSetupButtonLiveIndicator:AlignTop(10)
 		cameraSetupButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
 		local configSheetOneCameraSetupButton = vgui.Create("fmainmenu_config_editor_button", configSheetOne)
-		configSheetOneCameraSetupButton:SetText(FMainMenu.Lang.ConfigPropertiesCameraSetupPropName)
+		configSheetOneCameraSetupButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesCameraSetupPropName"))
 		configSheetOneCameraSetupButton:SetSize(200,25)
 		configSheetOneCameraSetupButton:AlignLeft(4)
 		configSheetOneCameraSetupButton:AlignTop(5)
 		configSheetOneCameraSetupButton.DoClick = function(button)
-			local propertyCode = 1
+			local propertyCode = 11
 			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
 			FMainMenu.configPropertyWindow.propertyCode = propertyCode
 		
@@ -197,58 +197,59 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			cameraPosition:SetSize( 240, 255 )
 			cameraPosition:SetPos(5,25)
 			local cameraPositionLabel = vgui.Create("fmainmenu_config_editor_label", cameraPosition)
-			cameraPositionLabel:SetText(FMainMenu.Lang.ConfigPropertiesCameraSetupPropName)
+			cameraPositionLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesCameraSetupPropName"))
 			cameraPositionLabel:SetFont("HudHintTextLarge")
+			cameraPositionLabel:SetPos(2,0)
 			local cameraPositionDescLabel = vgui.Create("fmainmenu_config_editor_label", cameraPosition)
-			cameraPositionDescLabel:SetText(FMainMenu.Lang.ConfigPropertiesCameraSetupPropDesc)
-			cameraPositionDescLabel:SetPos(1, 24)
+			cameraPositionDescLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesCameraSetupPropDesc"))
+			cameraPositionDescLabel:SetPos(3, 24)
 			cameraPositionDescLabel:SetSize(225, 36)
 			
 			-- Position
 			local cameraPositionLabel2 = vgui.Create("fmainmenu_config_editor_label", cameraPosition)
-			cameraPositionLabel2:SetText(FMainMenu.Lang.ConfigPropertiesCameraSetupPosLabel)
-			cameraPositionLabel2:SetPos(0, 70)
+			cameraPositionLabel2:SetText(FMainMenu.GetPhrase("ConfigPropertiesCameraSetupPosLabel"))
+			cameraPositionLabel2:SetPos(2, 70)
 			local cameraPositionPosBoxXLabel = vgui.Create("fmainmenu_config_editor_label", cameraPosition)
 			cameraPositionPosBoxXLabel:SetText("X: ")
-			cameraPositionPosBoxXLabel:SetPos(60, 88)	
+			cameraPositionPosBoxXLabel:SetPos(143, 88)	
 			local cameraPositionPosBoxX = vgui.Create("fmainmenu_config_editor_textentry", cameraPosition)
 			cameraPositionPosBoxX:SetSize( 75, 18 )
-			cameraPositionPosBoxX:SetPos( 80, 88 )
+			cameraPositionPosBoxX:SetPos( 163, 88 )
 			local cameraPositionPosBoxYLabel = vgui.Create("fmainmenu_config_editor_label", cameraPosition)
 			cameraPositionPosBoxYLabel:SetText("Y: ")
-			cameraPositionPosBoxYLabel:SetPos(60, 104)
+			cameraPositionPosBoxYLabel:SetPos(143, 104)
 			local cameraPositionPosBoxY = vgui.Create("fmainmenu_config_editor_textentry", cameraPosition)
 			cameraPositionPosBoxY:SetSize( 75, 18 )
-			cameraPositionPosBoxY:SetPos( 80, 104 )
+			cameraPositionPosBoxY:SetPos( 163, 104 )
 			local cameraPositionPosBoxZLabel = vgui.Create("fmainmenu_config_editor_label", cameraPosition)
 			cameraPositionPosBoxZLabel:SetText("Z: ")
-			cameraPositionPosBoxZLabel:SetPos(60, 120)
+			cameraPositionPosBoxZLabel:SetPos(143, 120)
 			local cameraPositionPosBoxZ = vgui.Create("fmainmenu_config_editor_textentry", cameraPosition)
 			cameraPositionPosBoxZ:SetSize( 75, 18 )
-			cameraPositionPosBoxZ:SetPos( 80, 120 )
+			cameraPositionPosBoxZ:SetPos( 163, 120 )
 			
 			-- Orientation
 			local cameraPositionLabel3 = vgui.Create("fmainmenu_config_editor_label", cameraPosition)
-			cameraPositionLabel3:SetText(FMainMenu.Lang.ConfigPropertiesCameraSetupAngLabel)
-			cameraPositionLabel3:SetPos(0, 145)
+			cameraPositionLabel3:SetText(FMainMenu.GetPhrase("ConfigPropertiesCameraSetupAngLabel"))
+			cameraPositionLabel3:SetPos(2, 145)
 			local cameraPositionRotBoxXLabel = vgui.Create("fmainmenu_config_editor_label", cameraPosition)
 			cameraPositionRotBoxXLabel:SetText("X: ")
-			cameraPositionRotBoxXLabel:SetPos(60, 163)
+			cameraPositionRotBoxXLabel:SetPos(143, 163)
 			local cameraPositionRotBoxX = vgui.Create("fmainmenu_config_editor_textentry", cameraPosition)
 			cameraPositionRotBoxX:SetSize( 75, 18 )
-			cameraPositionRotBoxX:SetPos( 80, 163 )
+			cameraPositionRotBoxX:SetPos( 163, 163 )
 			local cameraPositionRotBoxYLabel = vgui.Create("fmainmenu_config_editor_label", cameraPosition)
 			cameraPositionRotBoxYLabel:SetText("Y: ")
-			cameraPositionRotBoxYLabel:SetPos(60, 179)
+			cameraPositionRotBoxYLabel:SetPos(143, 179)
 			local cameraPositionRotBoxY = vgui.Create("fmainmenu_config_editor_textentry", cameraPosition)
 			cameraPositionRotBoxY:SetSize( 75, 18 )
-			cameraPositionRotBoxY:SetPos( 80, 179 )
+			cameraPositionRotBoxY:SetPos( 163, 179 )
 			local cameraPositionRotBoxZLabel = vgui.Create("fmainmenu_config_editor_label", cameraPosition)
 			cameraPositionRotBoxZLabel:SetText("Z: ")
-			cameraPositionRotBoxZLabel:SetPos(60, 195)
+			cameraPositionRotBoxZLabel:SetPos(143, 195)
 			local cameraPositionRotBoxZ = vgui.Create("fmainmenu_config_editor_textentry", cameraPosition)
 			cameraPositionRotBoxZ:SetSize( 75, 18 )
-			cameraPositionRotBoxZ:SetPos( 80, 195 )
+			cameraPositionRotBoxZ:SetPos( 163, 195 )
 			
 			-- Used to detect changes in the on-screen form from the server-side variable
 			local function checkTextBox(boxText, serverSide)
@@ -316,7 +317,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			
 			-- Helpful button to substitute current player coordinates
 			local cameraPositionChooseButton = vgui.Create("fmainmenu_config_editor_button", cameraPosition)
-			cameraPositionChooseButton:SetText(FMainMenu.Lang.ConfigPropertiesCameraSetupCaptureLabel)
+			cameraPositionChooseButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesCameraSetupCaptureLabel"))
 			cameraPositionChooseButton:SetSize(200,25)
 			cameraPositionChooseButton:AlignLeft(20)
 			cameraPositionChooseButton:AlignTop(225)
@@ -422,12 +423,12 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		
 		-- Every Spawn
 		local configSheetOneCameraEverySpawnButton = vgui.Create("fmainmenu_config_editor_button", configSheetOne)
-		configSheetOneCameraEverySpawnButton:SetText(FMainMenu.Lang.ConfigPropertiesEverySpawnPropName)
+		configSheetOneCameraEverySpawnButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesEverySpawnPropName"))
 		configSheetOneCameraEverySpawnButton:SetSize(200,25)
 		configSheetOneCameraEverySpawnButton:AlignLeft(4)
 		configSheetOneCameraEverySpawnButton:AlignTop(35)
 		configSheetOneCameraEverySpawnButton.DoClick = function(button)
-			local propertyCode = 2
+			local propertyCode = 12
 			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
 			FMainMenu.configPropertyWindow.propertyCode = propertyCode
 		
@@ -436,20 +437,21 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			propertyPanel:SetSize( 240, 255 )
 			propertyPanel:SetPos(5,25)
 			local propertyPanelLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
-			propertyPanelLabel:SetText(FMainMenu.Lang.ConfigPropertiesEverySpawnPropName)
+			propertyPanelLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesEverySpawnPropName"))
 			propertyPanelLabel:SetFont("HudHintTextLarge")
+			propertyPanelLabel:SetPos(2,0)
 			local propertyPanelDescLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
-			propertyPanelDescLabel:SetText(FMainMenu.Lang.ConfigPropertiesEverySpawnPropDesc)
-			propertyPanelDescLabel:SetPos(1, 24)
+			propertyPanelDescLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesEverySpawnPropDesc"))
+			propertyPanelDescLabel:SetPos(3, 24)
 			propertyPanelDescLabel:SetSize(225, 36)
 			
 			-- Every Spawn
 			local cameraEverySpawnLabel2 = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
-			cameraEverySpawnLabel2:SetText(FMainMenu.Lang.ConfigPropertiesEverySpawnLabel)
-			cameraEverySpawnLabel2:SetPos(0, 70)
+			cameraEverySpawnLabel2:SetText(FMainMenu.GetPhrase("ConfigPropertiesEverySpawnLabel"))
+			cameraEverySpawnLabel2:SetPos(2, 70)
 			local cameraEverySpawnOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
 			cameraEverySpawnOption:SetSize( 50, 18 )
-			cameraEverySpawnOption:SetPos( 85, 70 )
+			cameraEverySpawnOption:SetPos( 188, 70 )
 			cameraEverySpawnOption:SetValue( "True" )
 			cameraEverySpawnOption:AddChoice( "True" )
 			cameraEverySpawnOption:AddChoice( "False" )
@@ -519,12 +521,12 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		
 		-- Advanced Spawn
 		local configSheetOneCameraAdvancedSpawnButton = vgui.Create("fmainmenu_config_editor_button", configSheetOne)
-		configSheetOneCameraAdvancedSpawnButton:SetText(FMainMenu.Lang.ConfigPropertiesAdvancedSpawnPropName)
+		configSheetOneCameraAdvancedSpawnButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnPropName"))
 		configSheetOneCameraAdvancedSpawnButton:SetSize(200,25)
 		configSheetOneCameraAdvancedSpawnButton:AlignLeft(4)
 		configSheetOneCameraAdvancedSpawnButton:AlignTop(65)
 		configSheetOneCameraAdvancedSpawnButton.DoClick = function(button)
-			local propertyCode = 3
+			local propertyCode = 13
 			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
 			FMainMenu.configPropertyWindow.propertyCode = propertyCode
 		
@@ -533,50 +535,51 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			propertyPanel:SetSize( 240, 255 )
 			propertyPanel:SetPos(5,25)
 			local propertyPanelLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
-			propertyPanelLabel:SetText(FMainMenu.Lang.ConfigPropertiesAdvancedSpawnPropName)
+			propertyPanelLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnPropName"))
 			propertyPanelLabel:SetFont("HudHintTextLarge")
+			propertyPanelLabel:SetPos(2,0)
 			local propertyPanelDescLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
-			propertyPanelDescLabel:SetText(FMainMenu.Lang.ConfigPropertiesAdvancedSpawnPropDesc)
-			propertyPanelDescLabel:SetPos(1, 24)
+			propertyPanelDescLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnPropDesc"))
+			propertyPanelDescLabel:SetPos(3, 24)
 			propertyPanelDescLabel:SetSize(225, 36)
 			
 			-- Advanced Spawn Toggle
 			local cameraEverySpawnLabel2 = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
-			cameraEverySpawnLabel2:SetText(FMainMenu.Lang.ConfigPropertiesAdvancedSpawnOptLabel)
-			cameraEverySpawnLabel2:SetPos(0, 70)
+			cameraEverySpawnLabel2:SetText(FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnOptLabel"))
+			cameraEverySpawnLabel2:SetPos(2, 70)
 			local cameraEverySpawnOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
 			cameraEverySpawnOption:SetSize( 50, 18 )
-			cameraEverySpawnOption:SetPos( 105, 70 )
+			cameraEverySpawnOption:SetPos( 188, 70 )
 			cameraEverySpawnOption:SetValue( "False" )
 			cameraEverySpawnOption:AddChoice( "True" )
 			cameraEverySpawnOption:AddChoice( "False" )	
 			
 			--Advanced Spawn Position
 			local cameraPositionLabel2 = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
-			cameraPositionLabel2:SetText(FMainMenu.Lang.ConfigPropertiesAdvancedSpawnPosLabel)
-			cameraPositionLabel2:SetPos(0, 91)
+			cameraPositionLabel2:SetText(FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnPosLabel"))
+			cameraPositionLabel2:SetPos(2, 91)
 			local cameraPositionPosBoxXLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
 			cameraPositionPosBoxXLabel:SetText("X: ")
-			cameraPositionPosBoxXLabel:SetPos(60, 109)	
+			cameraPositionPosBoxXLabel:SetPos(143, 109)	
 			local cameraPositionPosBoxX = vgui.Create("fmainmenu_config_editor_textentry", propertyPanel)
 			cameraPositionPosBoxX:SetSize( 75, 18 )
-			cameraPositionPosBoxX:SetPos( 80, 109 )
+			cameraPositionPosBoxX:SetPos( 163, 109 )
 			local cameraPositionPosBoxYLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
 			cameraPositionPosBoxYLabel:SetText("Y: ")
-			cameraPositionPosBoxYLabel:SetPos(60, 125)
+			cameraPositionPosBoxYLabel:SetPos(143, 125)
 			local cameraPositionPosBoxY = vgui.Create("fmainmenu_config_editor_textentry", propertyPanel)
 			cameraPositionPosBoxY:SetSize( 75, 18 )
-			cameraPositionPosBoxY:SetPos( 80, 125 )
+			cameraPositionPosBoxY:SetPos( 163, 125 )
 			local cameraPositionPosBoxZLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
 			cameraPositionPosBoxZLabel:SetText("Z: ")
-			cameraPositionPosBoxZLabel:SetPos(60, 141)
+			cameraPositionPosBoxZLabel:SetPos(143, 141)
 			local cameraPositionPosBoxZ = vgui.Create("fmainmenu_config_editor_textentry", propertyPanel)
 			cameraPositionPosBoxZ:SetSize( 75, 18 )
-			cameraPositionPosBoxZ:SetPos( 80, 141 )
+			cameraPositionPosBoxZ:SetPos( 163, 141 )
 			
 			-- Helpful function to autofill player's current position
 			local cameraPositionChooseButton = vgui.Create("fmainmenu_config_editor_button", propertyPanel)
-			cameraPositionChooseButton:SetText(FMainMenu.Lang.ConfigPropertiesAdvancedSpawnCaptureLabel)
+			cameraPositionChooseButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnCaptureLabel"))
 			cameraPositionChooseButton:SetSize(200,25)
 			cameraPositionChooseButton:AlignLeft(20)
 			cameraPositionChooseButton:AlignTop(170)
@@ -702,12 +705,12 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		cameraHearOtherPlayersButtonLiveIndicator:AlignTop(100)
 		cameraHearOtherPlayersButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
 		local configSheetOneCameraHearOtherPlayersButton = vgui.Create("fmainmenu_config_editor_button", configSheetOne)
-		configSheetOneCameraHearOtherPlayersButton:SetText(FMainMenu.Lang.ConfigPropertiesHearOtherPlayersPropName)
+		configSheetOneCameraHearOtherPlayersButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesHearOtherPlayersPropName"))
 		configSheetOneCameraHearOtherPlayersButton:SetSize(200,25)
 		configSheetOneCameraHearOtherPlayersButton:AlignLeft(4)
 		configSheetOneCameraHearOtherPlayersButton:AlignTop(95)
 		configSheetOneCameraHearOtherPlayersButton.DoClick = function(button)
-			local propertyCode = 4
+			local propertyCode = 14
 			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
 			FMainMenu.configPropertyWindow.propertyCode = propertyCode
 		
@@ -716,31 +719,32 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			propertyPanel:SetSize( 240, 255 )
 			propertyPanel:SetPos(5,25)
 			local propertyPanelLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
-			propertyPanelLabel:SetText(FMainMenu.Lang.ConfigPropertiesHearOtherPlayersPropName)
+			propertyPanelLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesHearOtherPlayersPropName"))
 			propertyPanelLabel:SetFont("HudHintTextLarge")
+			propertyPanelLabel:SetPos(2,0)
 			local propertyPanelDescLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
-			propertyPanelDescLabel:SetText(FMainMenu.Lang.ConfigPropertiesHearOtherPlayersPropDesc)
-			propertyPanelDescLabel:SetPos(1, 24)
+			propertyPanelDescLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesHearOtherPlayersPropDesc"))
+			propertyPanelDescLabel:SetPos(3, 24)
 			propertyPanelDescLabel:SetSize(225, 36)
 			
 			-- Hear Other Players Toggle
 			local toggleLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
-			toggleLabel:SetText(FMainMenu.Lang.ConfigPropertiesHearOtherPlayersLabel)
-			toggleLabel:SetPos(0, 70)
+			toggleLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesHearOtherPlayersLabel"))
+			toggleLabel:SetPos(2, 70)
 			local toggleOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
 			toggleOption:SetSize( 50, 18 )
-			toggleOption:SetPos( 118, 70 )
+			toggleOption:SetPos( 188, 70 )
 			toggleOption:SetValue( "False" )
 			toggleOption:AddChoice( "True" )
 			toggleOption:AddChoice( "False" )	
 			
 			-- Maximum Voice Distance
 			local distanceLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
-			distanceLabel:SetText(FMainMenu.Lang.ConfigPropertiesHearOtherPlayersDistanceLabel)
-			distanceLabel:SetPos(0, 91)
+			distanceLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesHearOtherPlayersDistanceLabel"))
+			distanceLabel:SetPos(2, 91)
 			local distanceBox = vgui.Create("fmainmenu_config_editor_textentry", propertyPanel)
 			distanceBox:SetSize( 75, 18 )
-			distanceBox:SetPos( 88, 91 )
+			distanceBox:SetPos( 163, 91 )
 			
 			-- Live Preview Sphere
 			local function createSphereHalf()
@@ -822,7 +826,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 				else
 					toggleOption:SetValue("False")
 				end
-				distanceBox:SetText(varTable[2])
+				distanceBox:SetText(math.sqrt(varTable[2]))
 				topHalfSphere:SetPos(varTable[3][mapName] + Vector(0,0,64.5))
 				bottomHalfSphere:SetPos(varTable[3][mapName] + Vector(0,0,63.5))
 				setUnsaved(false)
@@ -845,9 +849,11 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 				
 				if(tonumber(distanceBox:GetText()) == nil) then return end
 
-				propertyPanel.lastRecVariable[2] = tonumber(distanceBox:GetText())
+				local newPHDist = tonumber(distanceBox:GetText())
+				propertyPanel.lastRecVariable[2] = newPHDist*newPHDist
 				
 				updateVariables(propertyPanel.lastRecVariable, {"HearOtherPlayers","PlayerVoiceDistance"})
+				propertyPanel.lastRecVariable[2] = newPHDist
 				setUnsaved(false)
 			end
 			
@@ -863,40 +869,131 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			setPropPanel(propertyPanel, onCloseProp)
 		end
 		
-		configSheet:AddSheet( FMainMenu.Lang.ConfigPropertiesCategoriesCamera, configSheetOne, nil )
+		configSheet:AddSheet( FMainMenu.GetPhrase("ConfigPropertiesCategoriesCamera"), configSheetOne, nil )
 		
 		
 		
 		local configSheetTwo = vgui.Create("fmainmenu_config_editor_panel", configSheet)
 		configSheetTwo:SetSize( 240, 230 )
 		
+		-- Language Setting
+		local configSheetTwoLanguageButton = vgui.Create("fmainmenu_config_editor_button", configSheetTwo)
+		configSheetTwoLanguageButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesLanguagePropName"))
+		configSheetTwoLanguageButton:SetSize(200,25)
+		configSheetTwoLanguageButton:AlignLeft(4)
+		configSheetTwoLanguageButton:AlignTop(5)
+		configSheetTwoLanguageButton.DoClick = function(button)
+			local propertyCode = 21
+			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
+			FMainMenu.configPropertyWindow.propertyCode = propertyCode
 		
+			--Property Panel Setup
+			local propertyPanel = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.configPropertyWindow)
+			propertyPanel:SetSize( 240, 255 )
+			propertyPanel:SetPos(5,25)
+			local propertyPanelLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesLanguagePropName"))
+			propertyPanelLabel:SetFont("HudHintTextLarge")
+			propertyPanelLabel:SetPos(2,0)
+			local propertyPanelDescLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelDescLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesLanguagePropDesc"))
+			propertyPanelDescLabel:SetPos(3, 24)
+			propertyPanelDescLabel:SetSize(225, 36)
 		
-		configSheet:AddSheet( FMainMenu.Lang.ConfigPropertiesCategoriesMenu, configSheetTwo, nil )
+			--language setting dropdown
+			local toggleLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			toggleLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesLanguageLabel"))
+			toggleLabel:SetPos(2, 70)
+			local toggleOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			toggleOption:SetSize( 80, 18 )
+			toggleOption:SetPos( 158, 70 )
+			toggleOption:SetValue( "English" )
+			for _,v in pairs(FMainMenu.languageLookup) do
+				toggleOption:AddChoice( v )
+			end			
+			
+			-- Used to detect changes in the on-screen form from the server-side variable			
+			local function isVarChanged()
+				local serverVar = ""
+				if FMainMenu.languageLookup[propertyPanel.lastRecVariable[1]] then 
+					serverVar = FMainMenu.languageLookup[propertyPanel.lastRecVariable[1]]
+				else
+					serverVar = "English"
+				end
+				
+				if serverVar != toggleOption:GetText() then
+					setUnsaved(true)
+					return
+				end
+				
+				setUnsaved(false)
+			end
+			
+			function toggleOption:OnSelect( index, value, data )
+				isVarChanged()
+			end
+			
+			-- Called when server responds with current server-side variables
+			local function onGetVar(varTable)
+				local mapName = game.GetMap()
+				
+				propertyPanel.lastRecVariable = varTable
+				toggleOption:SetValue(FMainMenu.languageLookup[propertyPanel.lastRecVariable[1]])
+				setUnsaved(false)
+			end
+			
+			-- Send the request for said server-side variables
+			requestVariables(onGetVar, {"LangSetting"})
+			
+			-- Called when someone wants to commit changes to a property
+			local function saveFunc()
+				local mapName = game.GetMap()
+				
+				if(FMainMenu.languageReverseLookup[toggleOption:GetText()] == nil) then return end
+
+				propertyPanel.lastRecVariable[1] = FMainMenu.languageReverseLookup[toggleOption:GetText()]
+				
+				updateVariables(propertyPanel.lastRecVariable, {"LangSetting"})
+				setUnsaved(false)
+			end
+			
+			-- Called when someone wants to revert changes to a property
+			local function revertFunc()
+				requestVariables(onGetVar, {"LangSetting"})
+			end
+			
+			-- Setup the save and revert buttons
+			setupGeneralPropPanels(FMainMenu.configPropertyWindow, saveFunc, revertFunc)
+			
+			--Set completed panel as active property
+			setPropPanel(propertyPanel)
+		end
+		
+		configSheet:AddSheet( FMainMenu.GetPhrase("ConfigPropertiesCategoriesMenu"), configSheetTwo, nil )
 		
 		
 		
 		local configSheetThree = vgui.Create("fmainmenu_config_editor_panel", configSheet)
 		configSheetThree:SetSize( 240, 230 )
-		configSheet:AddSheet( FMainMenu.Lang.ConfigPropertiesCategoriesHooks, configSheetThree, nil )
+		configSheet:AddSheet( FMainMenu.GetPhrase("ConfigPropertiesCategoriesHooks"), configSheetThree, nil )
 		
 		
 		
 		local configSheetFour = vgui.Create("fmainmenu_config_editor_panel", configSheet)
 		configSheetFour:SetSize( 240, 230 )
-		configSheet:AddSheet( FMainMenu.Lang.ConfigPropertiesCategoriesDerma, configSheetFour, nil )
+		configSheet:AddSheet( FMainMenu.GetPhrase("ConfigPropertiesCategoriesDerma"), configSheetFour, nil )
 		
 		
 		
 		local configSheetFive = vgui.Create("fmainmenu_config_editor_panel", configSheet)
 		configSheetFive:SetSize( 240, 230 )
-		configSheet:AddSheet( FMainMenu.Lang.ConfigPropertiesCategoriesAccess, configSheetFive, nil )
+		configSheet:AddSheet( FMainMenu.GetPhrase("ConfigPropertiesCategoriesAccess"), configSheetFive, nil )
 		
 		
 		
 		local configSheetSix = vgui.Create("fmainmenu_config_editor_panel", configSheet)
 		configSheetSix:SetSize( 240, 230 )
-		configSheet:AddSheet( FMainMenu.Lang.ConfigPropertiesCategoriesCamera, configSheetSix, nil )
+		configSheet:AddSheet( FMainMenu.GetPhrase("ConfigPropertiesCategoriesCamera"), configSheetSix, nil )
 		
 		
 		
@@ -962,7 +1059,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 				closeCheck:SetTitle("FMainMenu - Unsaved Changes!")
 				
 				local closeQuestionLabel = vgui.Create("fmainmenu_config_editor_label", closeCheck)
-				closeQuestionLabel:SetText(FMainMenu.Lang.ConfigUnsavedChanges)
+				closeQuestionLabel:SetText(FMainMenu.GetPhrase("ConfigUnsavedChanges"))
 				closeQuestionLabel:SetSize(280,125)
 				closeQuestionLabel:SetContentAlignment(8)
 				closeQuestionLabel:SetPos(10, 25)

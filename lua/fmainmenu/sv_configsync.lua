@@ -34,7 +34,7 @@ FayLib.IGC.DefineKey(addonName, "AdvancedSpawnPos", {
 	["rp_downtown_v4c_v2"] = Vector(-1405.6032714844, 884.40338134766, -40.81294631958),
 }, false)
 FayLib.IGC.DefineKey(addonName, "HearOtherPlayers", true, false)
-FayLib.IGC.DefineKey(addonName, "PlayerVoiceDistance", 600, false)
+FayLib.IGC.DefineKey(addonName, "PlayerVoiceDistance", 360000, false)
 
 -- Main Menu Screen Layout Settings
 FayLib.IGC.DefineKey(addonName, "LangSetting", "en", true)
@@ -162,12 +162,22 @@ FMainMenu.EverySpawn = FayLib.IGC.GetKey(addonName, "EverySpawn")
 CAMI.RegisterPrivilege( { Name = "FMainMenu_CanEditMenu",    MinAccess = FayLib.IGC.GetKey(addonName, "configCanEdit") or "superadmin" } )
 
 --Language Loader
-if string.lower(FayLib.IGC.GetKey(addonName, "LangSetting")) == "en" then
-	AddCSLuaFile( "fmainmenu/lang/cl_lang_"..string.lower(FayLib.IGC.GetKey(addonName, "LangSetting"))..".lua" )
-	include( "fmainmenu/lang/cl_lang_"..string.lower(FayLib.IGC.GetKey(addonName, "LangSetting"))..".lua" )
-else -- assume English if no valid code given
-	AddCSLuaFile( "fmainmenu/lang/cl_lang_en.lua" )
-	include( "fmainmenu/lang/cl_lang_en.lua" )
+FMainMenu.languageLookup = {}
+FMainMenu.languageReverseLookup = {}
+local files = file.Find("fmainmenu/lang/*.lua", "LUA")
+for _, f in pairs(files) do
+	include("fmainmenu/lang/"..f)
+	AddCSLuaFile("fmainmenu/lang/"..f)
+end
+
+if FMainMenu.LangPresets[string.lower(FayLib.IGC.GetKey(addonName, "LangSetting"))] != nil then
+	FMainMenu.Lang = FMainMenu.LangPresets[string.lower(FayLib.IGC.GetKey(addonName, "LangSetting"))]
+else -- assume English if no valid code given, also reset language var
+	FMainMenu.Lang = FMainMenu.LangPresets["en"]
+	FayLib.IGC.SetKey(addonName, "LangSetting", "en")
+	FayLib.IGC.SaveConfig(addonName, "config", "fmainmenu")
+	FayLib.IGC.SyncShared(addonName)
+	FMainMenu.Log("Your language configuration was invalid, so it was reset to English", true)
 end
 
 
@@ -176,6 +186,18 @@ end
 FMainMenu.RefreshDetect = true
 hook.Add("IGCConfigUpdate", "FMainMenu_IGCCU", function(addonName)
 	FMainMenu.EverySpawn = FayLib.IGC.GetKey(addonName, "EverySpawn")
+	
+	-- Language update
+	if FMainMenu.LangPresets[string.lower(FayLib.IGC.GetKey(addonName, "LangSetting"))] != nil then
+		FMainMenu.Lang = FMainMenu.LangPresets[string.lower(FayLib.IGC.GetKey(addonName, "LangSetting"))]
+	else -- assume English if no valid code given, also reset language var
+		FMainMenu.Lang = FMainMenu.LangPresets["en"]
+		FayLib.IGC.SetKey(addonName, "LangSetting", "en")
+		FayLib.IGC.SaveConfig(addonName, "config", "fmainmenu")
+		FayLib.IGC.SyncShared(addonName)
+		FMainMenu.Log("Your language configuration was invalid, so it was reset to English", true)
+	end
+	
 	FMainMenu.RefreshDetect = true
 end)
 
@@ -183,9 +205,6 @@ end)
 
 --[[
 -- this will have to be dealt with in the config GUI at config update time
-
--- Distance to square is used, so lets square it now
-FMainMenu.Config.PlayerVoiceDistance = FMainMenu.Config.PlayerVoiceDistance * FMainMenu.Config.PlayerVoiceDistance
 
 --Dropbox Link Patch
 if string.find(FMainMenu.Config.musicContent, "dropbox") != nil then

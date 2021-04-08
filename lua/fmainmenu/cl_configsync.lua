@@ -15,14 +15,21 @@ local addonName = "fmainmenu" --easy reference instead of copy-pasting over and 
 FMainMenu.EverySpawn = false
 FMainMenu.firstJoinSeed = ""
 
+FMainMenu.languageLookup = {}
+FMainMenu.languageReverseLookup = {}
+local files = file.Find("fmainmenu/lang/*.lua", "LUA")
+for _, f in pairs(files) do
+	include("fmainmenu/lang/"..f)
+end
+
 hook.Add("IGCSharedConfigReady", "FMainMenu_IGSCR", function()
 	FMainMenu.EverySpawn = FayLib.IGC.GetSharedKey(addonName, "EverySpawn")
 	FMainMenu.firstJoinSeed = FayLib.IGC.GetSharedKey(addonName, "firstJoinSeed")
 	
-	if string.lower(FayLib.IGC.GetSharedKey(addonName, "LangSetting")) == "en" then
-		include( "fmainmenu/lang/cl_lang_"..string.lower(FayLib.IGC.GetSharedKey(addonName, "LangSetting"))..".lua" )
+	if FMainMenu.LangPresets[string.lower(FayLib.IGC.GetSharedKey(addonName, "LangSetting"))] != nil then
+		FMainMenu.Lang = FMainMenu.LangPresets[string.lower(FayLib.IGC.GetSharedKey(addonName, "LangSetting"))]
 	else -- assume English if no valid code given
-		include( "fmainmenu/lang/cl_lang_en.lua" )
+		FMainMenu.Lang = FMainMenu.LangPresets["en"]
 	end
 	
 	hook.Run("FMainMenu_OpenMenuInitial")
@@ -34,10 +41,10 @@ hook.Add("IGCConfigUpdate", "FMainMenu_IGCCU", function(addonName)
 		FMainMenu.EverySpawn = FayLib.IGC.GetSharedKey(addonName, "EverySpawn")
 		FMainMenu.firstJoinSeed = FayLib.IGC.GetSharedKey(addonName, "firstJoinSeed")
 		
-		if string.lower(FayLib.IGC.GetSharedKey(addonName, "LangSetting")) == "en" then
-			include( "fmainmenu/lang/cl_lang_"..string.lower(FayLib.IGC.GetSharedKey(addonName, "LangSetting"))..".lua" )
+		if FMainMenu.LangPresets[string.lower(FayLib.IGC.GetSharedKey(addonName, "LangSetting"))] != nil then
+			FMainMenu.Lang = FMainMenu.LangPresets[string.lower(FayLib.IGC.GetSharedKey(addonName, "LangSetting"))]
 		else -- assume English if no valid code given
-			include( "fmainmenu/lang/cl_lang_en.lua" )
+			FMainMenu.Lang = FMainMenu.LangPresets["en"]
 		end
 	end
 	
