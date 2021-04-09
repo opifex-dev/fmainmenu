@@ -1,5 +1,8 @@
 FMainMenu.CurConfigMenu = FMainMenu.CurConfigMenu || nil
 FMainMenu.configPropertyWindow = FMainMenu.configPropertyWindow || nil
+local previewLevel = 0
+local previewCopy = {}
+local addonName = "fmainmenu"
 
 -- Function that helps to easily create the bottom buttons of the property editor
 local function setupGeneralPropPanels(configPropertyWindow, saveFunc, revertFunc)
@@ -120,6 +123,13 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		mainBlocker.Paint = function(s, width, height) end
 		mainBlocker:SetZPos(5)
 		
+		-- Code prepping for GUI previews
+		previewLevel = 0
+		previewCopy = {}
+		for k,v in pairs(FayLib.IGC["Config"]["Shared"][addonName]) do -- copy shared vars
+			previewCopy[k] = v
+		end
+		
 		
 		
 		--[[
@@ -189,6 +199,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		configSheetOneCameraSetupButton:AlignTop(5)
 		configSheetOneCameraSetupButton.DoClick = function(button)
 			local propertyCode = 11
+			previewLevel = 0
 			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
 			FMainMenu.configPropertyWindow.propertyCode = propertyCode
 		
@@ -429,6 +440,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		configSheetOneCameraEverySpawnButton:AlignTop(35)
 		configSheetOneCameraEverySpawnButton.DoClick = function(button)
 			local propertyCode = 12
+			previewLevel = 0
 			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
 			FMainMenu.configPropertyWindow.propertyCode = propertyCode
 		
@@ -458,7 +470,6 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			
 			-- Used to detect changes in the on-screen form from the server-side variable
 			local function isVarChanged()
-				local mapName = game.GetMap()
 				local serverVar = ""
 				if propertyPanel.lastRecVariable[1] then 
 					serverVar = "True"
@@ -527,6 +538,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		configSheetOneCameraAdvancedSpawnButton:AlignTop(65)
 		configSheetOneCameraAdvancedSpawnButton.DoClick = function(button)
 			local propertyCode = 13
+			previewLevel = 0
 			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
 			FMainMenu.configPropertyWindow.propertyCode = propertyCode
 		
@@ -711,6 +723,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		configSheetOneCameraHearOtherPlayersButton:AlignTop(95)
 		configSheetOneCameraHearOtherPlayersButton.DoClick = function(button)
 			local propertyCode = 14
+			previewLevel = 0
 			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
 			FMainMenu.configPropertyWindow.propertyCode = propertyCode
 		
@@ -784,7 +797,6 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			
 			-- Used to detect changes in the on-screen form from the server-side variable
 			local function isVarChanged()
-				local mapName = game.GetMap()
 				local serverVar = ""
 				if propertyPanel.lastRecVariable[1] then 
 					serverVar = "True"
@@ -838,7 +850,6 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			
 			-- Called when someone wants to commit changes to a property
 			local function saveFunc()
-				local mapName = game.GetMap()
 				if toggleOption:GetValue() == "True" then
 					propertyPanel.lastRecVariable[1] = true
 				elseif toggleOption:GetValue() == "False" then
@@ -884,6 +895,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		configSheetTwoLanguageButton:AlignTop(5)
 		configSheetTwoLanguageButton.DoClick = function(button)
 			local propertyCode = 21
+			previewLevel = 0
 			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
 			FMainMenu.configPropertyWindow.propertyCode = propertyCode
 		
@@ -935,8 +947,6 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			
 			-- Called when server responds with current server-side variables
 			local function onGetVar(varTable)
-				local mapName = game.GetMap()
-				
 				propertyPanel.lastRecVariable = varTable
 				toggleOption:SetValue(FMainMenu.languageLookup[propertyPanel.lastRecVariable[1]])
 				setUnsaved(false)
@@ -947,8 +957,6 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			
 			-- Called when someone wants to commit changes to a property
 			local function saveFunc()
-				local mapName = game.GetMap()
-				
 				if(FMainMenu.languageReverseLookup[toggleOption:GetText()] == nil) then return end
 
 				propertyPanel.lastRecVariable[1] = FMainMenu.languageReverseLookup[toggleOption:GetText()]
@@ -960,6 +968,122 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			-- Called when someone wants to revert changes to a property
 			local function revertFunc()
 				requestVariables(onGetVar, {"LangSetting"})
+			end
+			
+			-- Setup the save and revert buttons
+			setupGeneralPropPanels(FMainMenu.configPropertyWindow, saveFunc, revertFunc)
+			
+			--Set completed panel as active property
+			setPropPanel(propertyPanel)
+		end
+		
+		-- Garry's Mod Positioning Style
+		local configSheetTwoGMODStyleButtonLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetTwo)
+		configSheetTwoGMODStyleButtonLiveIndicator:SetSize( 15, 15 )
+		configSheetTwoGMODStyleButtonLiveIndicator:AlignRight(12)
+		configSheetTwoGMODStyleButtonLiveIndicator:AlignTop(40)
+		configSheetTwoGMODStyleButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
+		local configSheetTwoGMODStyleButton = vgui.Create("fmainmenu_config_editor_button", configSheetTwo)
+		configSheetTwoGMODStyleButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesGMODStylePropName"))
+		configSheetTwoGMODStyleButton:SetSize(200,25)
+		configSheetTwoGMODStyleButton:AlignLeft(4)
+		configSheetTwoGMODStyleButton:AlignTop(35)
+		configSheetTwoGMODStyleButton.DoClick = function(button)
+			local propertyCode = 22
+			previewLevel = 1
+			local tableKeyName = "GarrysModStyle"
+			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
+			FMainMenu.configPropertyWindow.propertyCode = propertyCode
+		
+			--Property Panel Setup
+			local propertyPanel = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.configPropertyWindow)
+			propertyPanel:SetSize( 240, 255 )
+			propertyPanel:SetPos(5,25)
+			local propertyPanelLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesGMODStylePropName"))
+			propertyPanelLabel:SetFont("HudHintTextLarge")
+			propertyPanelLabel:SetPos(2,0)
+			local propertyPanelDescLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelDescLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesGMODStylePropDesc"))
+			propertyPanelDescLabel:SetPos(3, 24)
+			propertyPanelDescLabel:SetSize(225, 36)
+		
+			--language setting dropdown
+			local toggleLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			toggleLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesGMODStyleLabel"))
+			toggleLabel:SetPos(2, 70)
+			local toggleOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			toggleOption:SetSize( 50, 18 )
+			toggleOption:SetPos( 188, 70 )
+			toggleOption:SetValue( "True" )
+			toggleOption:AddChoice( "True" )
+			toggleOption:AddChoice( "False" )
+			
+			-- Update needed live preview stuff
+			local function updatePreview()
+				if toggleOption:GetValue() == "True" then
+					previewCopy["_"..tableKeyName] = true
+				elseif toggleOption:GetValue() == "False" then
+					previewCopy["_"..tableKeyName] = false
+				end
+			end
+			
+			-- Used to detect changes in the on-screen form from the server-side variable	
+			local function isVarChanged()
+				local serverVar = ""
+				if propertyPanel.lastRecVariable[1] then 
+					serverVar = "True"
+				else
+					serverVar = "False"
+				end
+				
+				if serverVar != toggleOption:GetText() then
+					setUnsaved(true)
+					return
+				end
+				
+				setUnsaved(false)
+			end
+			
+			function toggleOption:OnSelect( index, value, data )
+				isVarChanged()
+				updatePreview()
+			end
+			
+			-- Called when server responds with current server-side variables
+			local function onGetVar(varTable)
+				propertyPanel.lastRecVariable = varTable
+				
+				if varTable[1] then 
+					toggleOption:SetValue("True") 
+				else
+					toggleOption:SetValue("False")
+				end
+				
+				setUnsaved(false)
+				updatePreview()
+			end
+			
+			-- Send the request for said server-side variables
+			requestVariables(onGetVar, {"GarrysModStyle"})
+			
+			-- Called when someone wants to commit changes to a property
+			local function saveFunc()
+				if toggleOption:GetValue() == "True" then
+					propertyPanel.lastRecVariable[1] = true
+				elseif toggleOption:GetValue() == "False" then
+					propertyPanel.lastRecVariable[1] = false
+				else
+					return
+				end
+				
+				updateVariables(propertyPanel.lastRecVariable, {"GarrysModStyle"})
+				setUnsaved(false)
+			end
+			
+			-- Called when someone wants to revert changes to a property
+			local function revertFunc()
+				requestVariables(onGetVar, {"GarrysModStyle"})
 			end
 			
 			-- Setup the save and revert buttons
@@ -1007,7 +1131,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		topInfoBar:SetZPos(10)
 		
 		local topInfoBarNameLabel = vgui.Create("fmainmenu_config_editor_label", topInfoBar)
-		topInfoBarNameLabel:SetText("FMainMenu Config Editor")
+		topInfoBarNameLabel:SetText(FMainMenu.GetPhrase("ConfigTopBarHeaderText"))
 		topInfoBarNameLabel:SetFont("Trebuchet24")
 		topInfoBarNameLabel:SetContentAlignment( 5 )
 		topInfoBarNameLabel:SetSize(screenWidth/3, 30)
@@ -1030,10 +1154,11 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			FMainMenu.configPropertyWindow = nil
 			FMainMenu.CurConfigMenu:Close()
 			FMainMenu.CurConfigMenu = nil
+			previewLevel = 0
 		end
 		
 		local topInfoBarCloseButton = vgui.Create("fmainmenu_config_editor_button", topInfoBar)
-		topInfoBarCloseButton:SetText("Exit")
+		topInfoBarCloseButton:SetText(FMainMenu.GetPhrase("ConfigTopBarExitText"))
 		topInfoBarCloseButton:SetSize(52.5,25)
 		topInfoBarCloseButton:AlignRight(5)
 		topInfoBarCloseButton:AlignTop(2.5)
@@ -1108,6 +1233,73 @@ hook.Add( "HUDShouldDraw", "HideHUD_FMainMenu_ConfigEditor", function( name )
 		return false
 	end
 end )
+
+--[[
+	Preview Hooks
+	
+	The below HUDPaint and HUDPaintBackground hooks will be used to render a real-time preview of vgui changes the player is making in the editor.
+	I will also be listing all the possible states below so I don't forget.
+	
+	NOTE: We can likely utilize the updatePreview function I made for the other previews by keeping a copy of all needed variables to simulate the menu,
+	and using the updatePreview function to modify whatever property the user is editing
+	
+	previewLevel:
+	0 - no GUI
+	1 - background/base menu only
+	2 - 1 but with first time join module simulated on top
+]]--
+local blurMat = Material("pp/blurscreen")
+local colorWhite = Color(255, 255, 255)
+
+hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
+	if previewLevel > 0 then -- draw menu
+		local width = ScrW()
+		local height = ScrH()
+	
+		if previewCopy["_logoIsText"] then
+			local titleH = (height * 0.5) - previewCopy["_logoFontSize"] - 64
+			if previewCopy["_GarrysModStyle"] then
+				titleH = previewCopy["_logoFontSize"]
+			end
+			draw.SimpleTextOutlined( previewCopy["_logoContent"], FMainMenu.CurrentLogoFont, width * 0.04, titleH, previewCopy["_textLogoColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_logoOutlineThickness"], previewCopy["_logoOutlineColor"] )
+		else
+			
+		end
+			
+		if previewLevel == 2 then -- draw first time join dialogue
+			
+		end
+	end
+end)
+
+hook.Add( "HUDPaintBackground", "ExampleMenuBackground_FMainMenu_ConfigEditor", function()
+	if previewLevel > 0 then -- draw menu background
+		local width = ScrW()
+		local height = ScrH()
+		
+		-- background tint
+		surface.SetDrawColor(previewCopy["_BackgroundColorTint"])
+		surface.DrawRect(0, 0, width, height)
+				
+		-- background blur
+		local blurAmount = previewCopy["_BackgroundBlurAmount"]
+		if blurAmount > 0 then
+			local x, y = 0, 0
+			local scrW, scrH = ScrW(), ScrH()
+		
+			surface.SetDrawColor(colorWhite)
+			surface.SetMaterial(blurMat)
+			
+			for i = 1, 3 do
+				blurMat:SetFloat("$blur", (i / 3) * (blurAmount or 8))
+				blurMat:Recompute()
+
+				render.UpdateScreenEffectTexture()
+				surface.DrawTexturedRect(x * -1, y * -1, scrW, scrH)
+			end
+		end
+	end
+end)
 
 -- Concommand to request editor access
 local function requestMenu( player, command, arguments )

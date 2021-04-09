@@ -36,6 +36,8 @@ FMainMenu.LangPresets[prefix].ConfigPropertiesCategoriesHooks = "Hook Functional
 FMainMenu.LangPresets[prefix].ConfigPropertiesCategoriesDerma = "Derma Style"
 FMainMenu.LangPresets[prefix].ConfigPropertiesCategoriesAccess = "Config Access"
 FMainMenu.LangPresets[prefix].ConfigPropertiesCategoriesCamera = "Advanced"
+FMainMenu.LangPresets[prefix].ConfigTopBarHeaderText = "FMainMenu Config Editor"
+FMainMenu.LangPresets[prefix].ConfigTopBarExitText = "Exit"
 
 FMainMenu.LangPresets[prefix].ConfigPropertiesCameraSetupPropName = "Camera Setup"
 FMainMenu.LangPresets[prefix].ConfigPropertiesCameraSetupPropDesc = "Allows you to set where the camera\nwill exist in the world"
@@ -61,6 +63,10 @@ FMainMenu.LangPresets[prefix].ConfigPropertiesHearOtherPlayersDistanceLabel = "M
 FMainMenu.LangPresets[prefix].ConfigPropertiesLanguagePropName = "Language"
 FMainMenu.LangPresets[prefix].ConfigPropertiesLanguagePropDesc = "Choose what language static GUIs use.\nOnly applies to newly opened GUIs."
 FMainMenu.LangPresets[prefix].ConfigPropertiesLanguageLabel = "Language: "
+
+FMainMenu.LangPresets[prefix].ConfigPropertiesGMODStylePropName = "Title/Logo Positioning"
+FMainMenu.LangPresets[prefix].ConfigPropertiesGMODStylePropDesc = "Whether the menu title/logo should\nappear in the center-left or top-left."
+FMainMenu.LangPresets[prefix].ConfigPropertiesGMODStyleLabel = "Position in top-left? "
 
 -- IGNORE BELOW CODE
 FMainMenu.languageLookup[prefix] = fancyName
