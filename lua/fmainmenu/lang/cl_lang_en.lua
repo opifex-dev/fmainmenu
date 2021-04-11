@@ -45,9 +45,11 @@ FMainMenu.LangPresets[prefix].ConfigPropertiesCameraSetupPosLabel = "Position (C
 FMainMenu.LangPresets[prefix].ConfigPropertiesCameraSetupAngLabel = "Orientation (Current Map): "
 FMainMenu.LangPresets[prefix].ConfigPropertiesCameraSetupCaptureLabel = "Capture Current Location"
 
-FMainMenu.LangPresets[prefix].ConfigPropertiesEverySpawnPropName = "Every Spawn"
+FMainMenu.LangPresets[prefix].ConfigPropertiesEverySpawnPropName = "Menu Frequency"
 FMainMenu.LangPresets[prefix].ConfigPropertiesEverySpawnPropDesc = "Whether the menu should appear on\nevery spawn or only once"
-FMainMenu.LangPresets[prefix].ConfigPropertiesEverySpawnLabel = "Every Spawn: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesEverySpawnLabel = "Menu Frequency: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesEverySpawnOptionOne = "Every Spawn"
+FMainMenu.LangPresets[prefix].ConfigPropertiesEverySpawnOptionTwo = "First Spawn"
 
 FMainMenu.LangPresets[prefix].ConfigPropertiesAdvancedSpawnPropName = "Advanced Spawn"
 FMainMenu.LangPresets[prefix].ConfigPropertiesAdvancedSpawnPropDesc = "Whether the advanced spawn system\nshould be used"
@@ -66,7 +68,16 @@ FMainMenu.LangPresets[prefix].ConfigPropertiesLanguageLabel = "Language: "
 
 FMainMenu.LangPresets[prefix].ConfigPropertiesGMODStylePropName = "Title/Logo Positioning"
 FMainMenu.LangPresets[prefix].ConfigPropertiesGMODStylePropDesc = "Whether the menu title/logo should\nappear in the center-left or top-left."
-FMainMenu.LangPresets[prefix].ConfigPropertiesGMODStyleLabel = "Position in top-left? "
+FMainMenu.LangPresets[prefix].ConfigPropertiesGMODStyleLabel = "Menu Position: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesGMODStyleSelectOne = "Top-Left"
+FMainMenu.LangPresets[prefix].ConfigPropertiesGMODStyleSelectTwo = "Center-Left"
+
+FMainMenu.LangPresets[prefix].ConfigPropertiesLogoPropName = "Title/Logo Content"
+FMainMenu.LangPresets[prefix].ConfigPropertiesLogoPropDesc = "Whether the menu title should be an\nimage or text."
+FMainMenu.LangPresets[prefix].ConfigPropertiesLogoLabel = "Logo Type: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesLogoSelectOne = "Text"
+FMainMenu.LangPresets[prefix].ConfigPropertiesLogoSelectTwo = "Image"
+FMainMenu.LangPresets[prefix].ConfigPropertiesLogoContentLabel = "Text / Image Link: "
 
 -- IGNORE BELOW CODE
 FMainMenu.languageLookup[prefix] = fancyName

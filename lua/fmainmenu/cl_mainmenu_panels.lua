@@ -209,7 +209,7 @@ function FMainMenu.Panels.SetupBasics()
 		if !FayLib.IGC.GetSharedKey(addonName, "GarrysModStyle") then
 			logo:SetPos(ScrW() * 0.04, (ScrH() * 0.5) - FayLib.IGC.GetSharedKey(addonName, "logoFontSize") - 64)
 		else
-			logo:SetPos(ScrW() * 0.04, FayLib.IGC.GetSharedKey(addonName, "logoFontSize"))
+			logo:SetPos(ScrW() * 0.04, ScrW() * 0.04)
 		end
 		logo:SetFont(FMainMenu.CurrentLogoFont)
 		logo:SetTextColor(FayLib.IGC.GetSharedKey(addonName, "textLogoColor"))

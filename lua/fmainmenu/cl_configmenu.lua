@@ -462,19 +462,19 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			cameraEverySpawnLabel2:SetText(FMainMenu.GetPhrase("ConfigPropertiesEverySpawnLabel"))
 			cameraEverySpawnLabel2:SetPos(2, 70)
 			local cameraEverySpawnOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
-			cameraEverySpawnOption:SetSize( 50, 18 )
-			cameraEverySpawnOption:SetPos( 188, 70 )
-			cameraEverySpawnOption:SetValue( "True" )
-			cameraEverySpawnOption:AddChoice( "True" )
-			cameraEverySpawnOption:AddChoice( "False" )
+			cameraEverySpawnOption:SetSize( 90, 18 )
+			cameraEverySpawnOption:SetPos( 148, 70 )
+			cameraEverySpawnOption:SetValue( FMainMenu.GetPhrase("ConfigPropertiesEverySpawnOptionOne"))
+			cameraEverySpawnOption:AddChoice( FMainMenu.GetPhrase("ConfigPropertiesEverySpawnOptionOne") )
+			cameraEverySpawnOption:AddChoice( FMainMenu.GetPhrase("ConfigPropertiesEverySpawnOptionTwo") )
 			
 			-- Used to detect changes in the on-screen form from the server-side variable
 			local function isVarChanged()
 				local serverVar = ""
 				if propertyPanel.lastRecVariable[1] then 
-					serverVar = "True"
+					serverVar = FMainMenu.GetPhrase("ConfigPropertiesEverySpawnOptionOne")
 				else
-					serverVar = "False"
+					serverVar = FMainMenu.GetPhrase("ConfigPropertiesEverySpawnOptionTwo")
 				end
 				
 				if cameraEverySpawnOption:GetValue() != serverVar then
@@ -494,9 +494,9 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			local function onGetVar(varTable)
 				propertyPanel.lastRecVariable = varTable
 				if varTable[1] then 
-					cameraEverySpawnOption:SetValue("True") 
+					cameraEverySpawnOption:SetValue(FMainMenu.GetPhrase("ConfigPropertiesEverySpawnOptionOne")) 
 				else
-					cameraEverySpawnOption:SetValue("False")
+					cameraEverySpawnOption:SetValue(FMainMenu.GetPhrase("ConfigPropertiesEverySpawnOptionTwo"))
 				end
 				setUnsaved(false)
 			end
@@ -506,9 +506,9 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			
 			-- Called when someone wants to commit changes to a property
 			local function saveFunc()
-				if cameraEverySpawnOption:GetValue() == "True" then
+				if cameraEverySpawnOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesEverySpawnOptionOne") then
 					propertyPanel.lastRecVariable[1] = true
-				elseif cameraEverySpawnOption:GetValue() == "False" then
+				elseif cameraEverySpawnOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesEverySpawnOptionTwo") then
 					propertyPanel.lastRecVariable[1] = false
 				else
 					return
@@ -1013,17 +1013,17 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			toggleLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesGMODStyleLabel"))
 			toggleLabel:SetPos(2, 70)
 			local toggleOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
-			toggleOption:SetSize( 50, 18 )
-			toggleOption:SetPos( 188, 70 )
-			toggleOption:SetValue( "True" )
-			toggleOption:AddChoice( "True" )
-			toggleOption:AddChoice( "False" )
+			toggleOption:SetSize( 85, 18 )
+			toggleOption:SetPos( 153, 70 )
+			toggleOption:SetValue( FMainMenu.GetPhrase("ConfigPropertiesGMODStyleSelectOne") )
+			toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigPropertiesGMODStyleSelectOne") )
+			toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigPropertiesGMODStyleSelectTwo") )
 			
 			-- Update needed live preview stuff
 			local function updatePreview()
-				if toggleOption:GetValue() == "True" then
+				if toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesGMODStyleSelectOne") then
 					previewCopy["_"..tableKeyName] = true
-				elseif toggleOption:GetValue() == "False" then
+				elseif toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesGMODStyleSelectTwo") then
 					previewCopy["_"..tableKeyName] = false
 				end
 			end
@@ -1032,9 +1032,9 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			local function isVarChanged()
 				local serverVar = ""
 				if propertyPanel.lastRecVariable[1] then 
-					serverVar = "True"
+					serverVar = FMainMenu.GetPhrase("ConfigPropertiesGMODStyleSelectOne")
 				else
-					serverVar = "False"
+					serverVar = FMainMenu.GetPhrase("ConfigPropertiesGMODStyleSelectTwo")
 				end
 				
 				if serverVar != toggleOption:GetText() then
@@ -1055,9 +1055,9 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 				propertyPanel.lastRecVariable = varTable
 				
 				if varTable[1] then 
-					toggleOption:SetValue("True") 
+					toggleOption:SetValue(FMainMenu.GetPhrase("ConfigPropertiesGMODStyleSelectOne")) 
 				else
-					toggleOption:SetValue("False")
+					toggleOption:SetValue(FMainMenu.GetPhrase("ConfigPropertiesGMODStyleSelectTwo"))
 				end
 				
 				setUnsaved(false)
@@ -1069,9 +1069,9 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			
 			-- Called when someone wants to commit changes to a property
 			local function saveFunc()
-				if toggleOption:GetValue() == "True" then
+				if toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesGMODStyleSelectOne") then
 					propertyPanel.lastRecVariable[1] = true
-				elseif toggleOption:GetValue() == "False" then
+				elseif toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesGMODStyleSelectTwo") then
 					propertyPanel.lastRecVariable[1] = false
 				else
 					return
@@ -1084,6 +1084,145 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			-- Called when someone wants to revert changes to a property
 			local function revertFunc()
 				requestVariables(onGetVar, {"GarrysModStyle"})
+			end
+			
+			-- Setup the save and revert buttons
+			setupGeneralPropPanels(FMainMenu.configPropertyWindow, saveFunc, revertFunc)
+			
+			--Set completed panel as active property
+			setPropPanel(propertyPanel)
+		end
+		
+		-- Logo & Logo Content
+		local configSheetTwoLogoButtonLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetTwo)
+		configSheetTwoLogoButtonLiveIndicator:SetSize( 15, 15 )
+		configSheetTwoLogoButtonLiveIndicator:AlignRight(12)
+		configSheetTwoLogoButtonLiveIndicator:AlignTop(70)
+		configSheetTwoLogoButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
+		local configSheetTwoLogoButton = vgui.Create("fmainmenu_config_editor_button", configSheetTwo)
+		configSheetTwoLogoButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesLogoPropName"))
+		configSheetTwoLogoButton:SetSize(200,25)
+		configSheetTwoLogoButton:AlignLeft(4)
+		configSheetTwoLogoButton:AlignTop(65)
+		configSheetTwoLogoButton.DoClick = function(button)
+			local propertyCode = 23
+			previewLevel = 1
+			local tableKeyName = {"logoIsText","logoContent"}
+			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
+			FMainMenu.configPropertyWindow.propertyCode = propertyCode
+		
+			--Property Panel Setup
+			local propertyPanel = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.configPropertyWindow)
+			propertyPanel:SetSize( 240, 255 )
+			propertyPanel:SetPos(5,25)
+			local propertyPanelLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesLogoPropName"))
+			propertyPanelLabel:SetFont("HudHintTextLarge")
+			propertyPanelLabel:SetPos(2,0)
+			local propertyPanelDescLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelDescLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesLogoPropDesc"))
+			propertyPanelDescLabel:SetPos(3, 24)
+			propertyPanelDescLabel:SetSize(225, 36)
+		
+			--language setting dropdown
+			local toggleLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			toggleLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesLogoLabel"))
+			toggleLabel:SetPos(2, 70)
+			local toggleOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			toggleOption:SetSize( 65, 18 )
+			toggleOption:SetPos( 173, 70 )
+			toggleOption:SetValue( FMainMenu.GetPhrase("ConfigPropertiesLogoSelectOne") )
+			toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigPropertiesLogoSelectOne") )
+			toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigPropertiesLogoSelectTwo") )
+			
+			local contentLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			contentLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesLogoContentLabel"))
+			contentLabel:SetPos(2, 91)
+			local contentBox = vgui.Create("fmainmenu_config_editor_textentry", propertyPanel)
+			contentBox:SetSize( 236, 18 )
+			contentBox:SetPos( 2, 111 )
+			
+			-- Update needed live preview stuff
+			local function updatePreview()
+				if toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesLogoSelectOne") then
+					previewCopy["_"..tableKeyName[1]] = true
+				elseif toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesLogoSelectTwo") then
+					previewCopy["_"..tableKeyName[1]] = false
+				end
+				
+				previewCopy["_"..tableKeyName[2]] = contentBox:GetText()
+			end
+			
+			-- Used to detect changes in the on-screen form from the server-side variable	
+			local function isVarChanged()
+				local serverVar = ""
+				if propertyPanel.lastRecVariable[1] then 
+					serverVar = FMainMenu.GetPhrase("ConfigPropertiesLogoSelectOne")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigPropertiesLogoSelectTwo")
+				end
+				
+				if serverVar != toggleOption:GetText() then
+					setUnsaved(true)
+					return
+				end
+				
+				if propertyPanel.lastRecVariable[2] != contentBox:GetText() then
+					setUnsaved(true)
+					return
+				end
+				
+				setUnsaved(false)
+			end
+			
+			function toggleOption:OnSelect( index, value, data )
+				isVarChanged()
+				updatePreview()
+			end
+			
+			function contentBox:OnChange()
+				isVarChanged()
+				updatePreview()
+			end
+			
+			-- Called when server responds with current server-side variables
+			local function onGetVar(varTable)
+				propertyPanel.lastRecVariable = varTable
+				
+				if varTable[1] then 
+					toggleOption:SetValue(FMainMenu.GetPhrase("ConfigPropertiesLogoSelectOne")) 
+				else
+					toggleOption:SetValue(FMainMenu.GetPhrase("ConfigPropertiesLogoSelectTwo"))
+				end
+				
+				contentBox:SetText(varTable[2])
+				
+				setUnsaved(false)
+				updatePreview()
+			end
+			
+			-- Send the request for said server-side variables
+			requestVariables(onGetVar, {"logoIsText","logoContent"})
+			
+			-- Called when someone wants to commit changes to a property
+			local function saveFunc()
+				if toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesLogoSelectOne") then
+					propertyPanel.lastRecVariable[1] = true
+				elseif toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesLogoSelectTwo") then
+					propertyPanel.lastRecVariable[1] = false
+				else
+					return
+				end
+				
+				propertyPanel.lastRecVariable[2] = contentBox:GetText()
+				
+				updateVariables(propertyPanel.lastRecVariable, {"logoIsText","logoContent"})
+				setUnsaved(false)
+			end
+			
+			-- Called when someone wants to revert changes to a property
+			local function revertFunc()
+				requestVariables(onGetVar, {"logoIsText","logoContent"})
 			end
 			
 			-- Setup the save and revert buttons
@@ -1250,6 +1389,8 @@ end )
 ]]--
 local blurMat = Material("pp/blurscreen")
 local colorWhite = Color(255, 255, 255)
+local HTMLLogo = nil
+local cachedLink = ""
 
 hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 	if previewLevel > 0 then -- draw menu
@@ -1257,17 +1398,79 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 		local height = ScrH()
 	
 		if previewCopy["_logoIsText"] then
+			if HTMLLogo != nil then
+				HTMLLogo:Remove()
+				HTMLLogo = nil
+				cachedLink = ""
+			end
+		
 			local titleH = (height * 0.5) - previewCopy["_logoFontSize"] - 64
 			if previewCopy["_GarrysModStyle"] then
-				titleH = previewCopy["_logoFontSize"]
+				titleH = ScrW() * 0.04
 			end
 			draw.SimpleTextOutlined( previewCopy["_logoContent"], FMainMenu.CurrentLogoFont, width * 0.04, titleH, previewCopy["_textLogoColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_logoOutlineThickness"], previewCopy["_logoOutlineColor"] )
 		else
-			
+			if HTMLLogo == nil || cachedLink != previewCopy["_logoContent"] then
+				if HTMLLogo != nil then HTMLLogo:Remove() end
+				HTMLLogo = vgui.Create("DHTML")
+				HTMLLogo:SetZPos(1)
+				HTMLLogo:SetSize(ScrW() * 0.5, 192)
+				if !previewCopy["_GarrysModStyle"] then
+					HTMLLogo:SetPos(ScrW() * 0.04, (ScrH() * 0.5) - 256)
+				else
+					HTMLLogo:SetPos(ScrW() * 0.04, 32)
+				end
+				HTMLLogo:SetMouseInputEnabled(false)
+				function HTMLLogo:ConsoleMessage(msg) end
+				HTMLLogo:SetHTML([[
+				<!DOCTYPE html>
+				<html>
+					<head>
+						<style>
+						body, html {
+							padding: 0;
+							margin: 0;
+							height:100%;
+							overflow: hidden;
+							position: relative;
+						}
+						img {
+							position: absolute;
+							bottom: 0px;
+							left: 0px;
+							max-width: 100%;
+							max-height: 100%;
+							disTextButton: block;
+						}
+						</style>
+					</head>
+					<body>
+						<img id="img"></img>
+						<script>
+							var url = "]] .. string.JavascriptSafe(previewCopy["_logoContent"]) .. [[";
+							document.getElementById("img").src = url;
+						</script>
+					</body>
+				</html>
+				]])
+				cachedLink = previewCopy["_logoContent"]
+			else
+				if !previewCopy["_GarrysModStyle"] then
+					HTMLLogo:SetPos(ScrW() * 0.04, (ScrH() * 0.5) - 256)
+				else
+					HTMLLogo:SetPos(ScrW() * 0.04, 32)
+				end
+			end
 		end
 			
 		if previewLevel == 2 then -- draw first time join dialogue
 			
+		end
+	else
+		if HTMLLogo != nil then
+			HTMLLogo:Remove()
+			HTMLLogo = nil
+			cachedLink = ""
 		end
 	end
 end)

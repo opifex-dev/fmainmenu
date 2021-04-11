@@ -100,7 +100,7 @@ local function openMenu()
 	local xPos = ScrW() * 0.05
 	local normalSize = 192
 	if FayLib.IGC.GetSharedKey(addonName, "logoIsText") then
-		normalSize = 72
+		normalSize = FayLib.IGC.GetSharedKey(addonName, "logoFontSize")
 	end
 	
 	local curYPos = (ScrH() * 0.5) - 32
