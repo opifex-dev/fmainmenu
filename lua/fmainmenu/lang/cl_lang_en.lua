@@ -79,6 +79,11 @@ FMainMenu.LangPresets[prefix].ConfigPropertiesLogoSelectOne = "Text"
 FMainMenu.LangPresets[prefix].ConfigPropertiesLogoSelectTwo = "Image"
 FMainMenu.LangPresets[prefix].ConfigPropertiesLogoContentLabel = "Text / Image Link: "
 
+FMainMenu.LangPresets[prefix].ConfigPropertiesBackgroundPropName = "Background Effects"
+FMainMenu.LangPresets[prefix].ConfigPropertiesBackgroundPropDesc = "Alter the blur and tint of the camera\nview."
+FMainMenu.LangPresets[prefix].ConfigPropertiesBackgroundBlurLabel = "Blur Amount: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesBackgroundTintLabel = "Tint Color: "
+
 -- IGNORE BELOW CODE
 FMainMenu.languageLookup[prefix] = fancyName
 FMainMenu.languageReverseLookup[fancyName] = prefix

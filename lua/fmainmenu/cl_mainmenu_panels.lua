@@ -194,14 +194,17 @@ end
 function FMainMenu.Panels.SetupBasics()
 	if m_border != nil then FMainMenu.Panels.Destroy() end
 	m_border = FMainMenu.Derma.CreateDPanel(nil, ScrW(), ScrH(), false)
-	m_border:SetPaintBackground(false)
+	m_border:SetPaintBackgroundEnabled(false)
 	
-	if FayLib.IGC.GetSharedKey(addonName, "BackgroundColorTint") != false then
-		FMainMenu.Derma:SetFrameSettings(m_border, FayLib.IGC.GetSharedKey(addonName, "BackgroundColorTint"), 0)
-	end
+	local tintColor = FayLib.IGC.GetSharedKey(addonName, "BackgroundColorTint")
+	local blurAmount = FayLib.IGC.GetSharedKey(addonName, "BackgroundBlurAmount")
 	
-	if FayLib.IGC.GetSharedKey(addonName, "BackgroundBlurAmount") != false then
-		FMainMenu.Derma:SetFrameBlur(m_border, FayLib.IGC.GetSharedKey(addonName, "BackgroundBlurAmount"))
+	if tintColor != false && blurAmount == false then
+		FMainMenu.Derma:SetFrameSettings(m_border, tintColor, 0)
+	elseif tintColor == false && blurAmount != false then
+		FMainMenu.Derma:SetFrameBlur(m_border, blurAmount)
+	elseif tintColor != false && blurAmount != false then
+		FMainMenu.Derma:SetFrameCombo(m_border, tintColor, blurAmount)
 	end
 	
 	if FayLib.IGC.GetSharedKey(addonName, "logoIsText") then

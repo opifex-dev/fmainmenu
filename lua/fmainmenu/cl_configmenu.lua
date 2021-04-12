@@ -35,6 +35,27 @@ local function setupGeneralPropPanels(configPropertyWindow, saveFunc, revertFunc
 	end
 end
 
+-- Checks to see if colors are equal
+local function isColorEqual(colorOne, colorTwo)
+	if colorOne.r != colorTwo.r then
+		return false
+	end
+	
+	if colorOne.g != colorTwo.g then
+		return false
+	end
+	
+	if colorOne.b != colorTwo.b then
+		return false
+	end
+	
+	if colorOne.a != colorTwo.a then
+		return false
+	end
+	
+	return true
+end
+
 -- Send the request to commit config changes
 local function updateVariables(varTable, varList)
 	net.Start("FMainMenu_Config_UpdateVar")
@@ -87,7 +108,7 @@ net.Receive( "FMainMenu_Config_ReqVar", function( len )
 			local innerTable = receivedVarTable[i]
 			local innerKeyList = table.GetKeys(innerTable)
 			if(#innerKeyList == 4 && innerTable.a ~= nil && innerTable.r ~= nil && innerTable.g ~= nil && innerTable.b ~= nil) then
-				receivedVarTable[keyList[i]] = Color(innerTable.r, innerTable.g, innerTable.b, innerTable.a)
+				receivedVarTable[i] = Color(innerTable.r, innerTable.g, innerTable.b, innerTable.a)
 			end
 		end
 	end
@@ -680,6 +701,11 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			-- Called when someone wants to commit changes to a property
 			local function saveFunc()
 				local mapName = game.GetMap()
+				
+				if(tonumber(cameraPositionPosBoxX:GetText()) == nil) then return end
+				if(tonumber(cameraPositionPosBoxY:GetText()) == nil) then return end
+				if(tonumber(cameraPositionPosBoxZ:GetText()) == nil) then return end
+				
 				if cameraEverySpawnOption:GetValue() == "True" then
 					propertyPanel.lastRecVariable[1] = true
 				elseif cameraEverySpawnOption:GetValue() == "False" then
@@ -687,10 +713,6 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 				else
 					return
 				end
-				
-				if(tonumber(cameraPositionPosBoxX:GetText()) == nil) then return end
-				if(tonumber(cameraPositionPosBoxY:GetText()) == nil) then return end
-				if(tonumber(cameraPositionPosBoxZ:GetText()) == nil) then return end
 
 				propertyPanel.lastRecVariable[2][mapName] = Vector(tonumber(cameraPositionPosBoxX:GetText()), tonumber(cameraPositionPosBoxY:GetText()), tonumber(cameraPositionPosBoxZ:GetText()))
 				
@@ -778,13 +800,15 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			local bottomHalfSphere = createSphereHalf()
 			
 			local function updatePreview()
+				if tonumber(distanceBox:GetText()) == nil then return end
+			
 				if toggleOption:GetText() == "False" then
 					topHalfSphere:SetModelScale( 0 )
 					bottomHalfSphere:SetModelScale( 0 )
 					return 
 				end
 				local boxText = distanceBox:GetText()
-				if tonumber(boxText) == nil then return end
+				
 				topHalfSphere:SetModelScale( boxText/96 )
 				bottomHalfSphere:SetModelScale( boxText/96 )
 			end
@@ -850,6 +874,8 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			
 			-- Called when someone wants to commit changes to a property
 			local function saveFunc()
+				if(tonumber(distanceBox:GetText()) == nil) then return end
+				
 				if toggleOption:GetValue() == "True" then
 					propertyPanel.lastRecVariable[1] = true
 				elseif toggleOption:GetValue() == "False" then
@@ -857,8 +883,6 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 				else
 					return
 				end
-				
-				if(tonumber(distanceBox:GetText()) == nil) then return end
 
 				local newPHDist = tonumber(distanceBox:GetText())
 				propertyPanel.lastRecVariable[2] = newPHDist*newPHDist
@@ -1008,7 +1032,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			propertyPanelDescLabel:SetPos(3, 24)
 			propertyPanelDescLabel:SetSize(225, 36)
 		
-			--language setting dropdown
+			-- menu position options
 			local toggleLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
 			toggleLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesGMODStyleLabel"))
 			toggleLabel:SetPos(2, 70)
@@ -1124,7 +1148,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			propertyPanelDescLabel:SetPos(3, 24)
 			propertyPanelDescLabel:SetSize(225, 36)
 		
-			--language setting dropdown
+			-- logo type selection
 			local toggleLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
 			toggleLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesLogoLabel"))
 			toggleLabel:SetPos(2, 70)
@@ -1135,6 +1159,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigPropertiesLogoSelectOne") )
 			toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigPropertiesLogoSelectTwo") )
 			
+			-- logo comment box
 			local contentLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
 			contentLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesLogoContentLabel"))
 			contentLabel:SetPos(2, 91)
@@ -1223,6 +1248,125 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			-- Called when someone wants to revert changes to a property
 			local function revertFunc()
 				requestVariables(onGetVar, {"logoIsText","logoContent"})
+			end
+			
+			-- Setup the save and revert buttons
+			setupGeneralPropPanels(FMainMenu.configPropertyWindow, saveFunc, revertFunc)
+			
+			--Set completed panel as active property
+			setPropPanel(propertyPanel)
+		end
+		
+		-- Background Tint & Background Blur
+		local configSheetTwoBackgroundButtonLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetTwo)
+		configSheetTwoBackgroundButtonLiveIndicator:SetSize( 15, 15 )
+		configSheetTwoBackgroundButtonLiveIndicator:AlignRight(12)
+		configSheetTwoBackgroundButtonLiveIndicator:AlignTop(100)
+		configSheetTwoBackgroundButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
+		local configSheetTwoBackgroundButton = vgui.Create("fmainmenu_config_editor_button", configSheetTwo)
+		configSheetTwoBackgroundButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesBackgroundPropName"))
+		configSheetTwoBackgroundButton:SetSize(200,25)
+		configSheetTwoBackgroundButton:AlignLeft(4)
+		configSheetTwoBackgroundButton:AlignTop(95)
+		configSheetTwoBackgroundButton.DoClick = function(button)
+			local propertyCode = 24
+			previewLevel = 1
+			local tableKeyName = {"BackgroundBlurAmount","BackgroundColorTint"}
+			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
+			FMainMenu.configPropertyWindow.propertyCode = propertyCode
+		
+			--Property Panel Setup
+			local propertyPanel = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.configPropertyWindow)
+			propertyPanel:SetSize( 240, 255 )
+			propertyPanel:SetPos(5,25)
+			local propertyPanelLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesBackgroundPropName"))
+			propertyPanelLabel:SetFont("HudHintTextLarge")
+			propertyPanelLabel:SetPos(2,0)
+			local propertyPanelDescLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelDescLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesBackgroundPropDesc"))
+			propertyPanelDescLabel:SetPos(3, 24)
+			propertyPanelDescLabel:SetSize(225, 36)
+		
+			-- blur amount
+			local blurLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			blurLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesBackgroundBlurLabel"))
+			blurLabel:SetPos(2, 70)
+			local blurBox = vgui.Create("fmainmenu_config_editor_textentry", propertyPanel)
+			blurBox:SetSize( 40, 18 )
+			blurBox:SetPos( 198, 70 )
+			
+			-- tint color
+			local tintLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			tintLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesBackgroundTintLabel"))
+			tintLabel:SetPos(2, 91)
+			local tintBox = vgui.Create("DColorMixer", propertyPanel)
+			tintBox:SetSize( 236, 212 )
+			tintBox:SetPos(2, 112)
+			
+			
+			-- Update needed live preview stuff
+			local function updatePreview()
+				if tonumber(blurBox:GetText()) == nil then return end
+				
+				previewCopy["_"..tableKeyName[1]] = tonumber(blurBox:GetText())
+				previewCopy["_"..tableKeyName[2]] = tintBox:GetColor()
+			end
+			
+			-- Used to detect changes in the on-screen form from the server-side variable	
+			local function isVarChanged()
+				if propertyPanel.lastRecVariable[1] != tonumber(blurBox:GetText()) then 
+					setUnsaved(true)
+					return
+				end
+				
+				if !isColorEqual(propertyPanel.lastRecVariable[2], tintBox:GetColor()) then
+					setUnsaved(true)
+					return
+				end
+				
+				setUnsaved(false)
+			end
+			
+			function blurBox:OnChange()
+				isVarChanged()
+				updatePreview()
+			end
+			
+			function tintBox:ValueChanged()
+				isVarChanged()
+				updatePreview()
+			end
+			
+			-- Called when server responds with current server-side variables
+			local function onGetVar(varTable)
+				propertyPanel.lastRecVariable = varTable
+				
+				blurBox:SetText(varTable[1])
+				
+				tintBox:SetColor(Color(varTable[2].r, varTable[2].g, varTable[2].b, varTable[2].a))
+				
+				setUnsaved(false)
+				updatePreview()
+			end
+			
+			-- Send the request for said server-side variables
+			requestVariables(onGetVar, {"BackgroundBlurAmount","BackgroundColorTint"})
+			
+			-- Called when someone wants to commit changes to a property
+			local function saveFunc()
+				if tonumber(blurBox:GetText()) == nil then return end
+				
+				propertyPanel.lastRecVariable[1] = tonumber(blurBox:GetText())
+				propertyPanel.lastRecVariable[2] = tintBox:GetColor()
+				
+				updateVariables(propertyPanel.lastRecVariable, {"BackgroundBlurAmount","BackgroundColorTint"})
+				setUnsaved(false)
+			end
+			
+			-- Called when someone wants to revert changes to a property
+			local function revertFunc()
+				requestVariables(onGetVar, {"BackgroundBlurAmount","BackgroundColorTint"})
 			end
 			
 			-- Setup the save and revert buttons
