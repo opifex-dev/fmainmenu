@@ -581,11 +581,11 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			cameraEverySpawnLabel2:SetText(FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnOptLabel"))
 			cameraEverySpawnLabel2:SetPos(2, 70)
 			local cameraEverySpawnOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
-			cameraEverySpawnOption:SetSize( 50, 18 )
-			cameraEverySpawnOption:SetPos( 188, 70 )
-			cameraEverySpawnOption:SetValue( "False" )
-			cameraEverySpawnOption:AddChoice( "True" )
-			cameraEverySpawnOption:AddChoice( "False" )	
+			cameraEverySpawnOption:SetSize( 70, 18 )
+			cameraEverySpawnOption:SetPos( 168, 70 )
+			cameraEverySpawnOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDisabled") )
+			cameraEverySpawnOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueEnabled") )
+			cameraEverySpawnOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDisabled") )	
 			
 			--Advanced Spawn Position
 			local cameraPositionLabel2 = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
@@ -634,9 +634,9 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 				local mapName = game.GetMap()
 				local serverVar = ""
 				if propertyPanel.lastRecVariable[1] then 
-					serverVar = "True"
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueEnabled")
 				else
-					serverVar = "False"
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDisabled")
 				end
 				
 				if cameraEverySpawnOption:GetValue() != serverVar then
@@ -685,9 +685,9 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 				
 				propertyPanel.lastRecVariable = varTable
 				if varTable[1] then 
-					cameraEverySpawnOption:SetValue("True") 
+					cameraEverySpawnOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueEnabled")) 
 				else
-					cameraEverySpawnOption:SetValue("False")
+					cameraEverySpawnOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDisabled"))
 				end
 				cameraPositionPosBoxX:SetText(math.Round( varTable[2][mapName].x, 3))
 				cameraPositionPosBoxY:SetText(math.Round( varTable[2][mapName].y, 3))
@@ -706,9 +706,9 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 				if(tonumber(cameraPositionPosBoxY:GetText()) == nil) then return end
 				if(tonumber(cameraPositionPosBoxZ:GetText()) == nil) then return end
 				
-				if cameraEverySpawnOption:GetValue() == "True" then
+				if cameraEverySpawnOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
 					propertyPanel.lastRecVariable[1] = true
-				elseif cameraEverySpawnOption:GetValue() == "False" then
+				elseif cameraEverySpawnOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
 					propertyPanel.lastRecVariable[1] = false
 				else
 					return
@@ -767,11 +767,11 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			toggleLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesHearOtherPlayersLabel"))
 			toggleLabel:SetPos(2, 70)
 			local toggleOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
-			toggleOption:SetSize( 50, 18 )
-			toggleOption:SetPos( 188, 70 )
-			toggleOption:SetValue( "False" )
-			toggleOption:AddChoice( "True" )
-			toggleOption:AddChoice( "False" )	
+			toggleOption:SetSize( 70, 18 )
+			toggleOption:SetPos( 168, 70 )
+			toggleOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDisabled") )
+			toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueEnabled") )
+			toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDisabled") )	
 			
 			-- Maximum Voice Distance
 			local distanceLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
@@ -802,7 +802,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			local function updatePreview()
 				if tonumber(distanceBox:GetText()) == nil then return end
 			
-				if toggleOption:GetText() == "False" then
+				if toggleOption:GetText() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
 					topHalfSphere:SetModelScale( 0 )
 					bottomHalfSphere:SetModelScale( 0 )
 					return 
@@ -823,17 +823,18 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			local function isVarChanged()
 				local serverVar = ""
 				if propertyPanel.lastRecVariable[1] then 
-					serverVar = "True"
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueEnabled")
 				else
-					serverVar = "False"
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDisabled")
 				end
 				
+				print(1)
 				if toggleOption:GetText() != serverVar then
 					setUnsaved(true)
 					return
 				end
 				
-				if tonumber(distanceBox:GetText()) == nil || tonumber(distanceBox:GetText()) != propertyPanel.lastRecVariable[2] then
+				if tonumber(distanceBox:GetText()) == nil || tonumber(distanceBox:GetText()) != math.sqrt(propertyPanel.lastRecVariable[2]) then
 					setUnsaved(true)
 					return
 				end
@@ -858,9 +859,9 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 				
 				propertyPanel.lastRecVariable = varTable
 				if varTable[1] then 
-					toggleOption:SetValue("True") 
+					toggleOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueEnabled")) 
 				else
-					toggleOption:SetValue("False")
+					toggleOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDisabled"))
 				end
 				distanceBox:SetText(math.sqrt(varTable[2]))
 				topHalfSphere:SetPos(varTable[3][mapName] + Vector(0,0,64.5))
@@ -876,9 +877,9 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			local function saveFunc()
 				if(tonumber(distanceBox:GetText()) == nil) then return end
 				
-				if toggleOption:GetValue() == "True" then
+				if toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
 					propertyPanel.lastRecVariable[1] = true
-				elseif toggleOption:GetValue() == "False" then
+				elseif toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
 					propertyPanel.lastRecVariable[1] = false
 				else
 					return
@@ -1376,6 +1377,197 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			setPropPanel(propertyPanel)
 		end
 		
+		-- Changelog
+		local configSheetTwoBackgroundButtonLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetTwo)
+		configSheetTwoBackgroundButtonLiveIndicator:SetSize( 15, 15 )
+		configSheetTwoBackgroundButtonLiveIndicator:AlignRight(12)
+		configSheetTwoBackgroundButtonLiveIndicator:AlignTop(130)
+		configSheetTwoBackgroundButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
+		local configSheetTwoBackgroundButton = vgui.Create("fmainmenu_config_editor_button", configSheetTwo)
+		configSheetTwoBackgroundButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesChangelogPropName"))
+		configSheetTwoBackgroundButton:SetSize(200,25)
+		configSheetTwoBackgroundButton:AlignLeft(4)
+		configSheetTwoBackgroundButton:AlignTop(125)
+		configSheetTwoBackgroundButton.DoClick = function(button)
+			local propertyCode = 25
+			previewLevel = 1
+			local tableKeyName = {"showChangeLog","changeLogMoveToBottom","changeLogText"}
+			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
+			FMainMenu.configPropertyWindow.propertyCode = propertyCode
+		
+			--Property Panel Setup
+			local propertyPanel = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.configPropertyWindow)
+			propertyPanel:SetSize( 240, 255 )
+			propertyPanel:SetPos(5,25)
+			local propertyPanelLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesChangelogPropName"))
+			propertyPanelLabel:SetFont("HudHintTextLarge")
+			propertyPanelLabel:SetPos(2,0)
+			local propertyPanelDescLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelDescLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesChangelogPropDesc"))
+			propertyPanelDescLabel:SetPos(3, 24)
+			propertyPanelDescLabel:SetSize(225, 36)
+		
+			-- changelog toggle
+			local toggleLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			toggleLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesChangelogToggleLabel"))
+			toggleLabel:SetPos(2, 70)
+			local toggleOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			toggleOption:SetSize( 70, 18 )
+			toggleOption:SetPos( 168, 70 )
+			toggleOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueEnabled") )
+			toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueEnabled") )
+			toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDisabled") )
+			
+			-- bottom margin toggle
+			local marginLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			marginLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesChangelogMarginLabel"))
+			marginLabel:SetPos(2, 91)
+			local marginOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			marginOption:SetSize( 95, 18 )
+			marginOption:SetPos( 143, 91 )
+			marginOption:SetValue( FMainMenu.GetPhrase("ConfigPropertiesMarginSelectOne") )
+			marginOption:AddChoice( FMainMenu.GetPhrase("ConfigPropertiesMarginSelectOne") )
+			marginOption:AddChoice( FMainMenu.GetPhrase("ConfigPropertiesMarginSelectTwo") )
+			
+			-- Changelog Text
+			local textLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			textLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesChangelogTextLabel"))
+			textLabel:SetPos(2, 112)
+			local textBox = vgui.Create("fmainmenu_config_editor_textentry", propertyPanel)
+			textBox:SetSize( 236, 120 )
+			textBox:SetPos( 2, 133 )
+			textBox:SetEnterAllowed( true )
+			textBox:SetMultiline( true )
+			
+			
+			
+			-- Update needed live preview stuff
+			local function updatePreview()
+				if toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
+					previewCopy["_"..tableKeyName[1]] = true
+				elseif toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
+					previewCopy["_"..tableKeyName[1]] = false
+				end
+				
+				if marginOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesMarginSelectTwo") then
+					previewCopy["_"..tableKeyName[2]] = true
+				elseif marginOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesMarginSelectOne") then
+					previewCopy["_"..tableKeyName[2]] = false
+				end
+				
+				previewCopy["_"..tableKeyName[3]] = textBox:GetText()
+			end
+			
+			-- Used to detect changes in the on-screen form from the server-side variable	
+			local function isVarChanged()
+				local serverVar = ""
+				if propertyPanel.lastRecVariable[1] then 
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueEnabled")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDisabled")
+				end
+				
+				if toggleOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				if propertyPanel.lastRecVariable[2] then 
+					serverVar = FMainMenu.GetPhrase("ConfigPropertiesMarginSelectTwo")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigPropertiesMarginSelectOne")
+				end
+				
+				if marginOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				if textBox:GetText() != propertyPanel.lastRecVariable[3] then
+					setUnsaved(true)
+					return
+				end
+				
+				setUnsaved(false)
+			end
+			
+			function toggleOption:OnSelect( index, value, data )
+				isVarChanged()
+				updatePreview()
+			end
+			
+			function marginOption:OnSelect( index, value, data )
+				isVarChanged()
+				updatePreview()
+			end
+			
+			function textBox:OnChange()
+				isVarChanged()
+				updatePreview()
+			end
+			
+			-- Called when server responds with current server-side variables
+			local function onGetVar(varTable)
+				propertyPanel.lastRecVariable = varTable
+				
+				if varTable[1] then 
+					toggleOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueEnabled")) 
+				else
+					toggleOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDisabled"))
+				end
+				
+				if varTable[2] then 
+					marginOption:SetValue(FMainMenu.GetPhrase("ConfigPropertiesMarginSelectTwo")) 
+				else
+					marginOption:SetValue(FMainMenu.GetPhrase("ConfigPropertiesMarginSelectOne"))
+				end
+				
+				textBox:SetText(varTable[3])
+				
+				setUnsaved(false)
+				updatePreview()
+			end
+			
+			-- Send the request for said server-side variables
+			requestVariables(onGetVar, {"showChangeLog","changeLogMoveToBottom","changeLogText"})
+			
+			-- Called when someone wants to commit changes to a property
+			local function saveFunc()
+				if toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
+					propertyPanel.lastRecVariable[1] = true
+				elseif toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
+					propertyPanel.lastRecVariable[1] = false
+				else
+					return
+				end
+				
+				if marginOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesMarginSelectTwo") then
+					propertyPanel.lastRecVariable[2] = true
+				elseif marginOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesMarginSelectOne") then
+					propertyPanel.lastRecVariable[2] = false
+				else
+					return
+				end
+				
+				propertyPanel.lastRecVariable[3] = textBox:GetText()
+				
+				updateVariables(propertyPanel.lastRecVariable, {"showChangeLog","changeLogMoveToBottom","changeLogText"})
+				setUnsaved(false)
+			end
+			
+			-- Called when someone wants to revert changes to a property
+			local function revertFunc()
+				requestVariables(onGetVar, {"showChangeLog","changeLogMoveToBottom","changeLogText"})
+			end
+			
+			-- Setup the save and revert buttons
+			setupGeneralPropPanels(FMainMenu.configPropertyWindow, saveFunc, revertFunc)
+			
+			--Set completed panel as active property
+			setPropPanel(propertyPanel)
+		end
+		
 		configSheet:AddSheet( FMainMenu.GetPhrase("ConfigPropertiesCategoriesMenu"), configSheetTwo, nil )
 		
 		
@@ -1534,6 +1726,8 @@ end )
 local blurMat = Material("pp/blurscreen")
 local colorWhite = Color(255, 255, 255)
 local HTMLLogo = nil
+local ChangelogBox = nil
+local CLText = nil
 local cachedLink = ""
 
 hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
@@ -1550,7 +1744,7 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 		
 			local titleH = (height * 0.5) - previewCopy["_logoFontSize"] - 64
 			if previewCopy["_GarrysModStyle"] then
-				titleH = ScrW() * 0.04
+				titleH = width * 0.04
 			end
 			draw.SimpleTextOutlined( previewCopy["_logoContent"], FMainMenu.CurrentLogoFont, width * 0.04, titleH, previewCopy["_textLogoColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_logoOutlineThickness"], previewCopy["_logoOutlineColor"] )
 		else
@@ -1558,11 +1752,11 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 				if HTMLLogo != nil then HTMLLogo:Remove() end
 				HTMLLogo = vgui.Create("DHTML")
 				HTMLLogo:SetZPos(1)
-				HTMLLogo:SetSize(ScrW() * 0.5, 192)
+				HTMLLogo:SetSize(width * 0.5, 192)
 				if !previewCopy["_GarrysModStyle"] then
-					HTMLLogo:SetPos(ScrW() * 0.04, (ScrH() * 0.5) - 256)
+					HTMLLogo:SetPos(width * 0.04, (height * 0.5) - 256)
 				else
-					HTMLLogo:SetPos(ScrW() * 0.04, 32)
+					HTMLLogo:SetPos(width * 0.04, 32)
 				end
 				HTMLLogo:SetMouseInputEnabled(false)
 				function HTMLLogo:ConsoleMessage(msg) end
@@ -1600,10 +1794,44 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 				cachedLink = previewCopy["_logoContent"]
 			else
 				if !previewCopy["_GarrysModStyle"] then
-					HTMLLogo:SetPos(ScrW() * 0.04, (ScrH() * 0.5) - 256)
+					HTMLLogo:SetPos(width * 0.04, (height * 0.5) - 256)
 				else
-					HTMLLogo:SetPos(ScrW() * 0.04, 32)
+					HTMLLogo:SetPos(width * 0.04, 32)
 				end
+			end
+		end
+
+		if previewCopy["_showChangeLog"] then
+			if ChangelogBox == nil then 
+				ChangelogBox = FMainMenu.Derma.CreateDPanel(nil, 256, ScrH()*(1/3), false )
+				FMainMenu.Derma:SetFrameSettings(ChangelogBox, FayLib.IGC.GetSharedKey(addonName, "commonPanelColor"), 0)
+				ChangelogBox:SetZPos(1)
+				
+				CLText = FMainMenu.Derma.CreateDLabel(ChangelogBox, 221, (ScrH()*(1/3))-5, false, text)
+				CLText:SetFont("HudHintTextLarge")
+				CLText:SetPos(10, 5)
+				CLText:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
+				CLText:SetContentAlignment( 7 )
+				CLText:SetWrap( true )
+			end
+			
+			if previewCopy["_changeLogMoveToBottom"] then
+				ChangelogBox:SetPos(width-266, (height*(2/3)))
+			else
+				ChangelogBox:SetPos(width-266, 10)
+			end
+			
+			CLText:SetFont("HudHintTextLarge")
+			CLText:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
+			CLText:SetText(previewCopy["_changeLogText"])
+			CLText:SetContentAlignment( 7 )
+			CLText:SetWrap( true )
+		else
+			if ChangelogBox != nil then
+				CLText:Remove()
+				ChangelogBox:Remove()
+				ChangelogBox = nil
+				CLText = nil
 			end
 		end
 			
@@ -1615,6 +1843,13 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			HTMLLogo:Remove()
 			HTMLLogo = nil
 			cachedLink = ""
+		end
+		
+		if ChangelogBox != nil then
+			CLText:Remove()
+			ChangelogBox:Remove()
+			ChangelogBox = nil
+			CLText = nil
 		end
 	end
 end)
@@ -1630,10 +1865,7 @@ hook.Add( "HUDPaintBackground", "ExampleMenuBackground_FMainMenu_ConfigEditor", 
 				
 		-- background blur
 		local blurAmount = previewCopy["_BackgroundBlurAmount"]
-		if blurAmount > 0 then
-			local x, y = 0, 0
-			local scrW, scrH = ScrW(), ScrH()
-		
+		if blurAmount > 0 then		
 			surface.SetDrawColor(colorWhite)
 			surface.SetMaterial(blurMat)
 			
@@ -1642,7 +1874,7 @@ hook.Add( "HUDPaintBackground", "ExampleMenuBackground_FMainMenu_ConfigEditor", 
 				blurMat:Recompute()
 
 				render.UpdateScreenEffectTexture()
-				surface.DrawTexturedRect(x * -1, y * -1, scrW, scrH)
+				surface.DrawTexturedRect(0, 0, width, height)
 			end
 		end
 	end

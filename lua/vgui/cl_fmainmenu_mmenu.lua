@@ -75,18 +75,17 @@ end
 --Version of above designed to have both blur and tint simultaniously
 function FMainMenu.Derma:SetFrameCombo(frame, color, blur)
 	function frame:Paint(width, height)
-		local x, y = 0, 0
 		local scrW, scrH = ScrW(), ScrH()
 	
 		surface.SetDrawColor(colorWhite)
 		surface.SetMaterial(blurMat)
 		
 		for i = 1, 3 do
-			blurMat:SetFloat("$blur", (i / 3) * (amount or 8))
+			blurMat:SetFloat("$blur", (i / 3) * (blur or 8))
 			blurMat:Recompute()
 
 			render.UpdateScreenEffectTexture()
-			surface.DrawTexturedRect(x * -1, y * -1, scrW, scrH)
+			surface.DrawTexturedRect(0, 0, scrW, scrH)
 		end
 		
 		surface.SetDrawColor(color)

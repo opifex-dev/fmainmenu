@@ -23,6 +23,9 @@ FMainMenu.LangPresets[prefix].TTTRoundStarted = "The TTT round has started, so y
 FMainMenu.LangPresets[prefix].MurderRoundStarted = "The Murder round has started, so you have been kicked out of the main menu."
 FMainMenu.LangPresets[prefix].LogMurderEverySpawn = "EverySpawn is not supported in Murder, so it has been disabled."
 
+FMainMenu.LangPresets[prefix].ConfigCommonValueDisabled = "Disabled"
+FMainMenu.LangPresets[prefix].ConfigCommonValueEnabled = "Enabled"
+
 FMainMenu.LangPresets[prefix].ConfigLeaveMenu = "Please exit the main menu before opening the coonfiguration tool."
 FMainMenu.LangPresets[prefix].ConfigUnsavedChanges = "The current property is changed but unsaved,\n        would you like to discard changes?"
 FMainMenu.LangPresets[prefix].ConfigPropertiesWindowTitle = "FMainMenu - Config Properties"
@@ -83,6 +86,16 @@ FMainMenu.LangPresets[prefix].ConfigPropertiesBackgroundPropName = "Background E
 FMainMenu.LangPresets[prefix].ConfigPropertiesBackgroundPropDesc = "Alter the blur and tint of the camera\nview."
 FMainMenu.LangPresets[prefix].ConfigPropertiesBackgroundBlurLabel = "Blur Amount: "
 FMainMenu.LangPresets[prefix].ConfigPropertiesBackgroundTintLabel = "Tint Color: "
+
+FMainMenu.LangPresets[prefix].ConfigPropertiesChangelogPropName = "Changelog"
+FMainMenu.LangPresets[prefix].ConfigPropertiesChangelogPropDesc = "Edit various setting about the\nchangelog panel."
+FMainMenu.LangPresets[prefix].ConfigPropertiesChangelogToggleLabel = "Changelog:"
+FMainMenu.LangPresets[prefix].ConfigPropertiesChangelogSelectOne = "Enabled"
+FMainMenu.LangPresets[prefix].ConfigPropertiesChangelogSelectTwo = "Disabled"
+FMainMenu.LangPresets[prefix].ConfigPropertiesChangelogMarginLabel = "Changelog Position:"
+FMainMenu.LangPresets[prefix].ConfigPropertiesMarginSelectOne = "Top-Right"
+FMainMenu.LangPresets[prefix].ConfigPropertiesMarginSelectTwo = "Bottom-Right"
+FMainMenu.LangPresets[prefix].ConfigPropertiesChangelogTextLabel = "Changelog Text:"
 
 -- IGNORE BELOW CODE
 FMainMenu.languageLookup[prefix] = fancyName
