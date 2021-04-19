@@ -2,10 +2,19 @@ FMainMenu.Lang = FMainMenu.Lang || {}
 FMainMenu.LangPresets = FMainMenu.LangPresets || {}
 -- IGNORE ABOVE CODE
 
+--[[
+STEPS TO CREATE LANGUAGE:
+1. Edit these two values to fit your language. (prefix can just be a short code for the language, while fancyName is the full language name that will appear to users) 
+2. Edit the many strings below to fit your language 
+3, Drop the file into the language folder and restart the server 
+4, The language will now be added as an option in the config editor under the "Language" property.
+5. If you would like to contribute to the addon by having your translation be distributed along with the addon, send Fay a message on gmodstore or elsewhere.
+]]--
 local prefix = "en"
 local fancyName = "English"
 
-FMainMenu.LangPresets[prefix] = {}
+FMainMenu.LangPresets[prefix] = {} -- ignore this one line
+
 FMainMenu.LangPresets[prefix].WelcomerFrameTitle = "First Join Welcomer"
 FMainMenu.LangPresets[prefix].DisconnectFrameTitle = "Confirm Disconnect"
 FMainMenu.LangPresets[prefix].DisconnectConfirmText = "Are you sure you would like to disconnect?"
@@ -25,9 +34,15 @@ FMainMenu.LangPresets[prefix].LogMurderEverySpawn = "EverySpawn is not supported
 
 FMainMenu.LangPresets[prefix].ConfigCommonValueDisabled = "Disabled"
 FMainMenu.LangPresets[prefix].ConfigCommonValueEnabled = "Enabled"
+FMainMenu.LangPresets[prefix].ConfigCommonValueYes = "Yes"
+FMainMenu.LangPresets[prefix].ConfigCommonValueNo = "No"
+FMainMenu.LangPresets[prefix].ConfigCommonValueX = "X: "
+FMainMenu.LangPresets[prefix].ConfigCommonValueY = "Y: "
+FMainMenu.LangPresets[prefix].ConfigCommonValueZ = "Z: "
 
 FMainMenu.LangPresets[prefix].ConfigLeaveMenu = "Please exit the main menu before opening the coonfiguration tool."
 FMainMenu.LangPresets[prefix].ConfigUnsavedChanges = "The current property is changed but unsaved,\n        would you like to discard changes?"
+FMainMenu.LangPresets[prefix].ConfigUnsavedChangesHeader = "The current property is changed but unsaved,\n        would you like to discard changes?"
 FMainMenu.LangPresets[prefix].ConfigPropertiesWindowTitle = "FMainMenu - Config Properties"
 FMainMenu.LangPresets[prefix].ConfigPropertiesNoneSelected = "No Property Selected"
 FMainMenu.LangPresets[prefix].ConfigPropertiesSelectorTitle = "FMainMenu - Config Selector"
