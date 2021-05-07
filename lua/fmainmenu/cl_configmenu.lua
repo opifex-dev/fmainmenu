@@ -4,6 +4,8 @@ local previewLevel = 0
 local previewCopy = {}
 local addonName = "fmainmenu"
 
+local soundSelection = nil
+
 -- Function that helps to easily create the bottom buttons of the property editor
 local function setupGeneralPropPanels(configPropertyWindow, saveFunc, revertFunc)
 	-- General Panel
@@ -1654,8 +1656,113 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			audioFileChooseButton:AlignTop(225)
 			audioFileChooseButton:SetVisible(false)
 			audioFileChooseButton.DoClick = function(button)
-				--add this
+				local internalStation = nil
+				local currentSelection = contentBox:GetText()
 				
+				-- sound preview
+				local function stopSoundPreview()
+					if internalStation != nil then
+						internalStation:Stop()
+						internalStation = nil
+					end
+				end
+				
+				local function soundPreview(path)
+					stopSoundPreview()
+					
+					sound.PlayFile( path , "noblock", function( station, errCode, errStr )
+						if ( IsValid( station ) ) then
+							station:EnableLooping(false)
+							station:SetVolume(0.5)
+							internalStation = station
+						end
+					end)
+				end
+				
+				-- frame setup
+				soundSelection = vgui.Create( "fmainmenu_config_editor" )
+				soundSelection:SetSize( 720, 580 )
+				soundSelection:SetPos(screenWidth/2-360, screenHeight/2-290)
+				soundSelection:SetTitle(FMainMenu.GetPhrase("ConfigSoundSelectorWindowTitle"))
+				soundSelection:SetZPos(10)
+				function soundSelection:OnClose()
+					stopSoundPreview()
+					
+					soundSelection = nil
+				end
+				
+				-- file tree
+				local fileBrowser = vgui.Create( "DFileBrowser", soundSelection )
+				fileBrowser:SetSize( 710, 520 )
+				fileBrowser:AlignLeft(5)
+				fileBrowser:AlignTop(25)
+				fileBrowser:SetFileTypes("*.mp3 *.wav *.ogg")
+				fileBrowser:SetName("Sound Selection")
+				fileBrowser:SetBaseFolder("sound")
+				fileBrowser:SetCurrentFolder( "sound" ) 
+				fileBrowser:SetPath( "GAME" ) 
+				fileBrowser:SetOpen(true)
+				
+				function fileBrowser:OnSelect( path, pnl )
+					currentSelection = path
+					soundSelection:SetTitle(FMainMenu.GetPhrase("ConfigSoundSelectorWindowTitle").." ("..FMainMenu.GetPhrase("ConfigSoundSelectorWindowSelectionHeader")..currentSelection..")")
+				end
+				
+				function fileBrowser:OnDoubleClick( path, pnl )
+					soundPreview(path)
+				end
+				
+				-- bottom toolbar
+				local bottomPanel = vgui.Create("fmainmenu_config_editor_panel", soundSelection)
+				bottomPanel:SetSize( 710, 30 )
+				bottomPanel:AlignLeft(5)
+				bottomPanel:AlignTop(545)
+				
+				local bottomPanelSelectButton = vgui.Create("fmainmenu_config_editor_button", bottomPanel)
+				bottomPanelSelectButton:SetText(FMainMenu.GetPhrase("ConfigSoundSelectorChooseButtonText"))
+				bottomPanelSelectButton:SetSize(100,24)
+				bottomPanelSelectButton:AlignRight(5)
+				bottomPanelSelectButton:AlignTop(3)
+				bottomPanelSelectButton.DoClick = function(button)
+					if currentSelection != "" then
+						contentBox:SetText(currentSelection)
+						contentBox:OnChange()
+					end
+					
+					soundSelection:Close()
+				end
+				
+				local bottomPanelPlayButton = vgui.Create("fmainmenu_config_editor_button", bottomPanel)
+				bottomPanelPlayButton:SetText(FMainMenu.GetPhrase("ConfigSoundSelectorPlayButtonText"))
+				bottomPanelPlayButton:SetSize(100,24)
+				bottomPanelPlayButton:AlignLeft(5)
+				bottomPanelPlayButton:AlignTop(3)
+				bottomPanelPlayButton.DoClick = function(button)
+					if currentSelection != "" then
+						soundPreview(currentSelection)
+					end
+				end
+				
+				local bottomPanelStopButton = vgui.Create("fmainmenu_config_editor_button", bottomPanel)
+				bottomPanelStopButton:SetText(FMainMenu.GetPhrase("ConfigSoundSelectorStopButtonText"))
+				bottomPanelStopButton:SetSize(100,24)
+				bottomPanelStopButton:AlignLeft(110)
+				bottomPanelStopButton:AlignTop(3)
+				bottomPanelStopButton.DoClick = function(button)
+					stopSoundPreview()
+				end
+				
+				if currentSelection != "" && string.StartWith( currentSelection, "sound/" ) then
+					local reverseStr = string.reverse(currentSelection)
+					local lastSlash = string.find(reverseStr, "/")
+					if lastSlash != nil then
+						fileBrowser:SetCurrentFolder(  string.sub(currentSelection, 1, string.len(currentSelection)-lastSlash) ) 
+					end
+				else
+					currentSelection = ""
+				end
+					
+				soundSelection:MakePopup()
 			end
 			
 			
@@ -1899,6 +2006,9 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		local function closeConfig()
 			net.Start("FMainMenu_Config_CloseMenu")
 			net.SendToServer()
+			if soundSelection != nil then
+				soundSelection:Close()
+			end
 			mainBlocker:Remove()
 			if FMainMenu.configPropertyWindow.onCloseProp !=  nil then
 				FMainMenu.configPropertyWindow.onCloseProp()
@@ -2008,11 +2118,11 @@ local HTMLLogo = nil
 local ChangelogBox = nil
 local CLText = nil
 local cachedLink = ""
-local musicStation = ""
+local musicStation = nil
 local cachedMusicContent = ""
-local cachedMusicOption = ""
-local cachedMusicVolume = ""
-local cachedMusicLooping = ""
+local cachedMusicOption = nil
+local cachedMusicVolume = nil
+local cachedMusicLooping = nil
 
 hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 	if previewLevel > 0 then -- draw menu
@@ -2123,16 +2233,16 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			
 		end
 		
-		if previewLevel == 3 then -- music
+		if previewLevel == 3 && soundSelection == nil then -- music
 			if cachedMusicContent != previewCopy["_musicContent"] || cachedMusicOption != previewCopy["_musicToggle"] || cachedMusicVolume != previewCopy["_musicVolume"] || cachedMusicLooping != previewCopy["_musicLooping"] then
 				cachedMusicContent = previewCopy["_musicContent"]
 				cachedMusicOption = previewCopy["_musicToggle"]
 				cachedMusicVolume = previewCopy["_musicVolume"]
 				cachedMusicLooping = previewCopy["_musicLooping"]
 				
-				if musicStation != "" then
+				if musicStation != nil then
 					musicStation:Stop()
-					musicStation = ""
+					musicStation = nil
 				end
 				
 				if previewCopy["_musicToggle"] == 1 then
@@ -2156,14 +2266,14 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 				end
 			end
 		else
-			if musicStation != "" then
+			if musicStation != nil then
 				cachedMusicContent = ""
-				cachedMusicOption = ""
-				cachedMusicVolume = ""
-				cachedMusicLooping = ""
+				cachedMusicOption = nil
+				cachedMusicVolume = nil
+				cachedMusicLooping = nil
 				
 				musicStation:Stop()
-				musicStation = ""
+				musicStation = nil
 			end
 		end
 	else
@@ -2180,14 +2290,14 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			CLText = nil
 		end
 		
-		if musicStation != "" then
+		if musicStation != nil then
 			cachedMusicContent = ""
-			cachedMusicOption = ""
-			cachedMusicVolume = ""
-			cachedMusicLooping = ""
+			cachedMusicOption = nil
+			cachedMusicVolume = nil
+			cachedMusicLooping = nil
 			
 			musicStation:Stop()
-			musicStation = ""
+			musicStation = nil
 		end
 	end
 end)
