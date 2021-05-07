@@ -585,7 +585,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			cameraEverySpawnOption:SetPos( 168, 70 )
 			cameraEverySpawnOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDisabled") )
 			cameraEverySpawnOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueEnabled") )
-			cameraEverySpawnOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDisabled") )	
+			cameraEverySpawnOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDisabled") )
 			
 			--Advanced Spawn Position
 			local cameraPositionLabel2 = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
@@ -1568,6 +1568,284 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			setPropPanel(propertyPanel)
 		end
 		
+		-- Music Properties
+		local configSheetTwoBackgroundButtonLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetTwo)
+		configSheetTwoBackgroundButtonLiveIndicator:SetSize( 15, 15 )
+		configSheetTwoBackgroundButtonLiveIndicator:AlignRight(12)
+		configSheetTwoBackgroundButtonLiveIndicator:AlignTop(160)
+		configSheetTwoBackgroundButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
+		local configSheetTwoBackgroundButton = vgui.Create("fmainmenu_config_editor_button", configSheetTwo)
+		configSheetTwoBackgroundButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesMusicPropName"))
+		configSheetTwoBackgroundButton:SetSize(200,25)
+		configSheetTwoBackgroundButton:AlignLeft(4)
+		configSheetTwoBackgroundButton:AlignTop(155)
+		configSheetTwoBackgroundButton.DoClick = function(button)
+			local propertyCode = 26
+			previewLevel = 3
+			local tableKeyName = {"musicToggle","musicLooping","musicVolume","musicFade","musicContent"}
+			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
+			FMainMenu.configPropertyWindow.propertyCode = propertyCode
+		
+			--Property Panel Setup
+			local propertyPanel = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.configPropertyWindow)
+			propertyPanel:SetSize( 240, 255 )
+			propertyPanel:SetPos(5,25)
+			local propertyPanelLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesMusicPropName"))
+			propertyPanelLabel:SetFont("HudHintTextLarge")
+			propertyPanelLabel:SetPos(2,0)
+			local propertyPanelDescLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelDescLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesMusicPropDesc"))
+			propertyPanelDescLabel:SetPos(3, 24)
+			propertyPanelDescLabel:SetSize(225, 36)
+		
+			-- music toggle
+			local toggleLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			toggleLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesMusicTypeLabel"))
+			toggleLabel:SetPos(2, 70)
+			local toggleOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			toggleOption:SetSize( 70, 18 )
+			toggleOption:SetPos( 168, 70 )
+			toggleOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDisabled") )
+			toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDisabled") )
+			toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigPropertiesMusicTypeOptionOneLabel") )
+			toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigPropertiesMusicTypeOptionTwoLabel") )
+			
+			-- loop music toggle
+			local loopLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			loopLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesMusicLoopLabel"))
+			loopLabel:SetPos(2, 91)
+			local loopOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			loopOption:SetSize( 70, 18 )
+			loopOption:SetPos( 168, 91 )
+			loopOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueEnabled") )
+			loopOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueEnabled") )
+			loopOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDisabled") )
+			
+			-- music volume
+			local textLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			textLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesMusicVolumeLabel"))
+			textLabel:SetPos(2, 112)
+			local textBox = vgui.Create("fmainmenu_config_editor_textentry", propertyPanel)
+			textBox:SetSize( 40, 18 )
+			textBox:SetPos( 198, 112 )
+			
+			-- music fade
+			local fadeLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			fadeLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesMusicFadeLabel"))
+			fadeLabel:SetPos(2, 133)
+			local fadeBox = vgui.Create("fmainmenu_config_editor_textentry", propertyPanel)
+			fadeBox:SetSize( 40, 18 )
+			fadeBox:SetPos( 198, 133 )
+			
+			-- music content
+			local contentLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			contentLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesMusicSelectLabel"))
+			contentLabel:SetPos(2, 152)
+			local contentBox = vgui.Create("fmainmenu_config_editor_textentry", propertyPanel)
+			contentBox:SetSize( 236, 18 )
+			contentBox:SetPos( 2, 173 )
+			
+			-- File Selector Button, should probably be invisible when "File" is not the current option
+			local audioFileChooseButton = vgui.Create("fmainmenu_config_editor_button", propertyPanel)
+			audioFileChooseButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesMusicButtonLabel"))
+			audioFileChooseButton:SetSize(200,25)
+			audioFileChooseButton:AlignLeft(20)
+			audioFileChooseButton:AlignTop(225)
+			audioFileChooseButton:SetVisible(false)
+			audioFileChooseButton.DoClick = function(button)
+				--add this
+				
+			end
+			
+			
+			
+			-- Update needed live preview stuff
+			local function updatePreview()
+				if toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesMusicTypeOptionOneLabel") then
+					previewCopy["_"..tableKeyName[1]] = 1
+					contentBox:SetVisible(true)
+					contentLabel:SetVisible(true)
+					audioFileChooseButton:SetVisible(true)
+				elseif toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesMusicTypeOptionTwoLabel") then
+					previewCopy["_"..tableKeyName[1]] = 2
+					contentBox:SetVisible(true)
+					contentLabel:SetVisible(true)
+					audioFileChooseButton:SetVisible(false)
+				else
+					previewCopy["_"..tableKeyName[1]] = 0
+					contentBox:SetVisible(false)
+					contentLabel:SetVisible(false)
+					audioFileChooseButton:SetVisible(false)
+				end
+				
+				if loopOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
+					previewCopy["_"..tableKeyName[2]] = true
+				else
+					previewCopy["_"..tableKeyName[2]] = false
+				end
+				
+				if tonumber(textBox:GetText()) != nil then
+					previewCopy["_"..tableKeyName[3]] = tonumber(textBox:GetText())
+				end
+				
+				if tonumber(fadeBox:GetText()) != nil then
+					previewCopy["_"..tableKeyName[4]] = tonumber(fadeBox:GetText())
+				end
+				
+				previewCopy["_"..tableKeyName[5]] = contentBox:GetText()
+			end
+			
+			-- Used to detect changes in the on-screen form from the server-side variable	
+			local function isVarChanged()
+				local serverVar = ""
+				if propertyPanel.lastRecVariable[1] == 1 then 
+					serverVar = FMainMenu.GetPhrase("ConfigPropertiesMusicTypeOptionOneLabel")
+				elseif propertyPanel.lastRecVariable[1] == 2 then
+					serverVar = FMainMenu.GetPhrase("ConfigPropertiesMusicTypeOptionTwoLabel")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDisabled")
+				end
+				
+				if toggleOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				serverVar = ""
+				if propertyPanel.lastRecVariable[2] then 
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueEnabled")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDisabled")
+				end
+				
+				if loopOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				if tonumber(textBox:GetText()) != propertyPanel.lastRecVariable[3] then
+					setUnsaved(true)
+					return
+				end
+				
+				if tonumber(fadeBox:GetText()) != propertyPanel.lastRecVariable[4] then
+					setUnsaved(true)
+					return
+				end
+				
+				if contentBox:GetText() != propertyPanel.lastRecVariable[5] then
+					setUnsaved(true)
+					return
+				end
+				
+				setUnsaved(false)
+			end
+			
+			function toggleOption:OnSelect( index, value, data )
+				isVarChanged()
+				updatePreview()
+			end
+			
+			function loopOption:OnSelect( index, value, data )
+				isVarChanged()
+				updatePreview()
+			end
+			
+			function textBox:OnChange()
+				isVarChanged()
+				updatePreview()
+			end
+			
+			function fadeBox:OnChange()
+				isVarChanged()
+				updatePreview()
+			end
+			
+			function contentBox:OnChange()
+				isVarChanged()
+				updatePreview()
+			end
+			
+			-- Called when server responds with current server-side variables
+			local function onGetVar(varTable)
+				propertyPanel.lastRecVariable = varTable
+				
+				if varTable[1] == 2 then 
+					toggleOption:SetValue(FMainMenu.GetPhrase("ConfigPropertiesMusicTypeOptionTwoLabel")) 
+				elseif varTable[1] == 1 then
+					toggleOption:SetValue(FMainMenu.GetPhrase("ConfigPropertiesMusicTypeOptionOneLabel"))
+				else
+					toggleOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDisabled"))
+				end
+				
+				if varTable[2] then 
+					loopOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueEnabled")) 
+				else
+					loopOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDisabled"))
+				end
+				
+				textBox:SetText(varTable[3])
+				fadeBox:SetText(varTable[4])
+				contentBox:SetText(varTable[5])
+				
+				setUnsaved(false)
+				updatePreview()
+			end
+			
+			-- Send the request for said server-side variables
+			requestVariables(onGetVar, {"musicToggle","musicLooping","musicVolume","musicFade","musicContent"})
+			
+			-- Called when someone wants to commit changes to a property
+			local function saveFunc()				
+				if toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesMusicTypeOptionOneLabel") then
+					propertyPanel.lastRecVariable[1] = 1
+				elseif toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesMusicTypeOptionTwoLabel") then
+					propertyPanel.lastRecVariable[1] = 2
+				elseif toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
+					propertyPanel.lastRecVariable[1] = 0
+				else
+					return
+				end
+				
+				if loopOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
+					propertyPanel.lastRecVariable[2] = true
+				elseif loopOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
+					propertyPanel.lastRecVariable[2] = false
+				else
+					return
+				end
+				
+				if tonumber(textBox:GetText()) != nil then
+					propertyPanel.lastRecVariable[3] = tonumber(textBox:GetText())
+				else
+					return
+				end
+				
+				if tonumber(fadeBox:GetText()) != nil then
+					propertyPanel.lastRecVariable[4] = tonumber(fadeBox:GetText())
+				else
+					return
+				end
+				
+				propertyPanel.lastRecVariable[5] = contentBox:GetText()
+				
+				updateVariables(propertyPanel.lastRecVariable, {"musicToggle","musicLooping","musicVolume","musicFade","musicContent"})
+				setUnsaved(false)
+			end
+			
+			-- Called when someone wants to revert changes to a property
+			local function revertFunc()
+				requestVariables(onGetVar, {"musicToggle","musicLooping","musicVolume","musicFade","musicContent"})
+			end
+			
+			-- Setup the save and revert buttons
+			setupGeneralPropPanels(FMainMenu.configPropertyWindow, saveFunc, revertFunc)
+			
+			--Set completed panel as active property
+			setPropPanel(propertyPanel)
+		end
+		
 		configSheet:AddSheet( FMainMenu.GetPhrase("ConfigPropertiesCategoriesMenu"), configSheetTwo, nil )
 		
 		
@@ -1722,6 +2000,7 @@ end )
 	0 - no GUI
 	1 - background/base menu only
 	2 - 1 but with first time join module simulated on top
+	3 - 1 but with music
 ]]--
 local blurMat = Material("pp/blurscreen")
 local colorWhite = Color(255, 255, 255)
@@ -1729,6 +2008,11 @@ local HTMLLogo = nil
 local ChangelogBox = nil
 local CLText = nil
 local cachedLink = ""
+local musicStation = ""
+local cachedMusicContent = ""
+local cachedMusicOption = ""
+local cachedMusicVolume = ""
+local cachedMusicLooping = ""
 
 hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 	if previewLevel > 0 then -- draw menu
@@ -1838,6 +2122,50 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 		if previewLevel == 2 then -- draw first time join dialogue
 			
 		end
+		
+		if previewLevel == 3 then -- music
+			if cachedMusicContent != previewCopy["_musicContent"] || cachedMusicOption != previewCopy["_musicToggle"] || cachedMusicVolume != previewCopy["_musicVolume"] || cachedMusicLooping != previewCopy["_musicLooping"] then
+				cachedMusicContent = previewCopy["_musicContent"]
+				cachedMusicOption = previewCopy["_musicToggle"]
+				cachedMusicVolume = previewCopy["_musicVolume"]
+				cachedMusicLooping = previewCopy["_musicLooping"]
+				
+				if musicStation != "" then
+					musicStation:Stop()
+					musicStation = ""
+				end
+				
+				if previewCopy["_musicToggle"] == 1 then
+					--file
+					sound.PlayFile( previewCopy["_musicContent"] , "noblock", function( station, errCode, errStr )
+						if ( IsValid( station ) ) then
+							station:EnableLooping(previewCopy["_musicLooping"])
+							station:SetVolume(previewCopy["_musicVolume"])
+							musicStation = station
+						end
+					end)
+				elseif previewCopy["_musicToggle"] == 2 then
+					--url
+					sound.PlayURL( previewCopy["_musicContent"] , "noblock", function( station, errCode, errStr )
+						if ( IsValid( station ) ) then
+							station:EnableLooping(previewCopy["_musicLooping"])
+							station:SetVolume(previewCopy["_musicVolume"])
+							musicStation = station
+						end
+					end)
+				end
+			end
+		else
+			if musicStation != "" then
+				cachedMusicContent = ""
+				cachedMusicOption = ""
+				cachedMusicVolume = ""
+				cachedMusicLooping = ""
+				
+				musicStation:Stop()
+				musicStation = ""
+			end
+		end
 	else
 		if HTMLLogo != nil then
 			HTMLLogo:Remove()
@@ -1850,6 +2178,16 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			ChangelogBox:Remove()
 			ChangelogBox = nil
 			CLText = nil
+		end
+		
+		if musicStation != "" then
+			cachedMusicContent = ""
+			cachedMusicOption = ""
+			cachedMusicVolume = ""
+			cachedMusicLooping = ""
+			
+			musicStation:Stop()
+			musicStation = ""
 		end
 	end
 end)

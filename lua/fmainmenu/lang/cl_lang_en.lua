@@ -42,7 +42,7 @@ FMainMenu.LangPresets[prefix].ConfigCommonValueZ = "Z: "
 
 FMainMenu.LangPresets[prefix].ConfigLeaveMenu = "Please exit the main menu before opening the coonfiguration tool."
 FMainMenu.LangPresets[prefix].ConfigUnsavedChanges = "The current property is changed but unsaved,\n        would you like to discard changes?"
-FMainMenu.LangPresets[prefix].ConfigUnsavedChangesHeader = "The current property is changed but unsaved,\n        would you like to discard changes?"
+FMainMenu.LangPresets[prefix].ConfigUnsavedChangesHeader = "Unsaved Changes!"
 FMainMenu.LangPresets[prefix].ConfigPropertiesWindowTitle = "FMainMenu - Config Properties"
 FMainMenu.LangPresets[prefix].ConfigPropertiesNoneSelected = "No Property Selected"
 FMainMenu.LangPresets[prefix].ConfigPropertiesSelectorTitle = "FMainMenu - Config Selector"
@@ -111,6 +111,17 @@ FMainMenu.LangPresets[prefix].ConfigPropertiesChangelogMarginLabel = "Changelog 
 FMainMenu.LangPresets[prefix].ConfigPropertiesMarginSelectOne = "Top-Right"
 FMainMenu.LangPresets[prefix].ConfigPropertiesMarginSelectTwo = "Bottom-Right"
 FMainMenu.LangPresets[prefix].ConfigPropertiesChangelogTextLabel = "Changelog Text:"
+
+FMainMenu.LangPresets[prefix].ConfigPropertiesMusicPropName = "Background Music"
+FMainMenu.LangPresets[prefix].ConfigPropertiesMusicPropDesc = "Allows music to play to those in the\nmain menu."
+FMainMenu.LangPresets[prefix].ConfigPropertiesMusicTypeLabel = "Music Type: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesMusicTypeOptionOneLabel = "File"
+FMainMenu.LangPresets[prefix].ConfigPropertiesMusicTypeOptionTwoLabel = "URL"
+FMainMenu.LangPresets[prefix].ConfigPropertiesMusicLoopLabel = "Looping: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesMusicVolumeLabel = "Volume (0-1): "
+FMainMenu.LangPresets[prefix].ConfigPropertiesMusicFadeLabel = "Fade Time (seconds): "
+FMainMenu.LangPresets[prefix].ConfigPropertiesMusicSelectLabel = "Audio: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesMusicButtonLabel = "Select Audio File"
 
 -- IGNORE BELOW CODE
 FMainMenu.languageLookup[prefix] = fancyName
