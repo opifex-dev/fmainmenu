@@ -62,6 +62,7 @@ FMainMenu.LangPresets[prefix].ConfigSoundSelectorChooseButtonText = "Confirm"
 FMainMenu.LangPresets[prefix].ConfigSoundSelectorPlayButtonText = "Play"
 FMainMenu.LangPresets[prefix].ConfigSoundSelectorStopButtonText = "Stop"
 FMainMenu.LangPresets[prefix].ConfigSoundSelectorWindowSelectionHeader = "Currently Selected: "
+FMainMenu.LangPresets[prefix].ConfigSoundSelectorVolumeLabel = "Volume:"
 
 FMainMenu.LangPresets[prefix].ConfigPropertiesCameraSetupPropName = "Camera Setup"
 FMainMenu.LangPresets[prefix].ConfigPropertiesCameraSetupPropDesc = "Allows you to set where the camera\nwill exist in the world"

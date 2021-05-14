@@ -1657,6 +1657,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			audioFileChooseButton:SetVisible(false)
 			audioFileChooseButton.DoClick = function(button)
 				local internalStation = nil
+				local currentVol = 0.5
 				local currentSelection = contentBox:GetText()
 				
 				-- sound preview
@@ -1672,8 +1673,8 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 					
 					sound.PlayFile( path , "noblock", function( station, errCode, errStr )
 						if ( IsValid( station ) ) then
-							station:EnableLooping(false)
-							station:SetVolume(0.5)
+							station:EnableLooping(true)
+							station:SetVolume(currentVol)
 							internalStation = station
 						end
 					end)
@@ -1750,6 +1751,21 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 				bottomPanelStopButton:AlignTop(3)
 				bottomPanelStopButton.DoClick = function(button)
 					stopSoundPreview()
+				end
+				
+				local bottomPanelVolSlider = vgui.Create("DNumSlider", bottomPanel)
+				bottomPanelVolSlider:SetSize(250,24)
+				bottomPanelVolSlider:AlignLeft(290)
+				bottomPanelVolSlider:SetMin( 0 )
+				bottomPanelVolSlider:SetMax( 1 )
+				bottomPanelVolSlider:SetDecimals( 1 )
+				bottomPanelVolSlider:SetText( "Volume" )
+				bottomPanelVolSlider:AlignTop(3)
+				bottomPanelVolSlider.OnValueChanged = function( self, value )
+					currentVol = value
+					if internalStation ~= nil then
+						internalStation:SetVolume(currentVol)
+					end
 				end
 				
 				if currentSelection != "" && string.StartWith( currentSelection, "sound/" ) then
