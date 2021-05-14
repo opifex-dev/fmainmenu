@@ -1728,6 +1728,8 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 					if currentSelection != "" then
 						contentBox:SetText(currentSelection)
 						contentBox:OnChange()
+						textBox:SetText(math.Round( currentVol, 2))
+						textBox:OnChange()
 					end
 					
 					soundSelection:Close()
@@ -1776,6 +1778,11 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 					end
 				else
 					currentSelection = ""
+				end
+				
+				if tonumber(textBox:GetText()) ~= nil then
+					currentVol = tonumber(textBox:GetText())
+					bottomPanelVolSlider:SetValue( currentVol )
 				end
 					
 				soundSelection:MakePopup()
