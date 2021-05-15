@@ -130,6 +130,14 @@ FMainMenu.LangPresets[prefix].ConfigPropertiesMusicFadeLabel = "Fade Time (secon
 FMainMenu.LangPresets[prefix].ConfigPropertiesMusicSelectLabel = "Audio: "
 FMainMenu.LangPresets[prefix].ConfigPropertiesMusicButtonLabel = "Select Audio File"
 
+FMainMenu.LangPresets[prefix].ConfigPropertiesFJWelcomerPropName = "Welcome Screen"
+FMainMenu.LangPresets[prefix].ConfigPropertiesFJWelcomerPropDesc = "Allows players to receive information\non their first join."
+FMainMenu.LangPresets[prefix].ConfigPropertiesWelcomerTextLabel = "Welcome Text:"
+FMainMenu.LangPresets[prefix].ConfigPropertiesWelcomerTypeLabel = "Welcome Screen: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesWelcomerURLTextLabel = "Button Text: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesWelcomerURLLabel = "Website URL: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesWelcomerURLButtonToggleLabel = "Button Opens URL:"
+
 -- IGNORE BELOW CODE
 FMainMenu.languageLookup[prefix] = fancyName
 FMainMenu.languageReverseLookup[fancyName] = prefix

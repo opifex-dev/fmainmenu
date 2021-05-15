@@ -137,8 +137,8 @@ function FMainMenu.Panels.CreateWelcomer()
 	FMainMenu.Derma:SetFrameSettings(firstButton, FayLib.IGC.GetSharedKey(addonName, "commonButtonColor"), 0)
 	firstButton.DoClick = function()
 		surface.PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
-		file.Write("fmainmenu/"..FayLib.IGC.GetSharedKey(addonName, "firstJoinSeed")..".txt", "true")
-		if FayLib.IGC.GetSharedKey(addonName, "firstJoinURL") != false && FayLib.IGC.GetSharedKey(addonName, "firstJoinURL") != "false" then
+		file.Write("fmainmenu/"..FMainMenu.firstJoinSeed..".txt", "true")
+		if FayLib.IGC.GetSharedKey(addonName, "firstJoinURLEnabled") == true then
 			gui.OpenURL( FayLib.IGC.GetSharedKey(addonName, "firstJoinURL") )
 		end
 		troubleFrame:Close()

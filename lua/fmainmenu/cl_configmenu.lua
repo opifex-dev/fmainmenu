@@ -212,7 +212,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		--Camera Setup
 		local cameraSetupButtonLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetOne)
 		cameraSetupButtonLiveIndicator:SetSize( 15, 15 )
-		cameraSetupButtonLiveIndicator:AlignRight(12)
+		cameraSetupButtonLiveIndicator:AlignLeft(0)
 		cameraSetupButtonLiveIndicator:AlignTop(10)
 		cameraSetupButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
 		local configSheetOneCameraSetupButton = vgui.Create("fmainmenu_config_editor_button", configSheetOne)
@@ -737,7 +737,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		-- Hear Other Players
 		local cameraHearOtherPlayersButtonLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetOne)
 		cameraHearOtherPlayersButtonLiveIndicator:SetSize( 15, 15 )
-		cameraHearOtherPlayersButtonLiveIndicator:AlignRight(12)
+		cameraHearOtherPlayersButtonLiveIndicator:AlignLeft(0)
 		cameraHearOtherPlayersButtonLiveIndicator:AlignTop(100)
 		cameraHearOtherPlayersButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
 		local configSheetOneCameraHearOtherPlayersButton = vgui.Create("fmainmenu_config_editor_button", configSheetOne)
@@ -911,7 +911,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		
 		
 		
-		local configSheetTwo = vgui.Create("fmainmenu_config_editor_panel", configSheet)
+		local configSheetTwo = vgui.Create("fmainmenu_config_editor_scrollpanel", configSheet)
 		configSheetTwo:SetSize( 240, 230 )
 		
 		-- Language Setting
@@ -1007,7 +1007,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		-- Garry's Mod Positioning Style
 		local configSheetTwoGMODStyleButtonLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetTwo)
 		configSheetTwoGMODStyleButtonLiveIndicator:SetSize( 15, 15 )
-		configSheetTwoGMODStyleButtonLiveIndicator:AlignRight(12)
+		configSheetTwoGMODStyleButtonLiveIndicator:AlignLeft(0)
 		configSheetTwoGMODStyleButtonLiveIndicator:AlignTop(40)
 		configSheetTwoGMODStyleButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
 		local configSheetTwoGMODStyleButton = vgui.Create("fmainmenu_config_editor_button", configSheetTwo)
@@ -1123,7 +1123,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		-- Logo & Logo Content
 		local configSheetTwoLogoButtonLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetTwo)
 		configSheetTwoLogoButtonLiveIndicator:SetSize( 15, 15 )
-		configSheetTwoLogoButtonLiveIndicator:AlignRight(12)
+		configSheetTwoLogoButtonLiveIndicator:AlignLeft(0)
 		configSheetTwoLogoButtonLiveIndicator:AlignTop(70)
 		configSheetTwoLogoButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
 		local configSheetTwoLogoButton = vgui.Create("fmainmenu_config_editor_button", configSheetTwo)
@@ -1263,7 +1263,7 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		-- Background Tint & Background Blur
 		local configSheetTwoBackgroundButtonLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetTwo)
 		configSheetTwoBackgroundButtonLiveIndicator:SetSize( 15, 15 )
-		configSheetTwoBackgroundButtonLiveIndicator:AlignRight(12)
+		configSheetTwoBackgroundButtonLiveIndicator:AlignLeft(0)
 		configSheetTwoBackgroundButtonLiveIndicator:AlignTop(100)
 		configSheetTwoBackgroundButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
 		local configSheetTwoBackgroundButton = vgui.Create("fmainmenu_config_editor_button", configSheetTwo)
@@ -1380,17 +1380,17 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		end
 		
 		-- Changelog
-		local configSheetTwoBackgroundButtonLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetTwo)
-		configSheetTwoBackgroundButtonLiveIndicator:SetSize( 15, 15 )
-		configSheetTwoBackgroundButtonLiveIndicator:AlignRight(12)
-		configSheetTwoBackgroundButtonLiveIndicator:AlignTop(130)
-		configSheetTwoBackgroundButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
-		local configSheetTwoBackgroundButton = vgui.Create("fmainmenu_config_editor_button", configSheetTwo)
-		configSheetTwoBackgroundButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesChangelogPropName"))
-		configSheetTwoBackgroundButton:SetSize(200,25)
-		configSheetTwoBackgroundButton:AlignLeft(4)
-		configSheetTwoBackgroundButton:AlignTop(125)
-		configSheetTwoBackgroundButton.DoClick = function(button)
+		local configSheetTwoChangelogButtonLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetTwo)
+		configSheetTwoChangelogButtonLiveIndicator:SetSize( 15, 15 )
+		configSheetTwoChangelogButtonLiveIndicator:AlignLeft(0)
+		configSheetTwoChangelogButtonLiveIndicator:AlignTop(130)
+		configSheetTwoChangelogButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
+		local configSheetTwoChangelogButton = vgui.Create("fmainmenu_config_editor_button", configSheetTwo)
+		configSheetTwoChangelogButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesChangelogPropName"))
+		configSheetTwoChangelogButton:SetSize(200,25)
+		configSheetTwoChangelogButton:AlignLeft(4)
+		configSheetTwoChangelogButton:AlignTop(125)
+		configSheetTwoChangelogButton.DoClick = function(button)
 			local propertyCode = 25
 			previewLevel = 1
 			local tableKeyName = {"showChangeLog","changeLogMoveToBottom","changeLogText"}
@@ -1571,17 +1571,17 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		end
 		
 		-- Music Properties
-		local configSheetTwoBackgroundButtonLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetTwo)
-		configSheetTwoBackgroundButtonLiveIndicator:SetSize( 15, 15 )
-		configSheetTwoBackgroundButtonLiveIndicator:AlignRight(12)
-		configSheetTwoBackgroundButtonLiveIndicator:AlignTop(160)
-		configSheetTwoBackgroundButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
-		local configSheetTwoBackgroundButton = vgui.Create("fmainmenu_config_editor_button", configSheetTwo)
-		configSheetTwoBackgroundButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesMusicPropName"))
-		configSheetTwoBackgroundButton:SetSize(200,25)
-		configSheetTwoBackgroundButton:AlignLeft(4)
-		configSheetTwoBackgroundButton:AlignTop(155)
-		configSheetTwoBackgroundButton.DoClick = function(button)
+		local configSheetTwoMusicButtonLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetTwo)
+		configSheetTwoMusicButtonLiveIndicator:SetSize( 15, 15 )
+		configSheetTwoMusicButtonLiveIndicator:AlignLeft(0)
+		configSheetTwoMusicButtonLiveIndicator:AlignTop(160)
+		configSheetTwoMusicButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
+		local configSheetTwoMusicButton = vgui.Create("fmainmenu_config_editor_button", configSheetTwo)
+		configSheetTwoMusicButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesMusicPropName"))
+		configSheetTwoMusicButton:SetSize(200,25)
+		configSheetTwoMusicButton:AlignLeft(4)
+		configSheetTwoMusicButton:AlignTop(155)
+		configSheetTwoMusicButton.DoClick = function(button)
 			local propertyCode = 26
 			previewLevel = 3
 			local tableKeyName = {"musicToggle","musicLooping","musicVolume","musicFade","musicContent"}
@@ -1976,6 +1976,255 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			setPropPanel(propertyPanel)
 		end
 		
+		-- First Join Welcomer
+		local configSheetTwoFJWeclomerButtonLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetTwo)
+		configSheetTwoFJWeclomerButtonLiveIndicator:SetSize( 15, 15 )
+		configSheetTwoFJWeclomerButtonLiveIndicator:AlignLeft(0)
+		configSheetTwoFJWeclomerButtonLiveIndicator:AlignTop(190)
+		configSheetTwoFJWeclomerButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
+		local configSheetTwoFJWeclomerButton = vgui.Create("fmainmenu_config_editor_button", configSheetTwo)
+		configSheetTwoFJWeclomerButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesFJWelcomerPropName"))
+		configSheetTwoFJWeclomerButton:SetSize(200,25)
+		configSheetTwoFJWeclomerButton:AlignLeft(4)
+		configSheetTwoFJWeclomerButton:AlignTop(185)
+		configSheetTwoFJWeclomerButton.DoClick = function(button)
+			local propertyCode = 27
+			previewLevel = 2
+			local tableKeyName = {"firstJoinWelcome","firstJoinText","firstJoinURLText","firstJoinURL","firstJoinURLEnabled"}
+			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
+			FMainMenu.configPropertyWindow.propertyCode = propertyCode
+		
+			--Property Panel Setup
+			local propertyPanel = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.configPropertyWindow)
+			propertyPanel:SetSize( 240, 255 )
+			propertyPanel:SetPos(5,25)
+			local propertyPanelLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesFJWelcomerPropName"))
+			propertyPanelLabel:SetFont("HudHintTextLarge")
+			propertyPanelLabel:SetPos(2,0)
+			local propertyPanelDescLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelDescLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesFJWelcomerPropDesc"))
+			propertyPanelDescLabel:SetPos(3, 24)
+			propertyPanelDescLabel:SetSize(225, 36)
+		
+			-- welcomer toggle
+			local toggleLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			toggleLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesWelcomerTypeLabel"))
+			toggleLabel:SetPos(2, 70)
+			local toggleOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			toggleOption:SetSize( 70, 18 )
+			toggleOption:SetPos( 168, 70 )
+			toggleOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDisabled") )
+			toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueEnabled") )
+			toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDisabled") )
+			
+			-- welcome text
+			local FJTextLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			FJTextLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesWelcomerTextLabel"))
+			FJTextLabel:SetPos(2, 91)
+			local FJTextBox = vgui.Create("fmainmenu_config_editor_textentry", propertyPanel)
+			FJTextBox:SetSize( 236, 18 )
+			FJTextBox:SetPos( 2, 112 )
+			
+			-- Button Text
+			local FJURLTextLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			FJURLTextLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesWelcomerURLTextLabel"))
+			FJURLTextLabel:SetPos(2, 133)
+			local FJURLTextBox = vgui.Create("fmainmenu_config_editor_textentry", propertyPanel)
+			FJURLTextBox:SetSize( 236, 18 )
+			FJURLTextBox:SetPos( 2, 154 )
+			
+			-- url button toggle
+			local urlToggleLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			urlToggleLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesWelcomerURLButtonToggleLabel"))
+			urlToggleLabel:SetPos(2, 175)
+			local urlToggleOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			urlToggleOption:SetSize( 70, 18 )
+			urlToggleOption:SetPos( 168, 175 )
+			urlToggleOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueEnabled") )
+			urlToggleOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueEnabled") )
+			urlToggleOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDisabled") )
+			
+			-- Website Link
+			local FJURLLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			FJURLLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesWelcomerURLLabel"))
+			FJURLLabel:SetPos(2, 196)
+			FJURLLabel:SetVisible(false)
+			local FJURLBox = vgui.Create("fmainmenu_config_editor_textentry", propertyPanel)
+			FJURLBox:SetSize( 236, 18 )
+			FJURLBox:SetPos( 2, 217 )
+			FJURLBox:SetVisible(false)
+			
+			
+			
+			-- Update needed live preview stuff
+			local function updatePreview()
+				if toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
+					previewCopy["_"..tableKeyName[1]] = false
+				else
+					previewCopy["_"..tableKeyName[1]] = true
+				end
+				
+				previewCopy["_"..tableKeyName[2]] = FJTextBox:GetText()
+				
+				previewCopy["_"..tableKeyName[3]] = FJURLTextBox:GetText()
+				
+				previewCopy["_"..tableKeyName[4]] = FJURLBox:GetText()
+				
+				if urlToggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
+					previewCopy["_"..tableKeyName[5]] = false
+				else
+					previewCopy["_"..tableKeyName[5]] = true
+				end
+			end
+			
+			-- Used to detect changes in the on-screen form from the server-side variable	
+			local function isVarChanged()
+				if urlToggleOption:GetText() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
+					FJURLLabel:SetVisible(true)
+					FJURLBox:SetVisible(true)
+				else
+					FJURLLabel:SetVisible(false)
+					FJURLBox:SetVisible(false)
+				end
+				
+				local serverVar = ""
+				if propertyPanel.lastRecVariable[1] == false then
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDisabled")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueEnabled")
+				end
+				
+				if toggleOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				if FJTextBox:GetText() != propertyPanel.lastRecVariable[2] then
+					setUnsaved(true)
+					return
+				end
+				
+				if FJURLTextBox:GetText() != propertyPanel.lastRecVariable[3] then
+					setUnsaved(true)
+					return
+				end
+				
+				if FJURLBox:GetText() != propertyPanel.lastRecVariable[4] then
+					setUnsaved(true)
+					return
+				end
+				
+				if propertyPanel.lastRecVariable[5] == false then
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDisabled")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueEnabled")
+				end
+				
+				if urlToggleOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				setUnsaved(false)
+			end
+			
+			function toggleOption:OnSelect( index, value, data )
+				isVarChanged()
+				updatePreview()
+			end
+			
+			function urlToggleOption:OnSelect( index, value, data )
+				isVarChanged()
+				updatePreview()
+			end
+			
+			function FJTextBox:OnChange()
+				isVarChanged()
+				updatePreview()
+			end
+			
+			function FJURLTextBox:OnChange()
+				isVarChanged()
+				updatePreview()
+			end
+			
+			function FJURLBox:OnChange()
+				isVarChanged()
+				updatePreview()
+			end
+			
+			-- Called when server responds with current server-side variables
+			local function onGetVar(varTable)
+				propertyPanel.lastRecVariable = varTable
+				
+				if varTable[1] == true then
+					toggleOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueEnabled"))
+				else
+					toggleOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDisabled"))
+				end
+				
+				FJTextBox:SetText(varTable[2])
+				FJURLTextBox:SetText(varTable[3])
+				FJURLBox:SetText(varTable[4])
+				
+				if varTable[5] == true then
+					urlToggleOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueEnabled"))
+					FJURLLabel:SetVisible(true)
+					FJURLBox:SetVisible(true)
+				else
+					urlToggleOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDisabled"))
+					FJURLLabel:SetVisible(false)
+					FJURLBox:SetVisible(false)
+				end
+				
+				setUnsaved(false)
+				updatePreview()
+			end
+			
+			-- Send the request for said server-side variables
+			requestVariables(onGetVar, {"firstJoinWelcome","firstJoinText","firstJoinURLText","firstJoinURL","firstJoinURLEnabled"})
+			
+			-- Called when someone wants to commit changes to a property
+			local function saveFunc()
+				if toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
+					propertyPanel.lastRecVariable[1] = false
+				elseif toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
+					propertyPanel.lastRecVariable[1] = true
+				else
+					return
+				end
+				
+				propertyPanel.lastRecVariable[2] = FJTextBox:GetText()
+				
+				propertyPanel.lastRecVariable[3] = FJURLTextBox:GetText()
+				
+				propertyPanel.lastRecVariable[4] = FJURLBox:GetText()
+				
+				if urlToggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
+					propertyPanel.lastRecVariable[5] = false
+				elseif urlToggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
+					propertyPanel.lastRecVariable[5] = true
+				else
+					return
+				end
+				
+				updateVariables(propertyPanel.lastRecVariable, {"firstJoinWelcome","firstJoinText","firstJoinURLText","firstJoinURL","firstJoinURLEnabled"})
+				setUnsaved(false)
+			end
+			
+			-- Called when someone wants to revert changes to a property
+			local function revertFunc()
+				requestVariables(onGetVar, {"firstJoinWelcome","firstJoinText","firstJoinURLText","firstJoinURL","firstJoinURLEnabled"})
+			end
+			
+			-- Setup the save and revert buttons
+			setupGeneralPropPanels(FMainMenu.configPropertyWindow, saveFunc, revertFunc)
+			
+			--Set completed panel as active property
+			setPropPanel(propertyPanel)
+		end
+		
 		configSheet:AddSheet( FMainMenu.GetPhrase("ConfigPropertiesCategoriesMenu"), configSheetTwo, nil )
 		
 		
@@ -2139,6 +2388,9 @@ local blurMat = Material("pp/blurscreen")
 local colorWhite = Color(255, 255, 255)
 local HTMLLogo = nil
 local ChangelogBox = nil
+local welcomerBox = nil
+local welcomerBoxLeftText = nil
+local welcomerBoxButton = nil
 local CLText = nil
 local cachedLink = ""
 local musicStation = nil
@@ -2253,7 +2505,42 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 		end
 			
 		if previewLevel == 2 then -- draw first time join dialogue
+			if welcomerBox == nil then
+				welcomerBox = FMainMenu.Derma.CreateDFrame(FMainMenu.GetPhrase("WelcomerFrameTitle"), nil, 380, 256)
+				welcomerBox:SetZPos(1)
+				welcomerBox:Center()
+				welcomerBox:ShowCloseButton( false )
+				welcomerBox:SetDraggable( false )
+				
+				local initTroublePanel = FMainMenu.Derma.CreateDPanel(welcomerBox, 365, 221, false )
+				initTroublePanel:SetPos(5, 25)
+				FMainMenu.Derma:SetFrameSettings(initTroublePanel, FayLib.IGC.GetSharedKey(addonName, "commonPanelColor"), 0)
+				welcomerBoxLeftText = FMainMenu.Derma.CreateDLabel(initTroublePanel, 345, 128, false, previewCopy["_firstJoinText"])
+				welcomerBoxLeftText:SetFont("HudHintTextLarge")
+				welcomerBoxLeftText:SetPos(10, 10)
+				welcomerBoxLeftText:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
+				welcomerBoxLeftText:SetWrap( true )
+				welcomerBoxLeftText:SetContentAlignment( 8 )
+				
+				local wBBPanel = FMainMenu.Derma.CreateDPanel(initTroublePanel, 355, FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"), false )
+				wBBPanel:SetPos(5, 216-FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"))
+				
+				welcomerBoxButton = FMainMenu.Derma.CreateDLabel(initTroublePanel, 355, FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"), false, previewCopy["_firstJoinURLText"])
+				welcomerBoxButton:SetFont("HudHintTextLarge")
+				welcomerBoxButton:SetPos(5, 216-FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"))
+				welcomerBoxButton:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
+				welcomerBoxButton:SetContentAlignment( 5 )
+			end
 			
+			welcomerBoxLeftText:SetText(previewCopy["_firstJoinText"])
+			welcomerBoxButton:SetText(previewCopy["_firstJoinURLText"])
+		else
+			if welcomerBox != nil then
+				welcomerBox:Close()
+				welcomerBox = nil
+				welcomerBoxButton = nil
+				welcomerBoxLeftText = nil
+			end
 		end
 		
 		if previewLevel == 3 && soundSelection == nil then -- music
@@ -2311,6 +2598,13 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			ChangelogBox:Remove()
 			ChangelogBox = nil
 			CLText = nil
+		end
+		
+		if welcomerBox != nil then
+			welcomerBox:Close()
+			welcomerBox = nil
+			welcomerBoxButton = nil
+			welcomerBoxLeftText = nil
 		end
 		
 		if musicStation != nil then
