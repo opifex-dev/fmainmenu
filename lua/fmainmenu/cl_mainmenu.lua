@@ -167,6 +167,9 @@ local function openMenu()
 		end
 		
 		if FayLib.IGC.GetSharedKey(addonName, "dcButton") then
+			if #FayLib.IGC.GetSharedKey(addonName, "URLButtons") == 0 then
+				curYPos = curYPos - 36
+			end
 			local quitButton = FMainMenu.Panels.CreateButton(FMainMenu.GetPhrase("DisconnectButtonText"))
 			quitButton:SetPos(xPos, curYPos)
 			quitButton.DoClick = function()

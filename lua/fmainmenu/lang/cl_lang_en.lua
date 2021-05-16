@@ -138,6 +138,24 @@ FMainMenu.LangPresets[prefix].ConfigPropertiesWelcomerURLTextLabel = "Button Tex
 FMainMenu.LangPresets[prefix].ConfigPropertiesWelcomerURLLabel = "Website URL: "
 FMainMenu.LangPresets[prefix].ConfigPropertiesWelcomerURLButtonToggleLabel = "Button Opens URL:"
 
+FMainMenu.LangPresets[prefix].ConfigPropertiesDisconnectPropName = "Disconnect Button"
+FMainMenu.LangPresets[prefix].ConfigPropertiesDisconnectPropDesc = "Allows players to easily disconnect\nfrom the main menu."
+FMainMenu.LangPresets[prefix].ConfigPropertiesDisconnectToggleLabel = "Diconnect Button:"
+
+FMainMenu.LangPresets[prefix].ConfigPropertiesURLButtonsPropName = "URL Buttons"
+FMainMenu.LangPresets[prefix].ConfigPropertiesURLButtonsPropDesc = "Allows players to easily access\nimportant links from the menu."
+FMainMenu.LangPresets[prefix].ConfigPropertiesURLButtonsEditorButtonLabel = "Edit URL Buttons"
+FMainMenu.LangPresets[prefix].ConfigURLButtonEditorWindowTitle = "URL Button Editor"
+FMainMenu.LangPresets[prefix].ConfigURLButtonEditorCloseButtonText = "Close"
+FMainMenu.LangPresets[prefix].ConfigURLButtonEditorRevertButtonText = "Revert"
+FMainMenu.LangPresets[prefix].ConfigURLButtonEditorAddButtonText = "Add Button"
+FMainMenu.LangPresets[prefix].ConfigURLButtonEditorWindowButtonLabel = "Button Label: "
+FMainMenu.LangPresets[prefix].ConfigURLButtonEditorWindowLinkLabel = "Button Link: "
+FMainMenu.LangPresets[prefix].ConfigURLButtonEditorWindowDeleteConfirm = "Are you sure you would like to delete this button?"
+
+
+
+
 -- IGNORE BELOW CODE
 FMainMenu.languageLookup[prefix] = fancyName
 FMainMenu.languageReverseLookup[fancyName] = prefix

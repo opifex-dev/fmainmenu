@@ -66,11 +66,11 @@ FayLib.IGC.DefineKey(addonName, "firstJoinURLText", "View Rules", true)
 FayLib.IGC.DefineKey(addonName, "firstJoinURL", "https://youtu.be/oHg5SJYRHA0", true)
 FayLib.IGC.DefineKey(addonName, "dcButton", true, true)
 FayLib.IGC.DefineKey(addonName, "URLButtons", {
-	{
+	[1] = {
 		Text = "Content Pack",
 		URL = "Workshop Link Here",
 	},
-	{
+	[2] = {
 		Text = "Discord",
 		URL = "Discord Link Here",
 	},

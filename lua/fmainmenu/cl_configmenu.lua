@@ -5,6 +5,8 @@ local previewCopy = {}
 local addonName = "fmainmenu"
 
 local soundSelection = nil
+local URLButtonEditor = nil
+
 
 -- Function that helps to easily create the bottom buttons of the property editor
 local function setupGeneralPropPanels(configPropertyWindow, saveFunc, revertFunc)
@@ -86,6 +88,14 @@ local function setPropPanel(newPanel, onClosePropFunc)
 	if onClosePropFunc != nil then
 		FMainMenu.configPropertyWindow.onCloseProp = onClosePropFunc
 	end
+	
+	FMainMenu.configPropertyWindow.configBlockerPanel = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.configPropertyWindow)
+	FMainMenu.configPropertyWindow.configBlockerPanel:SetBGColor(Color(0, 0, 0, 155))
+	FMainMenu.configPropertyWindow.configBlockerPanel:SetSize( 240, 330 )
+	FMainMenu.configPropertyWindow.configBlockerPanel:SetVisible(false)
+	FMainMenu.configPropertyWindow.configBlockerPanel:SetZPos(100)
+	FMainMenu.configPropertyWindow.configBlockerPanel:AlignLeft(5)
+	FMainMenu.configPropertyWindow.configBlockerPanel:AlignTop(25)
 	
 	FMainMenu.configPropertyWindow:MakePopup()
 end
@@ -195,15 +205,26 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		configSheet:AlignTop(25)
 		
 		local configUnsavedBlocker = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.CurConfigMenu)
-		configUnsavedBlocker:SetSize( 240, 190 )
+		configUnsavedBlocker:SetSize( 240, 195 )
 		configUnsavedBlocker:SetBGColor(Color(0,0,0,155))
 		configUnsavedBlocker:AlignRight(5)
-		configUnsavedBlocker:AlignTop(55)
+		configUnsavedBlocker:AlignTop(50)
 		configUnsavedBlocker:SetVisible(false)
+		
+		local configExternalWindowBlocker = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.CurConfigMenu)
+		configExternalWindowBlocker:SetSize( 240, 195 )
+		configExternalWindowBlocker:SetBGColor(Color(0,0,0,0))
+		configExternalWindowBlocker:AlignRight(5)
+		configExternalWindowBlocker:AlignTop(50)
+		configExternalWindowBlocker:SetVisible(false)
 		
 		local function setUnsaved(state)
 			FMainMenu.CurConfigMenu.unsavedVar = state
 			configUnsavedBlocker:SetVisible(state)
+		end
+		
+		local function setExternalBlock(state)
+			configExternalWindowBlocker:SetVisible(state)
 		end
 		
 		local configSheetOne = vgui.Create("fmainmenu_config_editor_panel", configSheet)
@@ -1656,6 +1677,9 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			audioFileChooseButton:AlignTop(225)
 			audioFileChooseButton:SetVisible(false)
 			audioFileChooseButton.DoClick = function(button)
+				setExternalBlock(true)
+				FMainMenu.configPropertyWindow.configBlockerPanel:SetVisible(true)
+				
 				local internalStation = nil
 				local currentVol = 0.5
 				local currentSelection = contentBox:GetText()
@@ -1688,6 +1712,8 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 				soundSelection:SetZPos(10)
 				function soundSelection:OnClose()
 					stopSoundPreview()
+					setExternalBlock(false)
+					FMainMenu.configPropertyWindow.configBlockerPanel:SetVisible(false)
 					
 					soundSelection = nil
 				end
@@ -2225,6 +2251,453 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			setPropPanel(propertyPanel)
 		end
 		
+		-- Disconnect Button
+		local configSheetTwoFJWeclomerButtonLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetTwo)
+		configSheetTwoFJWeclomerButtonLiveIndicator:SetSize( 15, 15 )
+		configSheetTwoFJWeclomerButtonLiveIndicator:AlignLeft(0)
+		configSheetTwoFJWeclomerButtonLiveIndicator:AlignTop(220)
+		configSheetTwoFJWeclomerButtonLiveIndicator:SetBGColor(Color(0, 200, 0))
+		local configSheetTwoFJWeclomerButton = vgui.Create("fmainmenu_config_editor_button", configSheetTwo)
+		configSheetTwoFJWeclomerButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesDisconnectPropName"))
+		configSheetTwoFJWeclomerButton:SetSize(200,25)
+		configSheetTwoFJWeclomerButton:AlignLeft(4)
+		configSheetTwoFJWeclomerButton:AlignTop(215)
+		configSheetTwoFJWeclomerButton.DoClick = function(button)
+			local propertyCode = 28
+			previewLevel = 1
+			local tableKeyName = {"dcButton"}
+			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
+			FMainMenu.configPropertyWindow.propertyCode = propertyCode
+		
+			--Property Panel Setup
+			local propertyPanel = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.configPropertyWindow)
+			propertyPanel:SetSize( 240, 255 )
+			propertyPanel:SetPos(5,25)
+			local propertyPanelLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesDisconnectPropName"))
+			propertyPanelLabel:SetFont("HudHintTextLarge")
+			propertyPanelLabel:SetPos(2,0)
+			local propertyPanelDescLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelDescLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesDisconnectPropDesc"))
+			propertyPanelDescLabel:SetPos(3, 24)
+			propertyPanelDescLabel:SetSize(225, 36)
+		
+			-- diconnect button toggle
+			local toggleLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			toggleLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesDisconnectToggleLabel"))
+			toggleLabel:SetPos(2, 70)
+			local toggleOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			toggleOption:SetSize( 70, 18 )
+			toggleOption:SetPos( 168, 70 )
+			toggleOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueEnabled") )
+			toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueEnabled") )
+			toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDisabled") )
+			
+			
+			
+			-- Update needed live preview stuff
+			local function updatePreview()
+				if toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
+					previewCopy["_"..tableKeyName[1]] = false
+				else
+					previewCopy["_"..tableKeyName[1]] = true
+				end
+			end
+			
+			-- Used to detect changes in the on-screen form from the server-side variable	
+			local function isVarChanged()				
+				local serverVar = ""
+				if propertyPanel.lastRecVariable[1] == false then
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDisabled")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueEnabled")
+				end
+				
+				if toggleOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				setUnsaved(false)
+			end
+			
+			function toggleOption:OnSelect( index, value, data )
+				isVarChanged()
+				updatePreview()
+			end
+			
+			-- Called when server responds with current server-side variables
+			local function onGetVar(varTable)
+				propertyPanel.lastRecVariable = varTable
+				
+				if varTable[1] == true then
+					toggleOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueEnabled"))
+				else
+					toggleOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDisabled"))
+				end
+				
+				setUnsaved(false)
+				updatePreview()
+			end
+			
+			-- Send the request for said server-side variables
+			requestVariables(onGetVar, {"dcButton"})
+			
+			-- Called when someone wants to commit changes to a property
+			local function saveFunc()
+				if toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
+					propertyPanel.lastRecVariable[1] = false
+				elseif toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
+					propertyPanel.lastRecVariable[1] = true
+				else
+					return
+				end
+				
+				updateVariables(propertyPanel.lastRecVariable, {"dcButton"})
+				setUnsaved(false)
+			end
+			
+			-- Called when someone wants to revert changes to a property
+			local function revertFunc()
+				requestVariables(onGetVar, {"dcButton"})
+			end
+			
+			-- Setup the save and revert buttons
+			setupGeneralPropPanels(FMainMenu.configPropertyWindow, saveFunc, revertFunc)
+			
+			--Set completed panel as active property
+			setPropPanel(propertyPanel)
+		end
+		
+		-- URL Buttons
+		local configSheetTwoURLButtonsLiveIndicator = vgui.Create("fmainmenu_config_editor_panel", configSheetTwo)
+		configSheetTwoURLButtonsLiveIndicator:SetSize( 15, 15 )
+		configSheetTwoURLButtonsLiveIndicator:AlignLeft(0)
+		configSheetTwoURLButtonsLiveIndicator:AlignTop(250)
+		configSheetTwoURLButtonsLiveIndicator:SetBGColor(Color(0, 200, 0))
+		local configSheetTwoURLButtons = vgui.Create("fmainmenu_config_editor_button", configSheetTwo)
+		configSheetTwoURLButtons:SetText(FMainMenu.GetPhrase("ConfigPropertiesURLButtonsPropName"))
+		configSheetTwoURLButtons:SetSize(200,25)
+		configSheetTwoURLButtons:AlignLeft(4)
+		configSheetTwoURLButtons:AlignTop(245)
+		configSheetTwoURLButtons.DoClick = function(button)
+			local propertyCode = 29
+			previewLevel = 1
+			local tableKeyName = {"URLButtons"}
+			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
+			FMainMenu.configPropertyWindow.propertyCode = propertyCode
+		
+			--Property Panel Setup
+			local propertyPanel = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.configPropertyWindow)
+			propertyPanel:SetSize( 240, 255 )
+			propertyPanel:SetPos(5,25)
+			local propertyPanelLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesURLButtonsPropName"))
+			propertyPanelLabel:SetFont("HudHintTextLarge")
+			propertyPanelLabel:SetPos(2,0)
+			local propertyPanelDescLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelDescLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesURLButtonsPropDesc"))
+			propertyPanelDescLabel:SetPos(3, 24)
+			propertyPanelDescLabel:SetSize(225, 36)
+		
+			-- URL Buttons Editor
+			local internalURLButtons = {}
+			local URLButtonsEditorButton = vgui.Create("fmainmenu_config_editor_button", propertyPanel)
+			URLButtonsEditorButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesURLButtonsEditorButtonLabel"))
+			URLButtonsEditorButton:SetSize(200,25)
+			URLButtonsEditorButton:AlignLeft(20)
+			URLButtonsEditorButton:AlignTop(70)
+			-- IMPORTANT: OnClick function move below isVarChanged so it can be triggered
+			
+			
+			
+			-- Update needed live preview stuff
+			local function updatePreview()
+				previewCopy["_"..tableKeyName[1]] = internalURLButtons
+			end
+			
+			-- Used to detect changes in the on-screen form from the server-side variable	
+			local function isVarChanged()
+				--Checks for differences between tables
+				if #propertyPanel.lastRecVariable[1] != #internalURLButtons then
+					setUnsaved(true)
+					return
+				end
+				
+				for i,button in ipairs(propertyPanel.lastRecVariable[1]) do
+					if button.Text != internalURLButtons[i].Text then
+						setUnsaved(true)
+						return
+					end
+					
+					if button.URL != internalURLButtons[i].URL then
+						setUnsaved(true)
+						return
+					end
+				end
+				
+				setUnsaved(false)
+			end
+			
+			URLButtonsEditorButton.DoClick = function(button)
+				setExternalBlock(true)
+				FMainMenu.configPropertyWindow.configBlockerPanel:SetVisible(true)
+					
+				-- frame setup
+				URLButtonEditor = vgui.Create( "fmainmenu_config_editor" )
+				URLButtonEditor:SetSize( 370, 580 )
+				URLButtonEditor:SetPos(screenWidth/2-185, screenHeight/2-290)
+				URLButtonEditor:SetTitle(FMainMenu.GetPhrase("ConfigURLButtonEditorWindowTitle"))
+				URLButtonEditor:SetZPos(10)
+				function URLButtonEditor:OnClose()
+					setExternalBlock(false)
+					FMainMenu.configPropertyWindow.configBlockerPanel:SetVisible(false)
+					
+					URLButtonEditor = nil
+				end
+				
+				local mainBPanel = nil
+				
+				local function updateCacheVisuals()
+					if mainBPanel != nil then
+						mainBPanel:Remove()
+					end
+					
+					mainBPanel = vgui.Create("fmainmenu_config_editor_scrollpanel", URLButtonEditor)
+					mainBPanel:SetBGColor(Color(110,110,110))
+					mainBPanel:SetSize( 360, 520 )
+					mainBPanel:AlignLeft(5)
+					mainBPanel:AlignTop(25)
+				
+					local panelBlocker = nil
+					local heightOff = 10
+					for i,button in ipairs(internalURLButtons) do
+						local buttonPanel = vgui.Create("fmainmenu_config_editor_panel", mainBPanel)
+						buttonPanel.bIndex = i
+						buttonPanel:SetBGColor(Color(100,100,100))
+						buttonPanel:SetSize( 320, 80 )
+						buttonPanel:AlignLeft(15)
+						buttonPanel:AlignTop(heightOff)
+						heightOff = heightOff + 90
+						
+						-- button text
+						local buttonText = vgui.Create("fmainmenu_config_editor_label", buttonPanel)
+						buttonText:SetText(FMainMenu.GetPhrase("ConfigURLButtonEditorWindowButtonLabel"))
+						buttonText:SetPos(5, 5)
+						local buttonTextBox = vgui.Create("fmainmenu_config_editor_textentry", buttonPanel)
+						buttonTextBox:SetSize( 196, 18 )
+						buttonTextBox:SetPos( 50, 5 )
+						buttonTextBox:AlignRight(5)
+						buttonTextBox:SetText(button.Text)
+						function buttonTextBox:OnChange()
+							internalURLButtons[buttonPanel.bIndex].Text = buttonTextBox:GetText()
+							isVarChanged()
+							updatePreview()
+						end
+						
+						-- button link
+						local buttonLinkLabel = vgui.Create("fmainmenu_config_editor_label", buttonPanel)
+						buttonLinkLabel:SetText(FMainMenu.GetPhrase("ConfigURLButtonEditorWindowLinkLabel"))
+						buttonLinkLabel:SetPos(5, 28)
+						local buttonLinkBox = vgui.Create("fmainmenu_config_editor_textentry", buttonPanel)
+						buttonLinkBox:SetSize( 196, 18 )
+						buttonLinkBox:SetPos( 50, 28 )
+						buttonLinkBox:AlignRight(5)
+						buttonLinkBox:SetText(button.URL)
+						function buttonLinkBox:OnChange()
+							internalURLButtons[buttonPanel.bIndex].URL = buttonLinkBox:GetText()
+							isVarChanged()
+							updatePreview()
+						end
+						
+						-- remove button
+						local buttonRemove = vgui.Create("fmainmenu_config_editor_image_button", buttonPanel)
+						buttonRemove:SetImage("icon16/cancel.png")
+						buttonRemove:SetSize(20,20)
+						buttonRemove:AlignRight(5)
+						buttonRemove:AlignBottom(5)
+						buttonRemove.DoClick = function(button)
+							--Confirmation dialogue
+							panelBlocker:SetVisible(true)
+							local removeConfirm =  vgui.Create("fmainmenu_config_editor_panel", panelBlocker)
+							removeConfirm:SetBGColor(Color(55, 55, 55, 255))
+							removeConfirm:SetSize( 246, 93 )
+							removeConfirm:Center()
+							
+							local leftText = FMainMenu.Derma.CreateDLabel(removeConfirm, 221, 113, false, FMainMenu.GetPhrase("ConfigURLButtonEditorWindowDeleteConfirm"))
+							leftText:SetFont("HudHintTextLarge")
+							leftText:SetPos(10, 5)
+							leftText:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor"))
+							leftText:SetWrap( true )
+							leftText:SetContentAlignment( 8 )
+							
+							local secondButton = FMainMenu.Derma.CreateDButton(removeConfirm, 108, 32, FMainMenu.GetPhrase("ConfigCommonValueNo"), "")
+							secondButton:SetPos(130, 56)
+							secondButton:SetFont("HudHintTextLarge")
+							secondButton:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
+							FMainMenu.Derma.SetPanelHover(secondButton, 1)
+							secondButton:SetContentAlignment( 5 )
+							FMainMenu.Derma:SetFrameSettings(secondButton, FayLib.IGC.GetSharedKey(addonName, "commonButtonColor"), 0)
+							secondButton.DoClick = function()
+								surface.PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
+								removeConfirm:Remove()
+								panelBlocker:SetVisible(false)
+							end
+							
+							local firstButton = FMainMenu.Derma.CreateDButton(removeConfirm, 108, 32, FMainMenu.GetPhrase("ConfigCommonValueYes"), "")
+							firstButton:SetPos(8, 56)
+							firstButton:SetFont("HudHintTextLarge")
+							firstButton:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
+							FMainMenu.Derma.SetPanelHover(firstButton, 1)
+							firstButton:SetContentAlignment( 5 )
+							FMainMenu.Derma:SetFrameSettings(firstButton, FayLib.IGC.GetSharedKey(addonName, "commonButtonColor"), 0)
+							firstButton.DoClick = function()
+								surface.PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
+								removeConfirm:Remove()
+								panelBlocker:SetVisible(false)
+								
+								-- Remove the button
+								table.remove( internalURLButtons, buttonPanel.bIndex )
+								updateCacheVisuals()
+								
+								isVarChanged()
+								updatePreview()
+							end
+						end
+						
+						-- move order up button
+						local buttonOrderUp = vgui.Create("fmainmenu_config_editor_image_button", buttonPanel)
+						buttonOrderUp:SetSize(28,28)
+						buttonOrderUp:AlignLeft(0)
+						buttonOrderUp:AlignBottom(3)
+						buttonOrderUp:SetKeepAspect( true )
+						buttonOrderUp:SetImage("icon16/arrow_up.png")
+						buttonOrderUp.DoClick = function(button)
+							if buttonPanel.bIndex > 1 then
+								local temp = table.Copy(internalURLButtons[buttonPanel.bIndex])
+								internalURLButtons[buttonPanel.bIndex] = internalURLButtons[buttonPanel.bIndex-1]
+								internalURLButtons[buttonPanel.bIndex-1] = temp
+								updateCacheVisuals()
+								
+								isVarChanged()
+								updatePreview()
+							end
+						end
+						
+						-- move order down button
+						local buttonOrderDown = vgui.Create("fmainmenu_config_editor_image_button", buttonPanel)
+						buttonOrderDown:SetImage("icon16/arrow_down.png")
+						buttonOrderDown:SetSize(28,28)
+						buttonOrderDown:AlignLeft(28)
+						buttonOrderDown:AlignBottom(3)
+						buttonOrderDown:SetKeepAspect( true )
+						buttonOrderDown.DoClick = function(button)
+							if buttonPanel.bIndex < #internalURLButtons then
+								local temp = table.Copy(internalURLButtons[buttonPanel.bIndex])
+								internalURLButtons[buttonPanel.bIndex] = internalURLButtons[buttonPanel.bIndex+1]
+								internalURLButtons[buttonPanel.bIndex+1] = temp
+								updateCacheVisuals()
+								
+								isVarChanged()
+								updatePreview()
+							end
+						end
+					end
+					
+					panelBlocker =  vgui.Create("fmainmenu_config_editor_panel", URLButtonEditor)
+					panelBlocker:SetBGColor(Color(0, 0, 0, 155))
+					panelBlocker:SetSize( 360, 520 )
+					panelBlocker:AlignLeft(5)
+					panelBlocker:AlignTop(25)
+					panelBlocker:SetVisible(false)
+				end
+				
+				local function updateCachedTable(varTable)
+					internalURLButtons = table.Copy(varTable[1])
+					updateCacheVisuals()
+					
+					isVarChanged()
+					updatePreview()
+				end
+				
+				-- bottom toolbar
+				local bottomPanel = vgui.Create("fmainmenu_config_editor_panel", URLButtonEditor)
+				bottomPanel:SetSize( 360, 30 )
+				bottomPanel:AlignLeft(5)
+				bottomPanel:AlignTop(545)
+				
+				local bottomPanelSaveButton = vgui.Create("fmainmenu_config_editor_button", bottomPanel)
+				bottomPanelSaveButton:SetText(FMainMenu.GetPhrase("ConfigURLButtonEditorCloseButtonText"))
+				bottomPanelSaveButton:SetSize(100,24)
+				bottomPanelSaveButton:AlignRight(5)
+				bottomPanelSaveButton:AlignTop(3)
+				bottomPanelSaveButton.DoClick = function(button)
+					URLButtonEditor:Close()
+				end
+				
+				local bottomPanelRevertButton = vgui.Create("fmainmenu_config_editor_button", bottomPanel)
+				bottomPanelRevertButton:SetText(FMainMenu.GetPhrase("ConfigURLButtonEditorRevertButtonText"))
+				bottomPanelRevertButton:SetSize(100,24)
+				bottomPanelRevertButton:AlignRight(110)
+				bottomPanelRevertButton:AlignTop(3)
+				bottomPanelRevertButton.DoClick = function(button)
+					requestVariables(updateCachedTable, {"URLButtons"})
+				end
+				
+				local bottomPanelAddButton = vgui.Create("fmainmenu_config_editor_button", bottomPanel)
+				bottomPanelAddButton:SetText(FMainMenu.GetPhrase("ConfigURLButtonEditorAddButtonText"))
+				bottomPanelAddButton:SetSize(100,24)
+				bottomPanelAddButton:AlignLeft(5)
+				bottomPanelAddButton:AlignTop(3)
+				bottomPanelAddButton.DoClick = function(button)
+					table.insert( internalURLButtons, {
+						Text = "New Button",
+						URL = "Link Here",
+					} )
+					updateCacheVisuals()
+					
+					isVarChanged()
+					updatePreview()
+				end
+				
+				updateCachedTable({internalURLButtons})
+					
+				URLButtonEditor:MakePopup()
+			end
+			
+			-- Called when server responds with current server-side variables
+			local function onGetVar(varTable)
+				propertyPanel.lastRecVariable = table.Copy(varTable)
+				
+				internalURLButtons = table.Copy(varTable[1])
+				
+				setUnsaved(false)
+				updatePreview()
+			end
+			
+			-- Send the request for said server-side variables
+			requestVariables(onGetVar, {"URLButtons"})
+			
+			-- Called when someone wants to commit changes to a property
+			local function saveFunc()
+				propertyPanel.lastRecVariable[1] = table.Copy(internalURLButtons)
+				
+				updateVariables(propertyPanel.lastRecVariable, {"URLButtons"})
+				setUnsaved(false)
+			end
+			
+			-- Called when someone wants to revert changes to a property
+			local function revertFunc()
+				requestVariables(onGetVar, {"URLButtons"})
+			end
+			
+			-- Setup the save and revert buttons
+			setupGeneralPropPanels(FMainMenu.configPropertyWindow, saveFunc, revertFunc)
+			
+			--Set completed panel as active property
+			setPropPanel(propertyPanel)
+		end
+		
 		configSheet:AddSheet( FMainMenu.GetPhrase("ConfigPropertiesCategoriesMenu"), configSheetTwo, nil )
 		
 		
@@ -2280,6 +2753,9 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 			net.SendToServer()
 			if soundSelection != nil then
 				soundSelection:Close()
+			end
+			if URLButtonEditor != nil then
+				URLButtonEditor:Close()
 			end
 			mainBlocker:Remove()
 			if FMainMenu.configPropertyWindow.onCloseProp !=  nil then
@@ -2404,6 +2880,7 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 		local width = ScrW()
 		local height = ScrH()
 	
+		-- Logo
 		if previewCopy["_logoIsText"] then
 			if HTMLLogo != nil then
 				HTMLLogo:Remove()
@@ -2469,7 +2946,43 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 				end
 			end
 		end
+		
+		-- Buttons
+		local xPos = width * 0.05
+		local normalSize = 192
+		if previewCopy["_logoIsText"] then
+			normalSize = previewCopy["_logoFontSize"]
+		end
+		
+		local curYPos = (ScrH() * 0.5) - 32
+		if previewCopy["_GarrysModStyle"] then
+			local additive = 64
+			if previewCopy["_logoIsText"] then
+				additive = 104
+			end
+			curYPos = additive + normalSize
+		end
+		
+		-- Play Button
+		draw.SimpleText( FMainMenu.GetPhrase("PlayButtonText"), FMainMenu.CurrentTextButtonFont, xPos, curYPos, FayLib.IGC.GetSharedKey(addonName, "textButtonColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+		curYPos = curYPos + 72
+		
+		-- URL Buttons
+		for _,URLButton in ipairs(previewCopy["_URLButtons"]) do
+			draw.SimpleText( URLButton.Text, FMainMenu.CurrentTextButtonFont, xPos, curYPos, FayLib.IGC.GetSharedKey(addonName, "textButtonColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+			curYPos = curYPos + 48
+		end
+		
+		-- Disconnect Button
+		if previewCopy["_dcButton"] then
+			curYPos = curYPos + 24
+			if #previewCopy["_URLButtons"] == 0 then
+				curYPos = curYPos - 36
+			end
+			draw.SimpleText( FMainMenu.GetPhrase("DisconnectButtonText"), FMainMenu.CurrentTextButtonFont, xPos, curYPos, FayLib.IGC.GetSharedKey(addonName, "textButtonColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+		end
 
+		-- Changelog
 		if previewCopy["_showChangeLog"] then
 			if ChangelogBox == nil then 
 				ChangelogBox = FMainMenu.Derma.CreateDPanel(nil, 256, ScrH()*(1/3), false )
@@ -2504,7 +3017,8 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			end
 		end
 			
-		if previewLevel == 2 then -- draw first time join dialogue
+		-- First Time Welcome
+		if previewLevel == 2 then
 			if welcomerBox == nil then
 				welcomerBox = FMainMenu.Derma.CreateDFrame(FMainMenu.GetPhrase("WelcomerFrameTitle"), nil, 380, 256)
 				welcomerBox:SetZPos(1)
@@ -2543,7 +3057,8 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			end
 		end
 		
-		if previewLevel == 3 && soundSelection == nil then -- music
+		-- Music Preview
+		if previewLevel == 3 && soundSelection == nil then
 			if cachedMusicContent != previewCopy["_musicContent"] || cachedMusicOption != previewCopy["_musicToggle"] || cachedMusicVolume != previewCopy["_musicVolume"] || cachedMusicLooping != previewCopy["_musicLooping"] then
 				cachedMusicContent = previewCopy["_musicContent"]
 				cachedMusicOption = previewCopy["_musicToggle"]

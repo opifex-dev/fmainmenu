@@ -152,6 +152,14 @@ derma.DefineControl("fmainmenu_config_editor_button", nil, PANEL, "DButton")
 
 local PANEL = {}
 function PANEL:Init()
+	self:SetSize(52.5,25)
+	self:SetPaintBackgroundEnabled( false )
+end
+
+derma.DefineControl("fmainmenu_config_editor_image_button", nil, PANEL, "DImageButton")
+
+local PANEL = {}
+function PANEL:Init()
 	self:SetText("")
 	self:SetTextColor( Color(0,0,0) )
 	self:SetTextColor(Color(0,0,0))

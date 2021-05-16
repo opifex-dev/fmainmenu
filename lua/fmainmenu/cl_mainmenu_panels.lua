@@ -164,7 +164,7 @@ function FMainMenu.Panels.CreateConfirmDC()
 	leftText:SetWrap( true )
 	leftText:SetContentAlignment( 8 )
 	
-	local secondButton = FMainMenu.Derma.CreateDButton(initTroublePanel, 108, 32, FMainMenu.GetPhrase("DisconnectConfirmNoText"), "")
+	local secondButton = FMainMenu.Derma.CreateDButton(initTroublePanel, 108, 32, FMainMenu.GetPhrase("ConfigCommonValueNo"), "")
 	secondButton:SetPos(130, 56)
 	secondButton:SetFont("HudHintTextLarge")
 	secondButton:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
@@ -177,7 +177,7 @@ function FMainMenu.Panels.CreateConfirmDC()
 		blocker:Remove()
 	end
 	
-	local firstButton = FMainMenu.Derma.CreateDButton(initTroublePanel, 108, 32, FMainMenu.GetPhrase("DisconnectConfirmYesText"), "")
+	local firstButton = FMainMenu.Derma.CreateDButton(initTroublePanel, 108, 32, FMainMenu.GetPhrase("ConfigCommonValueYes"), "")
 	firstButton:SetPos(8, 56)
 	firstButton:SetFont("HudHintTextLarge")
 	firstButton:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
