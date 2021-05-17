@@ -351,55 +351,49 @@ end )
 
 -- Sandbox Hooks
 hook.Add( "PlayerSpawnEffect", "FMainMenu_PlayerSpawnEffect", function( ply )
-    if ply:GetNWBool("FMainMenu_InMenu",false) && !FayLib.IGC.GetKey(addonName, "SandboxCanSpawnAnything") then
+    if ply:GetNWBool("FMainMenu_InMenu",false) && !FayLib.IGC.GetKey(addonName, "PlayerSpawnEffect") then
 		return false
 	end
 end )
 
 hook.Add( "PlayerSpawnNPC", "FMainMenu_PlayerSpawnNPC", function( ply )
-    if ply:GetNWBool("FMainMenu_InMenu",false) && !FayLib.IGC.GetKey(addonName, "SandboxCanSpawnAnything") then
-		return false
-	end
-end )
-
-hook.Add( "PlayerSpawnObject", "FMainMenu_PlayerSpawnObject", function( ply )
-    if ply:GetNWBool("FMainMenu_InMenu",false) && !FayLib.IGC.GetKey(addonName, "SandboxCanSpawnAnything") then
+    if ply:GetNWBool("FMainMenu_InMenu",false) && !FayLib.IGC.GetKey(addonName, "PlayerSpawnNPC") then
 		return false
 	end
 end )
 
 hook.Add( "PlayerSpawnProp", "FMainMenu_PlayerSpawnProp", function( ply )
-    if ply:GetNWBool("FMainMenu_InMenu",false) && !FayLib.IGC.GetKey(addonName, "SandboxCanSpawnAnything") then
+    if ply:GetNWBool("FMainMenu_InMenu",false) && !FayLib.IGC.GetKey(addonName, "PlayerSpawnProp") then
 		return false
 	end
 end )
 
 hook.Add( "PlayerSpawnRagdoll", "FMainMenu_PlayerSpawnRagdoll", function( ply )
-    if ply:GetNWBool("FMainMenu_InMenu",false) && !FayLib.IGC.GetKey(addonName, "SandboxCanSpawnAnything") then
+    if ply:GetNWBool("FMainMenu_InMenu",false) && !FayLib.IGC.GetKey(addonName, "PlayerSpawnRagdoll") then
 		return false
 	end
 end )
 
 hook.Add( "PlayerSpawnSENT", "FMainMenu_PlayerSpawnSENT", function( ply )
-    if ply:GetNWBool("FMainMenu_InMenu",false) && !FayLib.IGC.GetKey(addonName, "SandboxCanSpawnAnything") then
+    if ply:GetNWBool("FMainMenu_InMenu",false) && !FayLib.IGC.GetKey(addonName, "PlayerSpawnSENT") then
 		return false
 	end
 end )
 
 hook.Add( "PlayerSpawnSWEP", "FMainMenu_PlayerSpawnSWEP", function( ply )
-    if ply:GetNWBool("FMainMenu_InMenu",false) && !FayLib.IGC.GetKey(addonName, "SandboxCanSpawnAnything") then
+    if ply:GetNWBool("FMainMenu_InMenu",false) && !FayLib.IGC.GetKey(addonName, "PlayerSpawnSWEP") then
 		return false
 	end
 end )
 
 hook.Add( "PlayerSpawnVehicle", "FMainMenu_PlayerSpawnVehicle", function( ply )
-    if ply:GetNWBool("FMainMenu_InMenu",false) && !FayLib.IGC.GetKey(addonName, "SandboxCanSpawnAnything") then
+    if ply:GetNWBool("FMainMenu_InMenu",false) && !FayLib.IGC.GetKey(addonName, "PlayerSpawnVehicle") then
 		return false
 	end
 end )
 
 hook.Add( "PlayerGiveSWEP", "FMainMenu_PlayerGiveSWEP", function( ply )
-    if ply:GetNWBool("FMainMenu_InMenu",false) && !FayLib.IGC.GetKey(addonName, "SandboxCanSpawnAnything") then
+    if ply:GetNWBool("FMainMenu_InMenu",false) && !FayLib.IGC.GetKey(addonName, "PlayerGiveSWEP") then
 		return false
 	end
 end )

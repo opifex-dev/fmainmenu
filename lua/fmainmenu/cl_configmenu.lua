@@ -2539,7 +2539,6 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 							secondButton:SetContentAlignment( 5 )
 							FMainMenu.Derma:SetFrameSettings(secondButton, FayLib.IGC.GetSharedKey(addonName, "commonButtonColor"), 0)
 							secondButton.DoClick = function()
-								surface.PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
 								removeConfirm:Remove()
 								panelBlocker:SetVisible(false)
 							end
@@ -2552,7 +2551,6 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 							firstButton:SetContentAlignment( 5 )
 							FMainMenu.Derma:SetFrameSettings(firstButton, FayLib.IGC.GetSharedKey(addonName, "commonButtonColor"), 0)
 							firstButton.DoClick = function()
-								surface.PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
 								removeConfirm:Remove()
 								panelBlocker:SetVisible(false)
 								
@@ -2704,12 +2702,753 @@ net.Receive( "FMainMenu_Config_OpenMenu", function( len )
 		
 		local configSheetThree = vgui.Create("fmainmenu_config_editor_panel", configSheet)
 		configSheetThree:SetSize( 240, 230 )
+		
+		-- Sandbox Hooks
+		local configSheetThreeSandboxHooksButton = vgui.Create("fmainmenu_config_editor_button", configSheetThree)
+		configSheetThreeSandboxHooksButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesSandboxHooksPropName"))
+		configSheetThreeSandboxHooksButton:SetSize(200,25)
+		configSheetThreeSandboxHooksButton:AlignLeft(4)
+		configSheetThreeSandboxHooksButton:AlignTop(5)
+		configSheetThreeSandboxHooksButton.DoClick = function(button)
+			local propertyCode = 31
+			previewLevel = 0
+			local tableKeyName = {"PlayerSpawnEffect","PlayerSpawnNPC","PlayerSpawnProp","PlayerSpawnRagdoll","PlayerSpawnSENT","PlayerSpawnSWEP","PlayerSpawnVehicle","PlayerGiveSWEP"}
+			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
+			FMainMenu.configPropertyWindow.propertyCode = propertyCode
+		
+			--Property Panel Setup
+			local propertyPanel = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.configPropertyWindow)
+			propertyPanel:SetSize( 240, 255 )
+			propertyPanel:SetPos(5,25)
+			local propertyPanelLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesSandboxHooksPropName"))
+			propertyPanelLabel:SetFont("HudHintTextLarge")
+			propertyPanelLabel:SetPos(2,0)
+			local propertyPanelDescLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelDescLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesSandboxHooksPropDesc"))
+			propertyPanelDescLabel:SetPos(3, 24)
+			propertyPanelDescLabel:SetSize(225, 36)
+		
+			-- PlayerSpawnEffect toggle
+			local playerSpawnEffectLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			playerSpawnEffectLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesSandboxHooksPlayerSpawnEffect"))
+			playerSpawnEffectLabel:SetPos(2, 70)
+			local playerSpawnEffectOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			playerSpawnEffectOption:SetSize( 70, 18 )
+			playerSpawnEffectOption:SetPos( 168, 70 )
+			playerSpawnEffectOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			playerSpawnEffectOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueAllowed") )
+			playerSpawnEffectOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			
+			-- PlayerSpawnNPC toggle
+			local playerSpawnNPCLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			playerSpawnNPCLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesSandboxHooksPlayerSpawnNPC"))
+			playerSpawnNPCLabel:SetPos(2, 91)
+			local playerSpawnNPCOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			playerSpawnNPCOption:SetSize( 70, 18 )
+			playerSpawnNPCOption:SetPos( 168, 91 )
+			playerSpawnNPCOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			playerSpawnNPCOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueAllowed") )
+			playerSpawnNPCOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			
+			-- PlayerSpawnProp toggle
+			local playerSpawnPropLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			playerSpawnPropLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesSandboxHooksPlayerSpawnProp"))
+			playerSpawnPropLabel:SetPos(2, 112)
+			local playerSpawnPropOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			playerSpawnPropOption:SetSize( 70, 18 )
+			playerSpawnPropOption:SetPos( 168, 112 )
+			playerSpawnPropOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			playerSpawnPropOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueAllowed") )
+			playerSpawnPropOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			
+			-- PlayerSpawnRagdoll toggle
+			local playerSpawnRagdollLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			playerSpawnRagdollLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesSandboxHooksPlayerSpawnRagdoll"))
+			playerSpawnRagdollLabel:SetPos(2, 133)
+			local playerSpawnRagdollOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			playerSpawnRagdollOption:SetSize( 70, 18 )
+			playerSpawnRagdollOption:SetPos( 168, 133 )
+			playerSpawnRagdollOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			playerSpawnRagdollOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueAllowed") )
+			playerSpawnRagdollOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			
+			-- PlayerSpawnSENT toggle
+			local playerSpawnSENTLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			playerSpawnSENTLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesSandboxHooksPlayerSpawnSENT"))
+			playerSpawnSENTLabel:SetPos(2, 154)
+			local playerSpawnSENTOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			playerSpawnSENTOption:SetSize( 70, 18 )
+			playerSpawnSENTOption:SetPos( 168, 154 )
+			playerSpawnSENTOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			playerSpawnSENTOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueAllowed") )
+			playerSpawnSENTOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			
+			-- PlayerSpawnSWEP toggle
+			local playerSpawnSWEPLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			playerSpawnSWEPLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesSandboxHooksPlayerSpawnSWEP"))
+			playerSpawnSWEPLabel:SetPos(2, 175)
+			local playerSpawnSWEPOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			playerSpawnSWEPOption:SetSize( 70, 18 )
+			playerSpawnSWEPOption:SetPos( 168, 175 )
+			playerSpawnSWEPOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			playerSpawnSWEPOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueAllowed") )
+			playerSpawnSWEPOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			
+			-- PlayerSpawnVehicle toggle
+			local playerSpawnVehicleLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			playerSpawnVehicleLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesSandboxHooksPlayerSpawnVehicle"))
+			playerSpawnVehicleLabel:SetPos(2, 196)
+			local playerSpawnVehicleOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			playerSpawnVehicleOption:SetSize( 70, 18 )
+			playerSpawnVehicleOption:SetPos( 168, 196 )
+			playerSpawnVehicleOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			playerSpawnVehicleOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueAllowed") )
+			playerSpawnVehicleOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			
+			-- PlayerGiveSWEP toggle
+			local playerGiveSWEPLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			playerGiveSWEPLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesSandboxHooksPlayerGiveSWEP"))
+			playerGiveSWEPLabel:SetPos(2, 217)
+			local playerGiveSWEPOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			playerGiveSWEPOption:SetSize( 70, 18 )
+			playerGiveSWEPOption:SetPos( 168, 217 )
+			playerGiveSWEPOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			playerGiveSWEPOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueAllowed") )
+			playerGiveSWEPOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			
+			
+			
+			-- Used to detect changes in the on-screen form from the server-side variable	
+			local function isVarChanged()				
+				local serverVar = ""
+				if propertyPanel.lastRecVariable[1] == false then
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDenied")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueAllowed")
+				end
+				
+				if playerSpawnEffectOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				serverVar = ""
+				if propertyPanel.lastRecVariable[2] == false then
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDenied")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueAllowed")
+				end
+				
+				if playerSpawnNPCOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				serverVar = ""
+				if propertyPanel.lastRecVariable[3] == false then
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDenied")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueAllowed")
+				end
+				
+				if playerSpawnPropOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				serverVar = ""
+				if propertyPanel.lastRecVariable[4] == false then
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDenied")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueAllowed")
+				end
+				
+				if playerSpawnRagdollOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				serverVar = ""
+				if propertyPanel.lastRecVariable[5] == false then
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDenied")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueAllowed")
+				end
+				
+				if playerSpawnSENTOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				serverVar = ""
+				if propertyPanel.lastRecVariable[6] == false then
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDenied")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueAllowed")
+				end
+				
+				if playerSpawnSWEPOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				serverVar = ""
+				if propertyPanel.lastRecVariable[7] == false then
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDenied")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueAllowed")
+				end
+				
+				if playerSpawnVehicleOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				serverVar = ""
+				if propertyPanel.lastRecVariable[8] == false then
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDenied")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueAllowed")
+				end
+				
+				if playerGiveSWEPOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				setUnsaved(false)
+			end
+			
+			function playerSpawnEffectOption:OnSelect( index, value, data )
+				isVarChanged()
+			end
+			
+			function playerSpawnNPCOption:OnSelect( index, value, data )
+				isVarChanged()
+			end
+			
+			function playerSpawnPropOption:OnSelect( index, value, data )
+				isVarChanged()
+			end
+			
+			function playerSpawnRagdollOption:OnSelect( index, value, data )
+				isVarChanged()
+			end
+			
+			function playerSpawnSENTOption:OnSelect( index, value, data )
+				isVarChanged()
+			end
+			
+			function playerSpawnSWEPOption:OnSelect( index, value, data )
+				isVarChanged()
+			end
+			
+			function playerSpawnVehicleOption:OnSelect( index, value, data )
+				isVarChanged()
+			end
+			
+			function playerGiveSWEPOption:OnSelect( index, value, data )
+				isVarChanged()
+			end
+			
+			-- Called when server responds with current server-side variables
+			local function onGetVar(varTable)
+				propertyPanel.lastRecVariable = varTable
+				
+				if varTable[1] == true then
+					playerSpawnEffectOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueAllowed"))
+				else
+					playerSpawnEffectOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDenied"))
+				end
+				
+				if varTable[2] == true then
+					playerSpawnNPCOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueAllowed"))
+				else
+					playerSpawnNPCOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDenied"))
+				end
+				
+				if varTable[3] == true then
+					playerSpawnPropOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueAllowed"))
+				else
+					playerSpawnPropOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDenied"))
+				end
+				
+				if varTable[4] == true then
+					playerSpawnRagdollOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueAllowed"))
+				else
+					playerSpawnRagdollOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDenied"))
+				end
+				
+				if varTable[5] == true then
+					playerSpawnSENTOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueAllowed"))
+				else
+					playerSpawnSENTOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDenied"))
+				end
+				
+				if varTable[6] == true then
+					playerSpawnSWEPOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueAllowed"))
+				else
+					playerSpawnSWEPOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDenied"))
+				end
+				
+				if varTable[7] == true then
+					playerSpawnVehicleOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueAllowed"))
+				else
+					playerSpawnVehicleOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDenied"))
+				end
+				
+				if varTable[8] == true then
+					playerGiveSWEPOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueAllowed"))
+				else
+					playerGiveSWEPOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDenied"))
+				end
+				
+				setUnsaved(false)
+			end
+			
+			-- Send the request for said server-side variables
+			requestVariables(onGetVar, {"PlayerSpawnEffect","PlayerSpawnNPC","PlayerSpawnProp","PlayerSpawnRagdoll","PlayerSpawnSENT","PlayerSpawnSWEP","PlayerSpawnVehicle","PlayerGiveSWEP"})
+			
+			-- Called when someone wants to commit changes to a property
+			local function saveFunc()
+				if playerSpawnEffectOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
+					propertyPanel.lastRecVariable[1] = false
+				elseif playerSpawnEffectOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
+					propertyPanel.lastRecVariable[1] = true
+				else
+					return
+				end
+				
+				if playerSpawnNPCOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
+					propertyPanel.lastRecVariable[2] = false
+				elseif playerSpawnNPCOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
+					propertyPanel.lastRecVariable[2] = true
+				else
+					return
+				end
+				
+				if playerSpawnPropOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
+					propertyPanel.lastRecVariable[3] = false
+				elseif playerSpawnPropOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
+					propertyPanel.lastRecVariable[3] = true
+				else
+					return
+				end
+				
+				if playerSpawnRagdollOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
+					propertyPanel.lastRecVariable[4] = false
+				elseif playerSpawnRagdollOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
+					propertyPanel.lastRecVariable[4] = true
+				else
+					return
+				end
+				
+				if playerSpawnSENTOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
+					propertyPanel.lastRecVariable[5] = false
+				elseif playerSpawnSENTOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
+					propertyPanel.lastRecVariable[5] = true
+				else
+					return
+				end
+				
+				if playerSpawnSWEPOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
+					propertyPanel.lastRecVariable[6] = false
+				elseif playerSpawnSWEPOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
+					propertyPanel.lastRecVariable[6] = true
+				else
+					return
+				end
+				
+				if playerSpawnVehicleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
+					propertyPanel.lastRecVariable[7] = false
+				elseif playerSpawnVehicleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
+					propertyPanel.lastRecVariable[7] = true
+				else
+					return
+				end
+				
+				if playerGiveSWEPOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
+					propertyPanel.lastRecVariable[8] = false
+				elseif playerGiveSWEPOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
+					propertyPanel.lastRecVariable[8] = true
+				else
+					return
+				end
+				
+				updateVariables(propertyPanel.lastRecVariable, {"PlayerSpawnEffect","PlayerSpawnNPC","PlayerSpawnProp","PlayerSpawnRagdoll","PlayerSpawnSENT","PlayerSpawnSWEP","PlayerSpawnVehicle","PlayerGiveSWEP"})
+				setUnsaved(false)
+			end
+			
+			-- Called when someone wants to revert changes to a property
+			local function revertFunc()
+				requestVariables(onGetVar, {"PlayerSpawnEffect","PlayerSpawnNPC","PlayerSpawnProp","PlayerSpawnRagdoll","PlayerSpawnSENT","PlayerSpawnSWEP","PlayerSpawnVehicle","PlayerGiveSWEP"})
+			end
+			
+			-- Setup the save and revert buttons
+			setupGeneralPropPanels(FMainMenu.configPropertyWindow, saveFunc, revertFunc)
+			
+			--Set completed panel as active property
+			setPropPanel(propertyPanel)
+		end
+		
+		-- DarkRP Hooks
+		local configSheetThreeDarkRPHooksButton = vgui.Create("fmainmenu_config_editor_button", configSheetThree)
+		configSheetThreeDarkRPHooksButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesDarkRPHooksPropName"))
+		configSheetThreeDarkRPHooksButton:SetSize(200,25)
+		configSheetThreeDarkRPHooksButton:AlignLeft(4)
+		configSheetThreeDarkRPHooksButton:AlignTop(35)
+		configSheetThreeDarkRPHooksButton.DoClick = function(button)
+			local propertyCode = 32
+			previewLevel = 0
+			local tableKeyName = {"DarkRPCanBuy","DarkRPCanChatSound","DarkRPCanUse","DarkRPCanUsePocket","DarkRPCanDropWeapon","DarkRPCanReqHits","DarkRPCanReqWarrants"}
+			if FMainMenu.configPropertyWindow.propertyCode == propertyCode then return end
+			FMainMenu.configPropertyWindow.propertyCode = propertyCode
+		
+			--Property Panel Setup
+			local propertyPanel = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.configPropertyWindow)
+			propertyPanel:SetSize( 240, 255 )
+			propertyPanel:SetPos(5,25)
+			local propertyPanelLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesDarkRPHooksPropName"))
+			propertyPanelLabel:SetFont("HudHintTextLarge")
+			propertyPanelLabel:SetPos(2,0)
+			local propertyPanelDescLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			propertyPanelDescLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesDarkRPHooksPropDesc"))
+			propertyPanelDescLabel:SetPos(3, 24)
+			propertyPanelDescLabel:SetSize(225, 36)
+		
+			-- DarkRPCanBuy toggle
+			local canBuyLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			canBuyLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesDarkRPHooksCanBuy"))
+			canBuyLabel:SetPos(2, 70)
+			local canBuyOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			canBuyOption:SetSize( 70, 18 )
+			canBuyOption:SetPos( 168, 70 )
+			canBuyOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			canBuyOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueAllowed") )
+			canBuyOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			
+			-- DarkRPCanChatSound toggle
+			local canChatSoundLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			canChatSoundLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesDarkRPHooksCanChatSound"))
+			canChatSoundLabel:SetPos(2, 91)
+			local canChatSoundOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			canChatSoundOption:SetSize( 70, 18 )
+			canChatSoundOption:SetPos( 168, 91 )
+			canChatSoundOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			canChatSoundOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueAllowed") )
+			canChatSoundOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			
+			-- DarkRPCanUse toggle
+			local canUseLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			canUseLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesDarkRPHooksCanUse"))
+			canUseLabel:SetPos(2, 112)
+			local canUseOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			canUseOption:SetSize( 70, 18 )
+			canUseOption:SetPos( 168, 112 )
+			canUseOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			canUseOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueAllowed") )
+			canUseOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			
+			-- DarkRPCanUsePocket toggle
+			local canUsePocketLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			canUsePocketLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesDarkRPHooksCanUsePocket"))
+			canUsePocketLabel:SetPos(2, 133)
+			local canUsePocketOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			canUsePocketOption:SetSize( 70, 18 )
+			canUsePocketOption:SetPos( 168, 133 )
+			canUsePocketOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			canUsePocketOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueAllowed") )
+			canUsePocketOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			
+			-- DarkRPCanDropWeapon toggle
+			local canDropWeaponLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			canDropWeaponLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesDarkRPHooksCanDropWeapon"))
+			canDropWeaponLabel:SetPos(2, 154)
+			local canDropWeaponOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			canDropWeaponOption:SetSize( 70, 18 )
+			canDropWeaponOption:SetPos( 168, 154 )
+			canDropWeaponOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			canDropWeaponOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueAllowed") )
+			canDropWeaponOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			
+			-- DarkRPCanReqHits toggle
+			local canReqHitsLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			canReqHitsLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesDarkRPHooksCanReqHits"))
+			canReqHitsLabel:SetPos(2, 175)
+			local canReqHitsOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			canReqHitsOption:SetSize( 70, 18 )
+			canReqHitsOption:SetPos( 168, 175 )
+			canReqHitsOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			canReqHitsOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueAllowed") )
+			canReqHitsOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			
+			-- DarkRPCanReqWarrants toggle
+			local canReqWarrantsLabel = vgui.Create("fmainmenu_config_editor_label", propertyPanel)
+			canReqWarrantsLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesDarkRPHooksCanReqWarrants"))
+			canReqWarrantsLabel:SetPos(2, 196)
+			local canReqWarrantsOption = vgui.Create("fmainmenu_config_editor_combobox", propertyPanel)
+			canReqWarrantsOption:SetSize( 70, 18 )
+			canReqWarrantsOption:SetPos( 168, 196 )
+			canReqWarrantsOption:SetValue( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			canReqWarrantsOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueAllowed") )
+			canReqWarrantsOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueDenied") )
+			
+			
+			
+			-- Used to detect changes in the on-screen form from the server-side variable	
+			local function isVarChanged()				
+				local serverVar = ""
+				if propertyPanel.lastRecVariable[1] == false then
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDenied")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueAllowed")
+				end
+				
+				if canBuyOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				serverVar = ""
+				if propertyPanel.lastRecVariable[2] == false then
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDenied")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueAllowed")
+				end
+				
+				if canChatSoundOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				serverVar = ""
+				if propertyPanel.lastRecVariable[3] == false then
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDenied")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueAllowed")
+				end
+				
+				if canUseOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				serverVar = ""
+				if propertyPanel.lastRecVariable[4] == false then
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDenied")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueAllowed")
+				end
+				
+				if canUsePocketOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				serverVar = ""
+				if propertyPanel.lastRecVariable[5] == false then
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDenied")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueAllowed")
+				end
+				
+				if canDropWeaponOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				serverVar = ""
+				if propertyPanel.lastRecVariable[6] == false then
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDenied")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueAllowed")
+				end
+				
+				if canReqHitsOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				serverVar = ""
+				if propertyPanel.lastRecVariable[7] == false then
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueDenied")
+				else
+					serverVar = FMainMenu.GetPhrase("ConfigCommonValueAllowed")
+				end
+				
+				if canReqWarrantsOption:GetText() != serverVar then
+					setUnsaved(true)
+					return
+				end
+				
+				setUnsaved(false)
+			end
+			
+			function canBuyOption:OnSelect( index, value, data )
+				isVarChanged()
+			end
+			
+			function canChatSoundOption:OnSelect( index, value, data )
+				isVarChanged()
+			end
+			
+			function canUseOption:OnSelect( index, value, data )
+				isVarChanged()
+			end
+			
+			function canUsePocketOption:OnSelect( index, value, data )
+				isVarChanged()
+			end
+			
+			function canDropWeaponOption:OnSelect( index, value, data )
+				isVarChanged()
+			end
+			
+			function canReqHitsOption:OnSelect( index, value, data )
+				isVarChanged()
+			end
+			
+			function canReqWarrantsOption:OnSelect( index, value, data )
+				isVarChanged()
+			end
+			
+			-- Called when server responds with current server-side variables
+			local function onGetVar(varTable)
+				propertyPanel.lastRecVariable = varTable
+				
+				if varTable[1] == true then
+					canBuyOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueAllowed"))
+				else
+					canBuyOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDenied"))
+				end
+				
+				if varTable[2] == true then
+					canChatSoundOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueAllowed"))
+				else
+					canChatSoundOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDenied"))
+				end
+				
+				if varTable[3] == true then
+					canUseOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueAllowed"))
+				else
+					canUseOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDenied"))
+				end
+				
+				if varTable[4] == true then
+					canUsePocketOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueAllowed"))
+				else
+					canUsePocketOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDenied"))
+				end
+				
+				if varTable[5] == true then
+					canDropWeaponOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueAllowed"))
+				else
+					canDropWeaponOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDenied"))
+				end
+				
+				if varTable[6] == true then
+					canReqHitsOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueAllowed"))
+				else
+					canReqHitsOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDenied"))
+				end
+				
+				if varTable[7] == true then
+					canReqWarrantsOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueAllowed"))
+				else
+					canReqWarrantsOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDenied"))
+				end
+				
+				setUnsaved(false)
+			end
+			
+			-- Send the request for said server-side variables
+			requestVariables(onGetVar, {"DarkRPCanBuy","DarkRPCanChatSound","DarkRPCanUse","DarkRPCanUsePocket","DarkRPCanDropWeapon","DarkRPCanReqHits","DarkRPCanReqWarrants"})
+			
+			-- Called when someone wants to commit changes to a property
+			local function saveFunc()
+				if canBuyOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
+					propertyPanel.lastRecVariable[1] = false
+				elseif canBuyOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
+					propertyPanel.lastRecVariable[1] = true
+				else
+					return
+				end
+				
+				if canChatSoundOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
+					propertyPanel.lastRecVariable[2] = false
+				elseif canChatSoundOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
+					propertyPanel.lastRecVariable[2] = true
+				else
+					return
+				end
+				
+				if canUseOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
+					propertyPanel.lastRecVariable[3] = false
+				elseif canUseOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
+					propertyPanel.lastRecVariable[3] = true
+				else
+					return
+				end
+				
+				if canUsePocketOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
+					propertyPanel.lastRecVariable[4] = false
+				elseif canUsePocketOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
+					propertyPanel.lastRecVariable[4] = true
+				else
+					return
+				end
+				
+				if canDropWeaponOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
+					propertyPanel.lastRecVariable[5] = false
+				elseif canDropWeaponOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
+					propertyPanel.lastRecVariable[5] = true
+				else
+					return
+				end
+				
+				if canReqHitsOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
+					propertyPanel.lastRecVariable[6] = false
+				elseif canReqHitsOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
+					propertyPanel.lastRecVariable[6] = true
+				else
+					return
+				end
+				
+				if canReqWarrantsOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
+					propertyPanel.lastRecVariable[7] = false
+				elseif canReqWarrantsOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
+					propertyPanel.lastRecVariable[7] = true
+				else
+					return
+				end
+				
+				updateVariables(propertyPanel.lastRecVariable, {"DarkRPCanBuy","DarkRPCanChatSound","DarkRPCanUse","DarkRPCanUsePocket","DarkRPCanDropWeapon","DarkRPCanReqHits","DarkRPCanReqWarrants"})
+				setUnsaved(false)
+			end
+			
+			-- Called when someone wants to revert changes to a property
+			local function revertFunc()
+				requestVariables(onGetVar, {"DarkRPCanBuy","DarkRPCanChatSound","DarkRPCanUse","DarkRPCanUsePocket","DarkRPCanDropWeapon","DarkRPCanReqHits","DarkRPCanReqWarrants"})
+			end
+			
+			-- Setup the save and revert buttons
+			setupGeneralPropPanels(FMainMenu.configPropertyWindow, saveFunc, revertFunc)
+			
+			--Set completed panel as active property
+			setPropPanel(propertyPanel)
+		end
+		
 		configSheet:AddSheet( FMainMenu.GetPhrase("ConfigPropertiesCategoriesHooks"), configSheetThree, nil )
 		
 		
 		
 		local configSheetFour = vgui.Create("fmainmenu_config_editor_panel", configSheet)
 		configSheetFour:SetSize( 240, 230 )
+		
+		
+		
 		configSheet:AddSheet( FMainMenu.GetPhrase("ConfigPropertiesCategoriesDerma"), configSheetFour, nil )
 		
 		

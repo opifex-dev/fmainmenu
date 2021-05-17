@@ -77,7 +77,14 @@ FayLib.IGC.DefineKey(addonName, "URLButtons", {
 }, true)
 
 -- Sandbox Hook Settings
-FayLib.IGC.DefineKey(addonName, "SandboxCanSpawnAnything", false, false)
+FayLib.IGC.DefineKey(addonName, "PlayerSpawnEffect", false, false)
+FayLib.IGC.DefineKey(addonName, "PlayerSpawnNPC", false, false)
+FayLib.IGC.DefineKey(addonName, "PlayerSpawnProp", false, false)
+FayLib.IGC.DefineKey(addonName, "PlayerSpawnRagdoll", false, false)
+FayLib.IGC.DefineKey(addonName, "PlayerSpawnSENT", false, false)
+FayLib.IGC.DefineKey(addonName, "PlayerSpawnSWEP", false, false)
+FayLib.IGC.DefineKey(addonName, "PlayerSpawnVehicle", false, false)
+FayLib.IGC.DefineKey(addonName, "PlayerGiveSWEP", false, false)
 
 -- DarkRP Hook Settings
 FayLib.IGC.DefineKey(addonName, "DarkRPCanBuy", false, false)

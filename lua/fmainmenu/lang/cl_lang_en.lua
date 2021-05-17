@@ -39,6 +39,8 @@ FMainMenu.LangPresets[prefix].ConfigCommonValueNo = "No"
 FMainMenu.LangPresets[prefix].ConfigCommonValueX = "X: "
 FMainMenu.LangPresets[prefix].ConfigCommonValueY = "Y: "
 FMainMenu.LangPresets[prefix].ConfigCommonValueZ = "Z: "
+FMainMenu.LangPresets[prefix].ConfigCommonValueAllowed = "Allowed"
+FMainMenu.LangPresets[prefix].ConfigCommonValueDenied = "Denied"
 
 FMainMenu.LangPresets[prefix].ConfigLeaveMenu = "Please exit the main menu before opening the coonfiguration tool."
 FMainMenu.LangPresets[prefix].ConfigUnsavedChanges = "The current property is changed but unsaved,\n        would you like to discard changes?"
@@ -153,8 +155,26 @@ FMainMenu.LangPresets[prefix].ConfigURLButtonEditorWindowButtonLabel = "Button L
 FMainMenu.LangPresets[prefix].ConfigURLButtonEditorWindowLinkLabel = "Button Link: "
 FMainMenu.LangPresets[prefix].ConfigURLButtonEditorWindowDeleteConfirm = "Are you sure you would like to delete this button?"
 
+FMainMenu.LangPresets[prefix].ConfigPropertiesSandboxHooksPropName = "Sandbox Hooks"
+FMainMenu.LangPresets[prefix].ConfigPropertiesSandboxHooksPropDesc = "Control what the player can do\nwhile in the main menu."
+FMainMenu.LangPresets[prefix].ConfigPropertiesSandboxHooksPlayerSpawnEffect = "Spawning Effects: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesSandboxHooksPlayerSpawnNPC = "Spawning NPCs: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesSandboxHooksPlayerSpawnProp = "Spawning Props: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesSandboxHooksPlayerSpawnRagdoll = "Spawning Ragdolls: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesSandboxHooksPlayerSpawnSENT = "Spawning SENTs: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesSandboxHooksPlayerSpawnSWEP = "Spawning SWEPs: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesSandboxHooksPlayerSpawnVehicle = "Spawning Vehicles: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesSandboxHooksPlayerGiveSWEP = "Giving SWEPs To Self: "
 
-
+FMainMenu.LangPresets[prefix].ConfigPropertiesDarkRPHooksPropName = "DarkRP Hooks"
+FMainMenu.LangPresets[prefix].ConfigPropertiesDarkRPHooksPropDesc = "Control what the player can do\nwhile in the main menu."
+FMainMenu.LangPresets[prefix].ConfigPropertiesDarkRPHooksCanBuy = "Buying Items: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesDarkRPHooksCanChatSound = "Chat Sounds: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesDarkRPHooksCanUse = "Using Entities: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesDarkRPHooksCanUsePocket = "Using Pocket: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesDarkRPHooksCanDropWeapon = "Dropping Weapons: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesDarkRPHooksCanReqHits = "Requesting Hits: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesDarkRPHooksCanReqWarrants = "Requesting Warrants: "
 
 -- IGNORE BELOW CODE
 FMainMenu.languageLookup[prefix] = fancyName
