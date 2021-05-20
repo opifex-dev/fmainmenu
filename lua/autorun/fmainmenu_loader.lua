@@ -29,19 +29,26 @@ FMainMenu.Log("Begin Load", false)
 
 --Load required lua files in proper order
 if SERVER then
-	include( "fmainmenu/sv_configsync.lua" ) 
-	AddCSLuaFile( "fmainmenu/cl_configsync.lua" ) 
+	include( "fmainmenu/config/sv_configsync.lua" ) 
+	AddCSLuaFile( "fmainmenu/config/cl_configsync.lua" ) 
 	AddCSLuaFile("vgui/cl_fmainmenu_config.lua")
 	AddCSLuaFile( "vgui/cl_fmainmenu_mmenu.lua" ) 
-	AddCSLuaFile( "fmainmenu/cl_configmenu.lua" ) 
+	AddCSLuaFile( "fmainmenu/config/cl_configmenu.lua" ) 
 	AddCSLuaFile("fmainmenu/cl_mainmenu_panels.lua")
 	include( "fmainmenu/sv_mainmenu.lua" )
 	AddCSLuaFile( "fmainmenu/cl_mainmenu.lua" )
+	
+	AddCSLuaFile( "fmainmenu/config/cl_confighelper.lua" )
+	AddCSLuaFile( "fmainmenu/config/cl_configpanels.lua" )
+	local files = file.Find("fmainmenu/config/modules/*.lua", "LUA")
+	for _, f in pairs(files) do
+		AddCSLuaFile("fmainmenu/config/modules/"..f)
+	end
 else
-	include( "fmainmenu/cl_configsync.lua" ) 
+	include( "fmainmenu/config/cl_configsync.lua" ) 
 	include("vgui/cl_fmainmenu_config.lua")
 	include("vgui/cl_fmainmenu_mmenu.lua")
-	include( "fmainmenu/cl_configmenu.lua" ) 
+	include( "fmainmenu/config/cl_configmenu.lua" ) 
 	include("fmainmenu/cl_mainmenu_panels.lua")
 	include( "fmainmenu/cl_mainmenu.lua" )
 end

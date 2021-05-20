@@ -55,7 +55,7 @@ FMainMenu.LangPresets[prefix].ConfigPropertiesCategoriesMenu = "Menu"
 FMainMenu.LangPresets[prefix].ConfigPropertiesCategoriesHooks = "Hook Functionality"
 FMainMenu.LangPresets[prefix].ConfigPropertiesCategoriesDerma = "Derma Style"
 FMainMenu.LangPresets[prefix].ConfigPropertiesCategoriesAccess = "Config Access"
-FMainMenu.LangPresets[prefix].ConfigPropertiesCategoriesCamera = "Advanced"
+FMainMenu.LangPresets[prefix].ConfigPropertiesCategoriesAdvanced = "Advanced"
 FMainMenu.LangPresets[prefix].ConfigTopBarHeaderText = "FMainMenu Config Editor"
 FMainMenu.LangPresets[prefix].ConfigTopBarExitText = "Exit"
 

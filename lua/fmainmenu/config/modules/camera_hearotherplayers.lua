@@ -1,0 +1,137 @@
+--[[
+
+	HEAR OTHER PLAYERS IGC MODULE
+
+]]--
+
+FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
+
+local propertyCode = 14
+local configPropList = {"HearOtherPlayers","PlayerVoiceDistance", "CameraPosition"}
+local topHalfSphere = nil
+local bottomHalfSphere = nil
+
+-- Live Preview Sphere
+local function createSphereHalf()
+	local sphereHalf = ents.CreateClientProp("models/props_phx/construct/wood/wood_dome360.mdl")
+	sphereHalf:SetMaterial("models/debug/debugwhite")
+	sphereHalf:SetColor(Color(0, 255, 0, 155))
+	sphereHalf:GetPhysicsObject():EnableMotion( false )
+	sphereHalf:SetCollisionGroup( COLLISION_GROUP_IN_VEHICLE )
+	sphereHalf:DrawShadow( false )
+	sphereHalf:SetRenderMode( RENDERMODE_TRANSCOLOR )
+	sphereHalf:DestroyShadow()
+	
+	return sphereHalf
+end
+
+FMainMenu.ConfigModules[propertyCode] = {}
+FMainMenu.ConfigModules[propertyCode].previewLevel = 0
+FMainMenu.ConfigModules[propertyCode].category = 1
+FMainMenu.ConfigModules[propertyCode].propName = FMainMenu.GetPhrase("ConfigPropertiesHearOtherPlayersPropName")
+FMainMenu.ConfigModules[propertyCode].liveUpdate = true
+
+FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
+	--Property Panel Setup
+	local mainPropPanel = FMainMenu.ConfigModulesHelper.generatePropertyHeader(FMainMenu.GetPhrase("ConfigPropertiesHearOtherPlayersPropName"), FMainMenu.GetPhrase("ConfigPropertiesHearOtherPlayersPropDesc"))
+	
+	-- Hear Other Players Toggle
+	mainPropPanel.toggleOption = FMainMenu.ConfigModulePanels.createComboBox(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesHearOtherPlayersLabel"), FMainMenu.GetPhrase("ConfigCommonValueDisabled"))
+	mainPropPanel.toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueEnabled") )
+	
+	-- Maximum Voice Distance
+	mainPropPanel.distanceBox = FMainMenu.ConfigModulePanels.createLabelBoxComboSmall(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesHearOtherPlayersDistanceLabel"), true)
+	
+	-- Sphere setup
+	topHalfSphere = createSphereHalf()
+	topHalfSphere:SetAngles( Angle(0, 0, 180) )
+	bottomHalfSphere = createSphereHalf()
+	
+	return {configPropList, mainPropPanel}
+end
+
+FMainMenu.ConfigModules[propertyCode].isVarChanged = function()
+	local parentPanel = FMainMenu.configPropertyWindow.currentProp
+	
+	local serverVar = ""
+	if parentPanel.lastRecVariable[1] then 
+		serverVar = FMainMenu.GetPhrase("ConfigCommonValueEnabled")
+	else
+		serverVar = FMainMenu.GetPhrase("ConfigCommonValueDisabled")
+	end
+	
+	if parentPanel.toggleOption:GetText() != serverVar then
+		return true
+	end
+	
+	if tonumber(parentPanel.distanceBox:GetText()) == nil || tonumber(parentPanel.distanceBox:GetText()) != math.sqrt(parentPanel.lastRecVariable[2]) then
+		return true
+	end
+	
+	return false
+end
+
+FMainMenu.ConfigModules[propertyCode].updatePreview = function() 
+	local parentPanel = FMainMenu.configPropertyWindow.currentProp
+	
+	if tonumber(parentPanel.distanceBox:GetText()) == nil then return end
+	
+	if parentPanel.toggleOption:GetText() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
+		topHalfSphere:SetModelScale( 0 )
+		bottomHalfSphere:SetModelScale( 0 )
+		return 
+	end
+	local boxText = parentPanel.distanceBox:GetText()
+	
+	topHalfSphere:SetModelScale( boxText/96 )
+	bottomHalfSphere:SetModelScale( boxText/96 )
+end
+
+FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function()
+	topHalfSphere:Remove()
+	bottomHalfSphere:Remove()
+end
+
+FMainMenu.ConfigModules[propertyCode].saveFunc = function()
+	local parentPanel = FMainMenu.configPropertyWindow.currentProp
+		
+	if(tonumber(parentPanel.distanceBox:GetText()) == nil) then return end
+		
+	if parentPanel.toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
+		parentPanel.lastRecVariable[1] = true
+	elseif parentPanel.toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
+		parentPanel.lastRecVariable[1] = false
+	else
+		return
+	end
+
+	local newPHDist = tonumber(parentPanel.distanceBox:GetText())
+	parentPanel.lastRecVariable[2] = newPHDist*newPHDist
+	
+	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, {"HearOtherPlayers","PlayerVoiceDistance"})
+	parentPanel.lastRecVariable[2] = newPHDist
+	
+	FMainMenu.ConfigModulesHelper.setUnsaved(false)
+end
+
+FMainMenu.ConfigModules[propertyCode].varFetch = function(receivedVarTable)
+	local mapName = game.GetMap()
+	local parentPanel = FMainMenu.configPropertyWindow.currentProp
+	parentPanel.lastRecVariable = table.Copy(receivedVarTable)
+	
+	if receivedVarTable[1] then 
+		parentPanel.toggleOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueEnabled")) 
+	else
+		parentPanel.toggleOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueDisabled"))
+	end
+	parentPanel.distanceBox:SetText(math.sqrt(receivedVarTable[2]))
+	topHalfSphere:SetPos(receivedVarTable[3][mapName] + Vector(0,0,64.5))
+	bottomHalfSphere:SetPos(receivedVarTable[3][mapName] + Vector(0,0,63.5))
+	
+	FMainMenu.ConfigModulesHelper.setUnsaved(false)
+	FMainMenu.ConfigModules[propertyCode].updatePreview()
+end
+
+FMainMenu.ConfigModules[propertyCode].revertFunc = function()
+	FMainMenu.ConfigModulesHelper.requestVariables(configPropList)
+end
