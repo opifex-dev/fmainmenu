@@ -515,29 +515,36 @@ local function camUpdate(ply)
 		playerTempCams[ply:UserID()]:Remove()
 	end
 	playerTempCams[ply:UserID()] = ents.Create("prop_dynamic")
+	
 	local innerCam = playerTempCams[ply:UserID()]
 	innerCam:SetModel("models/brokenglass_piece.mdl")
 	innerCam:SetRenderMode(RENDERMODE_TRANSCOLOR)
 	innerCam:SetColor(camColor)
 	innerCam:DrawShadow( false )
+	
 	local cameraPos = ""
 	if playerTempConfigs[ply:UserID()]["_CameraPosition"][game.GetMap()] then
 		cameraPos = playerTempConfigs[ply:UserID()]["_CameraPosition"][game.GetMap()] + Vector(0,0,64)
 	else
 		cameraPos = Vector(-1286.149658, 1187.535156, -11371.772461)
 	end
+	
 	innerCam:SetPos( cameraPos )
+	
 	local cameraAng = ""
+	
 	if playerTempConfigs[ply:UserID()]["_CameraAngle"][game.GetMap()] then
 		cameraAng = playerTempConfigs[ply:UserID()]["_CameraAngle"][game.GetMap()]
 	else
 		cameraAng = Angle(42.586422, -40.820980, 0.000000)
 	end
+	
 	innerCam:SetAngles( cameraAng )
 	innerCam:Spawn()
 	innerCam:Activate()
 	innerCam:SetMoveType(MOVETYPE_NONE)
 	innerCam:SetSolid(SOLID_NONE)
+	
 	ply:SetViewEntity(innerCam)
 end
 

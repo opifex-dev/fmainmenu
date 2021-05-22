@@ -31,6 +31,7 @@ FMainMenu.ConfigModules[propertyCode].category = 1
 FMainMenu.ConfigModules[propertyCode].propName = FMainMenu.GetPhrase("ConfigPropertiesHearOtherPlayersPropName")
 FMainMenu.ConfigModules[propertyCode].liveUpdate = true
 
+-- Creates the property editing panel
 FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	--Property Panel Setup
 	local mainPropPanel = FMainMenu.ConfigModulesHelper.generatePropertyHeader(FMainMenu.GetPhrase("ConfigPropertiesHearOtherPlayersPropName"), FMainMenu.GetPhrase("ConfigPropertiesHearOtherPlayersPropDesc"))
@@ -50,6 +51,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	return {configPropList, mainPropPanel}
 end
 
+-- Determines whether the local property settings differ from the servers, meaning the user has changed it
 FMainMenu.ConfigModules[propertyCode].isVarChanged = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 	
@@ -71,12 +73,13 @@ FMainMenu.ConfigModules[propertyCode].isVarChanged = function()
 	return false
 end
 
-FMainMenu.ConfigModules[propertyCode].updatePreview = function() 
+-- Updates necessary live preview options
+FMainMenu.ConfigModules[propertyCode].updatePreview = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 	
 	if tonumber(parentPanel.distanceBox:GetText()) == nil then return end
 	
-	if parentPanel.toggleOption:GetText() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
+	if parentPanel.toggleOption:GetText() != FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
 		topHalfSphere:SetModelScale( 0 )
 		bottomHalfSphere:SetModelScale( 0 )
 		return 
@@ -87,11 +90,13 @@ FMainMenu.ConfigModules[propertyCode].updatePreview = function()
 	bottomHalfSphere:SetModelScale( boxText/96 )
 end
 
+-- Called when property is closed, allows for additional clean up if needed
 FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function()
 	topHalfSphere:Remove()
 	bottomHalfSphere:Remove()
 end
 
+-- Handles saving changes to a property
 FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 		
@@ -110,14 +115,12 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	
 	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, {"HearOtherPlayers","PlayerVoiceDistance"})
 	parentPanel.lastRecVariable[2] = newPHDist
-	
-	FMainMenu.ConfigModulesHelper.setUnsaved(false)
 end
 
+-- Called when the current values are being overwritten by the server
 FMainMenu.ConfigModules[propertyCode].varFetch = function(receivedVarTable)
 	local mapName = game.GetMap()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
-	parentPanel.lastRecVariable = table.Copy(receivedVarTable)
 	
 	if receivedVarTable[1] then 
 		parentPanel.toggleOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueEnabled")) 
@@ -127,11 +130,9 @@ FMainMenu.ConfigModules[propertyCode].varFetch = function(receivedVarTable)
 	parentPanel.distanceBox:SetText(math.sqrt(receivedVarTable[2]))
 	topHalfSphere:SetPos(receivedVarTable[3][mapName] + Vector(0,0,64.5))
 	bottomHalfSphere:SetPos(receivedVarTable[3][mapName] + Vector(0,0,63.5))
-	
-	FMainMenu.ConfigModulesHelper.setUnsaved(false)
-	FMainMenu.ConfigModules[propertyCode].updatePreview()
 end
 
+-- Called when the player wishes to reset the property values to those of the server
 FMainMenu.ConfigModules[propertyCode].revertFunc = function()
-	FMainMenu.ConfigModulesHelper.requestVariables(configPropList)
+	return configPropList
 end

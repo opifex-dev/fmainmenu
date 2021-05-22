@@ -15,6 +15,7 @@ FMainMenu.ConfigModules[propertyCode].category = 1
 FMainMenu.ConfigModules[propertyCode].propName = FMainMenu.GetPhrase("ConfigPropertiesCameraSetupPropName")
 FMainMenu.ConfigModules[propertyCode].liveUpdate = true
 
+-- Creates the property editing panel
 FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	--Property Panel Setup
 	local mainPropPanel = FMainMenu.ConfigModulesHelper.generatePropertyHeader(FMainMenu.GetPhrase("ConfigPropertiesCameraSetupPropName"), FMainMenu.GetPhrase("ConfigPropertiesCameraSetupPropDesc"))
@@ -56,6 +57,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	return {configPropList, mainPropPanel}
 end
 
+-- Determines whether the local property settings differ from the servers, meaning the user has changed it
 FMainMenu.ConfigModules[propertyCode].isVarChanged = function()
 	local mapName = game.GetMap()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
@@ -89,6 +91,7 @@ FMainMenu.ConfigModules[propertyCode].isVarChanged = function()
 	return false
 end
 
+-- Updates necessary live preview options
 FMainMenu.ConfigModules[propertyCode].updatePreview = function()
 	local mapName = game.GetMap()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
@@ -110,8 +113,10 @@ FMainMenu.ConfigModules[propertyCode].updatePreview = function()
 	net.SendToServer()
 end
 
+-- Called when property is closed, allows for additional clean up if needed
 FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function() end
 
+-- Handles saving changes to a property
 FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	local mapName = game.GetMap()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
@@ -126,15 +131,18 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	parentPanel.lastRecVariable[1][mapName] = Vector(tonumber(parentPanel.cameraPositionPosBoxX:GetText()), tonumber(parentPanel.cameraPositionPosBoxY:GetText()), tonumber(parentPanel.cameraPositionPosBoxZ:GetText()))
 	parentPanel.lastRecVariable[2][mapName] = Angle(tonumber(parentPanel.cameraPositionRotBoxX:GetText()), tonumber(parentPanel.cameraPositionRotBoxY:GetText()), tonumber(parentPanel.cameraPositionRotBoxZ:GetText()))
 	
-	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, configPropList)
-	FMainMenu.ConfigModulesHelper.setUnsaved(false)
 	LocalPlayer():SetNoDraw( false )
+	
+	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, configPropList)
 end
 
+-- Called when the current values are being overwritten by the server
 FMainMenu.ConfigModules[propertyCode].varFetch = function(receivedVarTable)
 	local mapName = game.GetMap()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
-	parentPanel.lastRecVariable = table.Copy(receivedVarTable)
+	
+	FMainMenu.ConfigPreview.previewCopy["_CameraPosition"] = receivedVarTable[1]
+	FMainMenu.ConfigPreview.previewCopy["_CameraAngle"] = receivedVarTable[2]
 	
 	parentPanel.cameraPositionPosBoxX:SetText(math.Round( receivedVarTable[1][mapName].x, 3))
 	parentPanel.cameraPositionPosBoxY:SetText(math.Round( receivedVarTable[1][mapName].y, 3))
@@ -142,12 +150,11 @@ FMainMenu.ConfigModules[propertyCode].varFetch = function(receivedVarTable)
 	parentPanel.cameraPositionRotBoxX:SetText(math.Round( receivedVarTable[2][mapName].x, 3))
 	parentPanel.cameraPositionRotBoxY:SetText(math.Round( receivedVarTable[2][mapName].y, 3))
 	parentPanel.cameraPositionRotBoxZ:SetText(math.Round( receivedVarTable[2][mapName].z, 3))
-	
-	FMainMenu.ConfigModulesHelper.setUnsaved(false)
-	FMainMenu.ConfigModules[propertyCode].updatePreview()
 end
 
+-- Called when the player wishes to reset the property values to those of the server
 FMainMenu.ConfigModules[propertyCode].revertFunc = function()
-	FMainMenu.ConfigModulesHelper.requestVariables(configPropList)
 	LocalPlayer():SetNoDraw( false )
+	
+	return configPropList
 end

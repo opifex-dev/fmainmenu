@@ -8,6 +8,8 @@ FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 
 local propertyCode = 13
 local configPropList = {"AdvancedSpawn","AdvancedSpawnPos"}
+local configPropListTwo = {"AdvancedSpawn","AdvancedSpawnPos","CameraPosition","CameraAngle"}
+local infoPopup = nil
 
 FMainMenu.ConfigModules[propertyCode] = {}
 FMainMenu.ConfigModules[propertyCode].previewLevel = 0
@@ -15,12 +17,13 @@ FMainMenu.ConfigModules[propertyCode].category = 1
 FMainMenu.ConfigModules[propertyCode].propName = FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnPropName")
 FMainMenu.ConfigModules[propertyCode].liveUpdate = false
 
+-- Creates the property editing panel
 FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	--Property Panel Setup
 	local mainPropPanel = FMainMenu.ConfigModulesHelper.generatePropertyHeader(FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnPropName"), FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnPropDesc"))
 	
 	-- Advanced Spawn Toggle
-	mainPropPanel.advancedSpawnOption = FMainMenu.ConfigModulePanels.createComboBox(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesEverySpawnLabel"), FMainMenu.GetPhrase("ConfigCommonValueDisabled"))
+	mainPropPanel.advancedSpawnOption = FMainMenu.ConfigModulePanels.createComboBox(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnOptLabel"), FMainMenu.GetPhrase("ConfigCommonValueDisabled"))
 	mainPropPanel.advancedSpawnOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueEnabled") )
 	
 	--Advanced Spawn Position
@@ -41,11 +44,67 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 		
 		FMainMenu.ConfigModulesHelper.setUnsaved(FMainMenu.ConfigModules[propertyCode].isVarChanged())
 		FMainMenu.ConfigModules[propertyCode].updatePreview()
+		
+		LocalPlayer():SetNoDraw( true )
 	end
 	
-	return {configPropList, mainPropPanel}
+	-- Provides ability for player to get detailed info on the Advanced Spawn system if needed
+	FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnInfoLabel"))
+	local informationButton = FMainMenu.ConfigModulePanels.createTextButtonLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnInfoButtonLabel"))
+	informationButton.DoClick = function(button)
+		-- FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnInfo")
+		
+		FMainMenu.ConfigModulesHelper.setExternalBlock(true)
+		FMainMenu.configPropertyWindow.configBlockerPanel:SetVisible(true)
+		
+		local screenWidth = ScrW()
+		local screenHeight = ScrH()
+		
+		-- frame setup
+		infoPopup = vgui.Create( "fmainmenu_config_editor" )
+		infoPopup:SetSize( 360, 280 )
+		infoPopup:SetPos(screenWidth/2-180, screenHeight/2-140)
+		infoPopup:SetTitle(FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnInfoWindowTitle"))
+		infoPopup:SetZPos(10)
+		function infoPopup:OnClose()
+			FMainMenu.ConfigModulesHelper.setExternalBlock(false)
+			FMainMenu.configPropertyWindow.configBlockerPanel:SetVisible(false)
+			
+			infoPopup = nil
+		end
+		
+		-- background panel
+		local mainPanel = vgui.Create("fmainmenu_config_editor_panel", infoPopup)
+		mainPanel:SetSize( 350, 250 )
+		mainPanel:AlignLeft(5)
+		mainPanel:AlignTop(25)
+		
+		-- information label
+		local mainLabel = vgui.Create("fmainmenu_config_editor_label", mainPanel)
+		mainLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnInfo"))
+		mainLabel:SetSize(350,210)
+		mainLabel:AlignLeft(5)
+		mainLabel:AlignTop(3)
+		mainLabel:SetContentAlignment(7)
+		mainLabel:SetWrap( true )
+		
+		-- close button
+		local closeButton = vgui.Create("fmainmenu_config_editor_button", mainPanel)
+		closeButton:SetText(FMainMenu.GetPhrase("ConfigCommonValueClose"))
+		closeButton:SetSize(300,25)
+		closeButton:AlignRight(25)
+		closeButton:AlignTop(215)
+		closeButton.DoClick = function(button)			
+			infoPopup:Close()
+		end
+			
+		infoPopup:MakePopup()
+	end
+	
+	return {configPropListTwo, mainPropPanel}
 end
 
+-- Determines whether the local property settings differ from the servers, meaning the user has changed it
 FMainMenu.ConfigModules[propertyCode].isVarChanged = function()
 	local mapName = game.GetMap()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
@@ -76,10 +135,47 @@ FMainMenu.ConfigModules[propertyCode].isVarChanged = function()
 	return false
 end
 
-FMainMenu.ConfigModules[propertyCode].updatePreview = function() end
+-- Updates necessary live preview options
+FMainMenu.ConfigModules[propertyCode].updatePreview = function() 
+	local mapName = game.GetMap()
+	local parentPanel = FMainMenu.configPropertyWindow.currentProp
+	
+	if(tonumber(parentPanel.cameraPositionPosBoxX:GetText()) == nil) then return end
+	if(tonumber(parentPanel.cameraPositionPosBoxY:GetText()) == nil) then return end
+	if(tonumber(parentPanel.cameraPositionPosBoxZ:GetText()) == nil) then return end
 
-FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function() end
+	local varUpdate = {}
+	varUpdate[1] = table.Copy(FMainMenu.ConfigPreview.previewCopy["_CameraPosition"])
+	varUpdate[1][mapName] = Vector(tonumber(parentPanel.cameraPositionPosBoxX:GetText()), tonumber(parentPanel.cameraPositionPosBoxY:GetText()), tonumber(parentPanel.cameraPositionPosBoxZ:GetText()))
+	varUpdate[2] = table.Copy(FMainMenu.ConfigPreview.previewCopy["_CameraAngle"])
+	
+	net.Start("FMainMenu_Config_UpdateTempVariable")
+		net.WriteTable({"CameraPosition","CameraAngle"})
+		net.WriteString(util.TableToJSON(varUpdate))
+	net.SendToServer()
+end
 
+-- Called when property is closed, allows for additional clean up if needed
+FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function()
+	local mapName = game.GetMap()
+	
+	if infoPopup != nil then
+		infoPopup:Close()
+	end
+	
+	if FMainMenu.configPropertyWindow.quitting == nil then
+		local varUpdate = {}
+		varUpdate[1] = table.Copy(FMainMenu.ConfigPreview.previewCopy["_CameraPosition"])
+		varUpdate[2] = table.Copy(FMainMenu.ConfigPreview.previewCopy["_CameraAngle"])
+		
+		net.Start("FMainMenu_Config_UpdateTempVariable")
+			net.WriteTable({"CameraPosition","CameraAngle"})
+			net.WriteString(util.TableToJSON(varUpdate))
+		net.SendToServer()
+	end
+end
+
+-- Handles saving changes to a property
 FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	local mapName = game.GetMap()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
@@ -98,14 +194,18 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 
 	parentPanel.lastRecVariable[2][mapName] = Vector(tonumber(parentPanel.cameraPositionPosBoxX:GetText()), tonumber(parentPanel.cameraPositionPosBoxY:GetText()), tonumber(parentPanel.cameraPositionPosBoxZ:GetText()))
 	
+	LocalPlayer():SetNoDraw( false )
+	
 	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, configPropList)
-	FMainMenu.ConfigModulesHelper.setUnsaved(false)
 end
 
+-- Called when the current values are being overwritten by the server
 FMainMenu.ConfigModules[propertyCode].varFetch = function(receivedVarTable)
 	local mapName = game.GetMap()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
-	parentPanel.lastRecVariable = table.Copy(receivedVarTable)
+	
+	FMainMenu.ConfigPreview.previewCopy["_CameraPosition"] = receivedVarTable[3]
+	FMainMenu.ConfigPreview.previewCopy["_CameraAngle"] = receivedVarTable[4]
 	
 	if receivedVarTable[1] then 
 		parentPanel.advancedSpawnOption:SetValue(FMainMenu.GetPhrase("ConfigCommonValueEnabled")) 
@@ -115,11 +215,11 @@ FMainMenu.ConfigModules[propertyCode].varFetch = function(receivedVarTable)
 	parentPanel.cameraPositionPosBoxX:SetText(math.Round( receivedVarTable[2][mapName].x, 3))
 	parentPanel.cameraPositionPosBoxY:SetText(math.Round( receivedVarTable[2][mapName].y, 3))
 	parentPanel.cameraPositionPosBoxZ:SetText(math.Round( receivedVarTable[2][mapName].z, 3))
-	
-	FMainMenu.ConfigModulesHelper.setUnsaved(false)
-	FMainMenu.ConfigModules[propertyCode].updatePreview()
 end
 
+-- Called when the player wishes to reset the property values to those of the server
 FMainMenu.ConfigModules[propertyCode].revertFunc = function()
-	FMainMenu.ConfigModulesHelper.requestVariables(configPropList)
+	LocalPlayer():SetNoDraw( false )
+	
+	return configPropListTwo
 end

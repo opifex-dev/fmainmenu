@@ -40,6 +40,7 @@ if SERVER then
 	
 	AddCSLuaFile( "fmainmenu/config/cl_confighelper.lua" )
 	AddCSLuaFile( "fmainmenu/config/cl_configpanels.lua" )
+	AddCSLuaFile( "fmainmenu/config/cl_configpreview.lua" )
 	local files = file.Find("fmainmenu/config/modules/*.lua", "LUA")
 	for _, f in pairs(files) do
 		AddCSLuaFile("fmainmenu/config/modules/"..f)

@@ -6,8 +6,8 @@ function PANEL:Init()
 	self:MoveToFront()
 	self:SetDeleteOnClose( true )
 	self:SetScreenLock( true )
-	self.panelColor = Color(100,100,100)
-	self.innerPanelColor = Color(120,120,120)
+	self.panelColor = Color(75, 75, 75)
+	self.innerPanelColor = Color(55, 55, 55)
 	self.Paint = function(s, width, height)
 		draw.RoundedBox( 5, 0, 0, width, height, self.panelColor )
 		surface.SetDrawColor( self.innerPanelColor )
@@ -27,7 +27,7 @@ function PANEL:Init()
 	self.closeButton:AlignTop(5)
 	self.closeButton:SetTextColor(Color(255,255,255))
 	self.closeButton:SetPaintBackgroundEnabled( false )
-	self.buttonColor = Color(135, 135, 135)
+	self.buttonColor = Color(125, 125, 125)
 	self.buttonTextColor = Color(255,255,255)
 	self.closeButton.Paint = function(button, width, height)
 		draw.RoundedBox( 3, 0, 0, width, height, self.buttonColor )
@@ -81,9 +81,28 @@ derma.DefineControl("fmainmenu_config_editornoclose", nil, PANEL, "fmainmenu_con
 local PANEL = {}
 function PANEL:Init()
 	local pan = self
-	self.panelColor = Color(125,125,125)
+	self.panelColor = Color(55, 55, 55)
 	self.Paint = function(s, width, height)
-		draw.RoundedBox( 5, 0, 0, width, height, self.panelColor )
+		draw.RoundedBox( 0, 0, 0, width, height, self.panelColor )
+	end
+end
+
+function PANEL:PerformLayout()
+	local currentTab = self:GetActiveTab()
+	for _,sheet in ipairs(self.Items) do
+		function sheet.Tab:Paint(w,h)
+			if currentTab == sheet.Tab then
+				surface.SetDrawColor(Color(75,75,75))
+			else
+				surface.SetDrawColor(Color(65,65,65))
+			end
+			surface.DrawRect(0,0,w,h)
+		end
+		
+		function sheet.Tab:Think() 
+			sheet.Tab:SetSize(1, 1)
+			sheet.Tab:SetZPos( 0 )
+		end
 	end
 end
 
@@ -96,7 +115,7 @@ derma.DefineControl("fmainmenu_config_editor_sheet", nil, PANEL, "DPropertySheet
 local PANEL = {}
 function PANEL:Init()
 	local pan = self
-	self.panelColor = Color(125,125,125)
+	self.panelColor = Color(55, 55, 55)
 	self.Paint = function(s, width, height)
 		surface.SetDrawColor( self.panelColor )
 		surface.DrawRect( 0, 0, width, height )
@@ -112,7 +131,7 @@ derma.DefineControl("fmainmenu_config_editor_panel", nil, PANEL, "DPanel")
 local PANEL = {}
 function PANEL:Init()
 	local pan = self
-	self.panelColor = Color(125,125,125)
+	self.panelColor = Color(55, 55, 55)
 	self.Paint = function(s, width, height)
 		surface.SetDrawColor( self.panelColor )
 		surface.DrawRect( 0, 0, width, height )
@@ -129,7 +148,7 @@ local PANEL = {}
 function PANEL:Init()
 	self:SetFont("Trebuchet18")
 	self:SetSize( 180, 18 )
-	self:SetTextColor(Color(255,255,255))
+	self:SetTextColor(Color(225,225,225))
 end
 
 derma.DefineControl("fmainmenu_config_editor_label", nil, PANEL, "DLabel")
@@ -138,14 +157,18 @@ local PANEL = {}
 function PANEL:Init()
 	self:SetText("")
 	self:SetSize(52.5,25)
-	self:SetTextColor(Color(255,255,255))
+	self:SetTextColor(Color(225,225,225))
 	self:SetFont("HudHintTextLarge")
 	self:SetPaintBackgroundEnabled( false )
-	self.buttonColor = Color(105, 105, 105)
-	self.buttonTextColor = Color(255,255,255)
+	self.buttonColor = Color(85, 85, 85)
+	self.buttonTextColor = Color(225,225,225)
 	self.Paint = function(button, width, height)
 		draw.RoundedBox( 3, 0, 0, width, height, self.buttonColor )
 	end
+end
+
+function PANEL:SetBGColor(newCol)
+	self.buttonColor = newCol
 end
 
 derma.DefineControl("fmainmenu_config_editor_button", nil, PANEL, "DButton")

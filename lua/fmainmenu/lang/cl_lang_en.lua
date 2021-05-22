@@ -15,7 +15,7 @@ local fancyName = "English"
 
 FMainMenu.LangPresets[prefix] = {} -- ignore this one line
 
-FMainMenu.LangPresets[prefix].WelcomerFrameTitle = "First Join Welcomer"
+FMainMenu.LangPresets[prefix].WelcomerFrameTitle = "Welcome To The Server"
 FMainMenu.LangPresets[prefix].DisconnectFrameTitle = "Confirm Disconnect"
 FMainMenu.LangPresets[prefix].DisconnectConfirmText = "Are you sure you would like to disconnect?"
 FMainMenu.LangPresets[prefix].DisconnectConfirmYesText = "Yes"
@@ -41,6 +41,7 @@ FMainMenu.LangPresets[prefix].ConfigCommonValueY = "Y: "
 FMainMenu.LangPresets[prefix].ConfigCommonValueZ = "Z: "
 FMainMenu.LangPresets[prefix].ConfigCommonValueAllowed = "Allowed"
 FMainMenu.LangPresets[prefix].ConfigCommonValueDenied = "Denied"
+FMainMenu.LangPresets[prefix].ConfigCommonValueClose = "Close"
 
 FMainMenu.LangPresets[prefix].ConfigLeaveMenu = "Please exit the main menu before opening the coonfiguration tool."
 FMainMenu.LangPresets[prefix].ConfigUnsavedChanges = "The current property is changed but unsaved,\n        would you like to discard changes?"
@@ -83,6 +84,11 @@ FMainMenu.LangPresets[prefix].ConfigPropertiesAdvancedSpawnPropDesc = "Whether t
 FMainMenu.LangPresets[prefix].ConfigPropertiesAdvancedSpawnOptLabel = "Advanced Spawn: "
 FMainMenu.LangPresets[prefix].ConfigPropertiesAdvancedSpawnPosLabel = "Position (Current Map): "
 FMainMenu.LangPresets[prefix].ConfigPropertiesAdvancedSpawnCaptureLabel = "Capture Current Location"
+FMainMenu.LangPresets[prefix].ConfigPropertiesAdvancedSpawnInfoLabel = "For more information on advanced\nspawn, click the button below"
+FMainMenu.LangPresets[prefix].ConfigPropertiesAdvancedSpawnInfoButtonLabel = "Print Information"
+FMainMenu.LangPresets[prefix].ConfigPropertiesAdvancedSpawnInfoPrinted = "Check Console"
+FMainMenu.LangPresets[prefix].ConfigPropertiesAdvancedSpawnInfo = "In Garry's Mod, soundscapes in a map can only be triggered when the player is physically in that part of the map. Advanced Spawn works by physically moving the player to the specified location.\n\nWARNING: This will result in the player no longer physically existing in the world until they press the play button. Please take this into consideration when deciding whether to enable this feature or not."
+FMainMenu.LangPresets[prefix].ConfigPropertiesAdvancedSpawnInfoWindowTitle = "Advanced Spawn Information"
 
 FMainMenu.LangPresets[prefix].ConfigPropertiesHearOtherPlayersPropName = "Hear Other Players"
 FMainMenu.LangPresets[prefix].ConfigPropertiesHearOtherPlayersPropDesc = "Whether the player should hear\nother players talking from the menu"
@@ -154,6 +160,7 @@ FMainMenu.LangPresets[prefix].ConfigURLButtonEditorAddButtonText = "Add Button"
 FMainMenu.LangPresets[prefix].ConfigURLButtonEditorWindowButtonLabel = "Button Label: "
 FMainMenu.LangPresets[prefix].ConfigURLButtonEditorWindowLinkLabel = "Button Link: "
 FMainMenu.LangPresets[prefix].ConfigURLButtonEditorWindowDeleteConfirm = "Are you sure you would like to delete this button?"
+FMainMenu.LangPresets[prefix].ConfigURLButtonEditorWindowRevertConfirm = "Are you sure you would like to revert back to server settings?"
 
 FMainMenu.LangPresets[prefix].ConfigPropertiesSandboxHooksPropName = "Sandbox Hooks"
 FMainMenu.LangPresets[prefix].ConfigPropertiesSandboxHooksPropDesc = "Control what the player can do\nwhile in the main menu."

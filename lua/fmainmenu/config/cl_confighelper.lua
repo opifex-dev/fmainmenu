@@ -12,12 +12,7 @@ FMainMenu.ConfigModulesHelper.numericTextBoxHasChanges = function(boxText, serve
 end
 
 -- Function that helps to easily create the bottom buttons of the property editor
-FMainMenu.ConfigModulesHelper.setupGeneralPropPanels = function()
-	local separatePanel = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.configPropertyWindow)
-	separatePanel:SetSize( 240, 10 )
-	separatePanel:SetPos(5,280)
-	separatePanel:SetBGColor(Color(105,105,105))
-	
+FMainMenu.ConfigModulesHelper.setupGeneralPropPanels = function()	
 	local propertyGeneralPanel = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.configPropertyWindow)
 	propertyGeneralPanel:SetSize( 240, 65 )
 	propertyGeneralPanel:SetPos(5,290)
@@ -28,7 +23,8 @@ FMainMenu.ConfigModulesHelper.setupGeneralPropPanels = function()
 	propPanelSaveButton:AlignLeft(20)
 	propPanelSaveButton:AlignTop(5)
 	propPanelSaveButton.DoClick = function(button)
-		FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].saveFunc()
+		local varsToUpdate = FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].saveFunc()
+		FMainMenu.ConfigModulesHelper.setUnsaved(false)
 	end
 	
 	local propPanelRevertButton = vgui.Create("fmainmenu_config_editor_button", propertyGeneralPanel)
@@ -37,7 +33,8 @@ FMainMenu.ConfigModulesHelper.setupGeneralPropPanels = function()
 	propPanelRevertButton:AlignLeft(20)
 	propPanelRevertButton:AlignTop(35)
 	propPanelRevertButton.DoClick = function(button)
-		FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].revertFunc()
+		local varsToRevert = FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].revertFunc()
+		FMainMenu.ConfigModulesHelper.requestVariables(varsToRevert)
 	end
 end
 
@@ -74,7 +71,7 @@ FMainMenu.ConfigModulesHelper.setPropPanel = function(newPanel)
 end
 
 -- Checks to see if colors are equal
-FMainMenu.ConfigModulesHelper.isColorEqual = function(colorOne, colorTwo)
+FMainMenu.ConfigModulesHelper.areColorsEqual = function(colorOne, colorTwo)
 	if colorOne.r != colorTwo.r then
 		return false
 	end
@@ -96,8 +93,8 @@ end
 
 -- Basic Property Header
 FMainMenu.ConfigModulesHelper.generatePropertyHeader = function(propName, propDesc)
-	local propHeader = vgui.Create("fmainmenu_config_editor_panel", FMainMenu.configPropertyWindow)
-	propHeader:SetSize( 240, 255 )
+	local propHeader = vgui.Create("fmainmenu_config_editor_scrollpanel", FMainMenu.configPropertyWindow)
+	propHeader:SetSize( 240, 265 )
 	propHeader:SetPos(5,25)
 	propHeader.tempYPos = 0
 	local propHeaderLabel = vgui.Create("fmainmenu_config_editor_label", propHeader)
@@ -117,6 +114,13 @@ FMainMenu.ConfigModulesHelper.requestVariables = function(varNames)
 	net.Start("FMainMenu_Config_ReqVar")
 		net.WriteTable(varNames)
 	net.SendToServer()
+end
+
+-- Request server-side variable(s) for editing
+FMainMenu.ConfigModulesHelper.requestVariablesCustom = function(varNames, responseFunc)
+	FMainMenu.configPropertyWindow.customFunc = responseFunc
+
+	FMainMenu.ConfigModulesHelper.requestVariables(varNames)
 end
 
 -- Handle received server-side variable(s)
@@ -145,7 +149,17 @@ net.Receive( "FMainMenu_Config_ReqVar", function( len )
 		end
 	end
 	
-	FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].varFetch(receivedVarTable)
+	FMainMenu.configPropertyWindow.currentProp.lastRecVariable = table.Copy(receivedVarTable)
+	
+	if FMainMenu.configPropertyWindow.customFunc != nil then
+		FMainMenu.configPropertyWindow.customFunc(receivedVarTable)
+		FMainMenu.configPropertyWindow.customFunc = nil 
+	else
+		FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].varFetch(receivedVarTable)
+	end
+	
+	FMainMenu.ConfigModulesHelper.setUnsaved(false)
+	FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].updatePreview()
 end)
 
 -- Send the request to commit config changes
@@ -163,4 +177,39 @@ end
 
 FMainMenu.ConfigModulesHelper.setExternalBlock = function(state)
 	FMainMenu.CurConfigMenu.configExternalWindowBlocker:SetVisible(state)
+end
+
+--[[
+ADJUSTMENT TYPES
+1 - none
+2 - shift to left X pixels
+3 - shift to left X/2 pixels (keep centered)
+4 - decrease size X pixels
+]]--
+
+local panelScrollAjustments = {
+	[1] = function(panel) end,
+	[2] = function(panel)
+		panel:AlignLeft(panel:GetX()-15)
+	end,
+	[3] = function(panel)
+		panel:AlignLeft(panel:GetX()-7.5)
+	end,
+	[4] = function(panel)
+		local oldX, oldY = panel:GetSize()
+		panel:SetSize(oldX-15, oldY)
+	end,
+}
+
+FMainMenu.ConfigModulesHelper.scrollBarAdjustments = function()
+	local mainPanel = FMainMenu.configPropertyWindow.currentProp
+	local widetsPanel = mainPanel:GetChildren()[1]
+	
+	if mainPanel.tempYPos > 198 then
+		for _,widget in ipairs(widetsPanel:GetChildren()) do
+			if widget.scrollAdjustmentType != nil then
+				panelScrollAjustments[widget.scrollAdjustmentType](widget)
+			end
+		end
+	end
 end
