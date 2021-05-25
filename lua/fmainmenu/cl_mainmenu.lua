@@ -117,7 +117,7 @@ local function openMenu()
 		["Play"] = function(Content)
 			local playButton = FMainMenu.Panels.CreateButton(Content.Text)
 			playButton:SetPos(xPos, curYPos)
-			curYPos = curYPos + 48
+			curYPos = curYPos + FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize") + 12
 			playButton.DoClick = function()
 				surface.PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
 				closePanelGlobal()
@@ -126,19 +126,19 @@ local function openMenu()
 		["URL"] = function(Content)
 			local urlButton = FMainMenu.Panels.CreateURLButton(Content.Text, Content.URL)
 			urlButton:SetPos(xPos, curYPos)
-			curYPos = curYPos + 48
+			curYPos = curYPos + FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize") + 12
 		end,
 		["Disconnect"] = function(Content)
 			local quitButton = FMainMenu.Panels.CreateButton(Content.Text)
 			quitButton:SetPos(xPos, curYPos)
-			curYPos = curYPos + 48
+			curYPos = curYPos + FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize") + 12
 			quitButton.DoClick = function()
 				surface.PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
 				FMainMenu.Panels.CreateConfirmDC()
 			end
 		end,
 		["Spacer"] = function(Content)
-			curYPos = curYPos + 24
+			curYPos = curYPos + ((2/3)*FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"))
 		end,
 	}
 	
@@ -150,7 +150,7 @@ local function openMenu()
 	else
 		local playButton = FMainMenu.Panels.CreateButton(FMainMenu.GetPhrase("PlayButtonText"))
 		playButton:SetPos(xPos, curYPos)
-		curYPos = curYPos + 72
+		curYPos = curYPos + FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize") + 36
 		playButton.DoClick = function()
 			surface.PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
 			closePanelGlobal()
@@ -159,7 +159,7 @@ local function openMenu()
 		for _,btn in ipairs(FayLib.IGC.GetSharedKey(addonName, "URLButtons")) do
 			local urlButton = FMainMenu.Panels.CreateURLButton(btn.Text, btn.URL)
 			urlButton:SetPos(xPos, curYPos)
-			curYPos = curYPos + 48
+			curYPos = curYPos + FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize") + 12
 		end
 		
 		if FayLib.IGC.GetSharedKey(addonName, "URLButtons") then

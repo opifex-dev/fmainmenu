@@ -5,6 +5,7 @@
 ]]--
 
 FMainMenu.ConfigModulesHelper = FMainMenu.ConfigModulesHelper || {}
+local soundSelection = nil
 
 -- Used to detect changes in the on-screen form from the server-side variable
 FMainMenu.ConfigModulesHelper.numericTextBoxHasChanges = function(boxText, serverSide, precision)
@@ -170,6 +171,7 @@ FMainMenu.ConfigModulesHelper.updateVariables = function(varTable, varList)
 	net.SendToServer()
 end
 
+-- Sets unsaved status, used for 
 FMainMenu.ConfigModulesHelper.setUnsaved = function(state)
 	FMainMenu.CurConfigMenu.unsavedVar = state
 	FMainMenu.CurConfigMenu.configUnsavedBlocker:SetVisible(state)
@@ -212,4 +214,155 @@ FMainMenu.ConfigModulesHelper.scrollBarAdjustments = function()
 			end
 		end
 	end
+end
+
+FMainMenu.ConfigModulesHelper.isSelectingSound = function()
+	if soundSelection != nil then
+		return true
+	end
+	
+	return false
+end
+
+FMainMenu.ConfigModulesHelper.doSoundSelection = function(contentBox, volumeBox)
+	FMainMenu.ConfigModulesHelper.setExternalBlock(true)
+	FMainMenu.configPropertyWindow.configBlockerPanel:SetVisible(true)
+	
+	local internalStation = nil
+	local currentVol = 0.5
+	local currentSelection = contentBox:GetText()
+	local screenWidth = ScrW()
+	local screenHeight = ScrH()
+	print(contentBox:GetText())
+	
+	-- sound preview
+	local function stopSoundPreview()
+		if internalStation != nil then
+			internalStation:Stop()
+			internalStation = nil
+		end
+	end
+	
+	local function soundPreview(path)
+		stopSoundPreview()
+		
+		sound.PlayFile( path , "noblock", function( station, errCode, errStr )
+			if ( IsValid( station ) ) then
+				station:EnableLooping(true)
+				station:SetVolume(currentVol)
+				internalStation = station
+			end
+		end)
+	end
+	
+	-- frame setup
+	soundSelection = vgui.Create( "fmainmenu_config_editor" )
+	soundSelection:SetSize( 720, 580 )
+	soundSelection:SetPos(screenWidth/2-360, screenHeight/2-290)
+	soundSelection:SetTitle(FMainMenu.GetPhrase("ConfigSoundSelectorWindowTitle"))
+	soundSelection:SetZPos(10)
+	function soundSelection:OnClose()
+		stopSoundPreview()
+		FMainMenu.ConfigModulesHelper.setExternalBlock(false)
+		FMainMenu.configPropertyWindow.configBlockerPanel:SetVisible(false)
+		
+		soundSelection = nil
+	end
+	
+	-- file tree
+	local fileBrowser = vgui.Create( "DFileBrowser", soundSelection )
+	fileBrowser:SetSize( 710, 520 )
+	fileBrowser:AlignLeft(5)
+	fileBrowser:AlignTop(25)
+	fileBrowser:SetFileTypes("*.mp3 *.wav *.ogg")
+	fileBrowser:SetName("Sound Selection")
+	fileBrowser:SetBaseFolder("sound")
+	fileBrowser:SetCurrentFolder( "sound" ) 
+	fileBrowser:SetPath( "GAME" ) 
+	fileBrowser:SetOpen(true)
+	
+	function fileBrowser:OnSelect( path, pnl )
+		currentSelection = path
+		soundSelection:SetTitle(FMainMenu.GetPhrase("ConfigSoundSelectorWindowTitle").." ("..FMainMenu.GetPhrase("ConfigSoundSelectorWindowSelectionHeader")..currentSelection..")")
+	end
+	
+	function fileBrowser:OnDoubleClick( path, pnl )
+		soundPreview(path)
+	end
+	
+	-- bottom toolbar
+	local bottomPanel = vgui.Create("fmainmenu_config_editor_panel", soundSelection)
+	bottomPanel:SetSize( 710, 30 )
+	bottomPanel:AlignLeft(5)
+	bottomPanel:AlignTop(545)
+	
+	local bottomPanelSelectButton = vgui.Create("fmainmenu_config_editor_button", bottomPanel)
+	bottomPanelSelectButton:SetText(FMainMenu.GetPhrase("ConfigSoundSelectorChooseButtonText"))
+	bottomPanelSelectButton:SetSize(100,24)
+	bottomPanelSelectButton:AlignRight(5)
+	bottomPanelSelectButton:AlignTop(3)
+	bottomPanelSelectButton.DoClick = function(button)
+		if currentSelection != "" then
+			contentBox:SetText(currentSelection)
+			contentBox:OnChange()
+			if volumeBox != nil then
+				volumeBox:SetText(math.Round( currentVol, 2))
+				volumeBox:OnChange()
+			end
+		end
+		
+		soundSelection:Close()
+	end
+	
+	local bottomPanelPlayButton = vgui.Create("fmainmenu_config_editor_button", bottomPanel)
+	bottomPanelPlayButton:SetText(FMainMenu.GetPhrase("ConfigSoundSelectorPlayButtonText"))
+	bottomPanelPlayButton:SetSize(100,24)
+	bottomPanelPlayButton:AlignLeft(5)
+	bottomPanelPlayButton:AlignTop(3)
+	bottomPanelPlayButton.DoClick = function(button)
+		if currentSelection != "" then
+			soundPreview(currentSelection)
+		end
+	end
+	
+	local bottomPanelStopButton = vgui.Create("fmainmenu_config_editor_button", bottomPanel)
+	bottomPanelStopButton:SetText(FMainMenu.GetPhrase("ConfigSoundSelectorStopButtonText"))
+	bottomPanelStopButton:SetSize(100,24)
+	bottomPanelStopButton:AlignLeft(110)
+	bottomPanelStopButton:AlignTop(3)
+	bottomPanelStopButton.DoClick = function(button)
+		stopSoundPreview()
+	end
+	
+	local bottomPanelVolSlider = vgui.Create("DNumSlider", bottomPanel)
+	bottomPanelVolSlider:SetSize(250,24)
+	bottomPanelVolSlider:AlignLeft(290)
+	bottomPanelVolSlider:SetMin( 0 )
+	bottomPanelVolSlider:SetMax( 1 )
+	bottomPanelVolSlider:SetDecimals( 1 )
+	bottomPanelVolSlider:SetText( "Volume" )
+	bottomPanelVolSlider:AlignTop(3)
+	bottomPanelVolSlider.OnValueChanged = function( self, value )
+		currentVol = value
+		if internalStation ~= nil then
+			internalStation:SetVolume(currentVol)
+		end
+	end
+	
+	if currentSelection != "" then
+		local reverseStr = string.reverse(currentSelection)
+		local lastSlash = string.find(reverseStr, "/")
+		if lastSlash != nil then
+			fileBrowser:SetCurrentFolder(  string.sub(currentSelection, 1, string.len(currentSelection)-lastSlash) ) 
+		end
+	else
+		currentSelection = ""
+	end
+	
+	if volumeBox != nil && tonumber(volumeBox:GetText()) ~= nil then
+		currentVol = tonumber(volumeBox:GetText())
+		bottomPanelVolSlider:SetValue( currentVol )
+	end
+		
+	soundSelection:MakePopup()
 end

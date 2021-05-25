@@ -10,7 +10,7 @@ FMainMenu.CurrentTextButtonFont = FMainMenu.CurrentTextButtonFont || "FMM_Button
 FMainMenu.FontCounter = FMainMenu.FontCounter || 0
 
 --Create fonts that will be used in the menu
-local function createNewFont(fontName, fontBase, fontSize, fontShadow)
+function FMainMenu.Panels.createNewFont(fontName, fontBase, fontSize, fontShadow)
 	surface.CreateFont( fontName, {
 		font = fontBase,
 		extended = false,
@@ -31,12 +31,12 @@ local function createNewFont(fontName, fontBase, fontSize, fontShadow)
 end
 
 hook.Add("IGCSharedConfigReady", "FMainMenu_Panels_SharedReady", function()
-	createNewFont("FMM_LogoFont", 
+	FMainMenu.Panels.createNewFont("FMM_LogoFont", 
 		FayLib.IGC.GetSharedKey(addonName, "logoFont"), 
 		FayLib.IGC.GetSharedKey(addonName, "logoFontSize"), 
 		FayLib.IGC.GetSharedKey(addonName, "logoShadow"))
 	
-	createNewFont("FMM_ButtonFont", 
+	FMainMenu.Panels.createNewFont("FMM_ButtonFont", 
 		FayLib.IGC.GetSharedKey(addonName, "textButtonFont"), 
 		FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"), 
 		FayLib.IGC.GetSharedKey(addonName, "textButtonShadow"))
@@ -46,12 +46,12 @@ hook.Add("IGCSharedConfigUpdate", "FMainMenu_Panels_SharedConfigUpdate", functio
 	if addonConfigName == addonName then
 		FMainMenu.FontCounter = FMainMenu.FontCounter + 1
 		
-		createNewFont("FMM_LogoFont"..tostring(FMainMenu.FontCounter), 
+		FMainMenu.Panels.createNewFont("FMM_LogoFont"..tostring(FMainMenu.FontCounter), 
 			FayLib.IGC.GetSharedKey(addonName, "logoFont"), 
 			FayLib.IGC.GetSharedKey(addonName, "logoFontSize"), 
 			FayLib.IGC.GetSharedKey(addonName, "logoShadow"))
 		
-		createNewFont("FMM_ButtonFont"..tostring(FMainMenu.FontCounter), 
+		FMainMenu.Panels.createNewFont("FMM_ButtonFont"..tostring(FMainMenu.FontCounter), 
 			FayLib.IGC.GetSharedKey(addonName, "textButtonFont"), 
 			FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"), 
 			FayLib.IGC.GetSharedKey(addonName, "textButtonShadow"))
@@ -66,7 +66,7 @@ local function buttonSetup(button, text, fontName)
 	button:SetText(text)
 	button:SetFont(fontName)
 	button:SetTextColor(FayLib.IGC.GetSharedKey(addonName, "textButtonColor"))
-	button:SetSize(256, FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"))
+	button:SetSize(ScrW()-300, FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"))
 	button:SetContentAlignment(4)
 	FMainMenu.Derma.SetPanelHover(button, 2, text)
 end
@@ -208,7 +208,7 @@ function FMainMenu.Panels.SetupBasics()
 	end
 	
 	if FayLib.IGC.GetSharedKey(addonName, "logoIsText") then
-		local logo = FMainMenu.Derma.CreateDLabel(m_border, ScrW() * 0.5, FayLib.IGC.GetSharedKey(addonName, "logoFontSize"), false, "")
+		local logo = FMainMenu.Derma.CreateDLabel(m_border, ScrW()-300, FayLib.IGC.GetSharedKey(addonName, "logoFontSize"), false, "")
 		if !FayLib.IGC.GetSharedKey(addonName, "GarrysModStyle") then
 			logo:SetPos(ScrW() * 0.04, (ScrH() * 0.5) - FayLib.IGC.GetSharedKey(addonName, "logoFontSize") - 64)
 		else

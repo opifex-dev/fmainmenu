@@ -97,7 +97,7 @@ FayLib.IGC.DefineKey(addonName, "DarkRPCanReqWarrants", false, false)
 
 -- Derma Style Settings
 FayLib.IGC.DefineKey(addonName, "textLogoColor", Color(255,255,255), true)
-FayLib.IGC.DefineKey(addonName, "logoFont", "Arial", true)
+FayLib.IGC.DefineKey(addonName, "logoFont", "Marlett", true)
 FayLib.IGC.DefineKey(addonName, "logoFontSize", 108, true)
 FayLib.IGC.DefineKey(addonName, "logoOutlineColor", Color(0,0,0), true)
 FayLib.IGC.DefineKey(addonName, "logoOutlineThickness", 1, true)

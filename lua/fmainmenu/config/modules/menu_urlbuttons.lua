@@ -1,6 +1,6 @@
 --[[
 
-	MUSIC IGC MODULE
+	URL BUTTONS MODULE
 
 ]]--
 

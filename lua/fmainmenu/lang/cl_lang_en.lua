@@ -46,9 +46,9 @@ FMainMenu.LangPresets[prefix].ConfigCommonValueClose = "Close"
 FMainMenu.LangPresets[prefix].ConfigLeaveMenu = "Please exit the main menu before opening the coonfiguration tool."
 FMainMenu.LangPresets[prefix].ConfigUnsavedChanges = "The current property is changed but unsaved,\n        would you like to discard changes?"
 FMainMenu.LangPresets[prefix].ConfigUnsavedChangesHeader = "Unsaved Changes!"
-FMainMenu.LangPresets[prefix].ConfigPropertiesWindowTitle = "FMainMenu - Config Properties"
+FMainMenu.LangPresets[prefix].ConfigPropertiesWindowTitle = "FMainMenu - Property Editor"
 FMainMenu.LangPresets[prefix].ConfigPropertiesNoneSelected = "No Property Selected"
-FMainMenu.LangPresets[prefix].ConfigPropertiesSelectorTitle = "FMainMenu - Config Selector"
+FMainMenu.LangPresets[prefix].ConfigPropertiesSelectorTitle = "FMainMenu - Property Selector"
 FMainMenu.LangPresets[prefix].ConfigPropertiesSavePropButton = "Save Property"
 FMainMenu.LangPresets[prefix].ConfigPropertiesRevertPropButton = "Revert Changes"
 FMainMenu.LangPresets[prefix].ConfigPropertiesCategoriesCamera = "Camera"
@@ -182,6 +182,22 @@ FMainMenu.LangPresets[prefix].ConfigPropertiesDarkRPHooksCanUsePocket = "Using P
 FMainMenu.LangPresets[prefix].ConfigPropertiesDarkRPHooksCanDropWeapon = "Dropping Weapons: "
 FMainMenu.LangPresets[prefix].ConfigPropertiesDarkRPHooksCanReqHits = "Requesting Hits: "
 FMainMenu.LangPresets[prefix].ConfigPropertiesDarkRPHooksCanReqWarrants = "Requesting Warrants: "
+
+FMainMenu.LangPresets[prefix].ConfigPropertiesDermaFont = "Font: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesDermaFontSize = "Font Size: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesDermaOutlineThickness = "Outline Thickness: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesDermaFontShadow = "Text Shadow: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesDermaTextColor = "Text Color: "
+FMainMenu.LangPresets[prefix].ConfigPropertiesDermaOutlineColor = "Outline Color: "
+
+FMainMenu.LangPresets[prefix].ConfigPropertiesLogoDermaPropName = "Logo Style"
+FMainMenu.LangPresets[prefix].ConfigPropertiesLogoDermaPropDesc = "Control how various aspects of\nthe logo are styled."
+
+FMainMenu.LangPresets[prefix].ConfigPropertiesTextButtonDermaPropName = "Button Style"
+FMainMenu.LangPresets[prefix].ConfigPropertiesTextButtonDermaPropDesc = "Control how various aspects of\nthe buttons are styled."
+FMainMenu.LangPresets[prefix].ConfigPropertiesTextButtonDermaHoverColor = "Text Color When Hovered:"
+FMainMenu.LangPresets[prefix].ConfigPropertiesTextButtonDermaHoverSound = "Sound When Hovered:"
+FMainMenu.LangPresets[prefix].ConfigPropertiesTextButtonDermaClickSound = "Sound When Clicked:"
 
 -- IGNORE BELOW CODE
 FMainMenu.languageLookup[prefix] = fancyName

@@ -8,10 +8,11 @@
 	and using the updatePreview function to modify whatever property the user is editing
 	
 	previewLevel:
-	0 - no GUI
-	1 - background/base menu only
+	0 - no GUI, background only
+	1 - background + base menu only
 	2 - 1 but with first time join module simulated on top
 	3 - 1 but with music
+	4 - 1 but with extra derma previews on top
 ]]--
 FMainMenu.ConfigPreview = FMainMenu.ConfigPreview || {}
 FMainMenu.ConfigPreview.previewLevel = FMainMenu.ConfigPreview.previewLevel || 0
@@ -32,6 +33,16 @@ local cachedMusicContent = ""
 local cachedMusicOption = nil
 local cachedMusicVolume = nil
 local cachedMusicLooping = nil
+local cachedLogoFont = ""
+local cachedLogoFontSize = -1
+local cachedLogoFontShadow = -1
+local previewLogoFont = nil
+local previewLogoFontCounter = 1
+local cachedButtonFont = ""
+local cachedButtonFontSize = -1
+local cachedButtonFontShadow = -1
+local previewButtonFont = nil
+local previewButtonFontCounter = 1
 
 hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 	local previewLevel = FMainMenu.ConfigPreview.previewLevel || 0
@@ -52,7 +63,17 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			if previewCopy["_GarrysModStyle"] then
 				titleH = width * 0.04
 			end
-			draw.SimpleTextOutlined( previewCopy["_logoContent"], FMainMenu.CurrentLogoFont, width * 0.04, titleH, previewCopy["_textLogoColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_logoOutlineThickness"], previewCopy["_logoOutlineColor"] )
+			
+			if previewCopy["_logoFont"] != cachedLogoFont || previewCopy["_logoFontSize"] != cachedLogoFontSize || previewCopy["_logoShadow"] != cachedLogoFontShadow then
+				previewLogoFont = "FMM_PreviewLogoFont"..tostring(previewLogoFontCounter)
+				FMainMenu.Panels.createNewFont(previewLogoFont, previewCopy["_logoFont"], previewCopy["_logoFontSize"], previewCopy["_logoShadow"])
+				cachedLogoFont = previewCopy["_logoFont"]
+				cachedLogoFontSize = previewCopy["_logoFontSize"]
+				cachedLogoFontShadow = previewCopy["_logoShadow"]
+				previewLogoFontCounter = previewLogoFontCounter + 1
+			end
+			
+			draw.SimpleTextOutlined( previewCopy["_logoContent"], previewLogoFont, width * 0.04, titleH, previewCopy["_textLogoColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_logoOutlineThickness"], previewCopy["_logoOutlineColor"] )
 		else
 			if HTMLLogo == nil || cachedLink != previewCopy["_logoContent"] then
 				if HTMLLogo != nil then HTMLLogo:Remove() end
@@ -123,14 +144,23 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			curYPos = additive + normalSize
 		end
 		
+		if previewCopy["_textButtonFont"] != cachedButtonFont || previewCopy["_textButtonFontSize"] != cachedButtonFontSize || previewCopy["_textButtonShadow"] != cachedButtonFontShadow then
+			previewButtonFont = "FMM_PreviewButtonFont"..tostring(previewButtonFontCounter)
+			FMainMenu.Panels.createNewFont(previewButtonFont, previewCopy["_textButtonFont"], previewCopy["_textButtonFontSize"], previewCopy["_textButtonShadow"])
+			cachedButtonFont = previewCopy["_textButtonFont"]
+			cachedButtonFontSize = previewCopy["_textButtonFontSize"]
+			cachedButtonFontShadow = previewCopy["_textButtonShadow"]
+			previewButtonFontCounter = previewButtonFontCounter + 1
+		end
+		
 		-- Play Button
-		draw.SimpleText( FMainMenu.GetPhrase("PlayButtonText"), FMainMenu.CurrentTextButtonFont, xPos, curYPos, FayLib.IGC.GetSharedKey(addonName, "textButtonColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-		curYPos = curYPos + 72
+		draw.SimpleTextOutlined( FMainMenu.GetPhrase("PlayButtonText"), previewButtonFont, xPos, curYPos, previewCopy["_textButtonColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_textButtonOutlineThickness"], previewCopy["_textButtonOutlineColor"] )
+		curYPos = curYPos + previewCopy["_textButtonFontSize"] + 36
 		
 		-- URL Buttons
 		for _,URLButton in ipairs(previewCopy["_URLButtons"]) do
-			draw.SimpleText( URLButton.Text, FMainMenu.CurrentTextButtonFont, xPos, curYPos, FayLib.IGC.GetSharedKey(addonName, "textButtonColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-			curYPos = curYPos + 48
+			draw.SimpleTextOutlined( URLButton.Text, previewButtonFont, xPos, curYPos, previewCopy["_textButtonColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_textButtonOutlineThickness"], previewCopy["_textButtonOutlineColor"] )
+			curYPos = curYPos + previewCopy["_textButtonFontSize"] + 12
 		end
 		
 		-- Disconnect Button
@@ -139,20 +169,20 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			if #previewCopy["_URLButtons"] == 0 then
 				curYPos = curYPos - 36
 			end
-			draw.SimpleText( FMainMenu.GetPhrase("DisconnectButtonText"), FMainMenu.CurrentTextButtonFont, xPos, curYPos, FayLib.IGC.GetSharedKey(addonName, "textButtonColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+			draw.SimpleTextOutlined( FMainMenu.GetPhrase("DisconnectButtonText"), previewButtonFont, xPos, curYPos, previewCopy["_textButtonColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_textButtonOutlineThickness"], previewCopy["_textButtonOutlineColor"] )
 		end
 
 		-- Changelog
 		if previewCopy["_showChangeLog"] then
 			if ChangelogBox == nil then 
 				ChangelogBox = FMainMenu.Derma.CreateDPanel(nil, 256, ScrH()*(1/3), false )
-				FMainMenu.Derma:SetFrameSettings(ChangelogBox, FayLib.IGC.GetSharedKey(addonName, "commonPanelColor"), 0)
+				FMainMenu.Derma:SetFrameSettings(ChangelogBox, previewCopy["_commonPanelColor"], 0)
 				ChangelogBox:SetZPos(1)
 				
 				CLText = FMainMenu.Derma.CreateDLabel(ChangelogBox, 221, (ScrH()*(1/3))-5, false, text)
 				CLText:SetFont("HudHintTextLarge")
 				CLText:SetPos(10, 5)
-				CLText:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
+				CLText:SetTextColor( previewCopy["_commonPanelColor"] )
 				CLText:SetContentAlignment( 7 )
 				CLText:SetWrap( true )
 			end
@@ -164,7 +194,7 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			end
 			
 			CLText:SetFont("HudHintTextLarge")
-			CLText:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
+			CLText:SetTextColor( previewCopy["_commonTextColor"] )
 			CLText:SetText(previewCopy["_changeLogText"])
 			CLText:SetContentAlignment( 7 )
 			CLText:SetWrap( true )
@@ -188,21 +218,21 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 				
 				local initTroublePanel = FMainMenu.Derma.CreateDPanel(welcomerBox, 365, 221, false )
 				initTroublePanel:SetPos(5, 25)
-				FMainMenu.Derma:SetFrameSettings(initTroublePanel, FayLib.IGC.GetSharedKey(addonName, "commonPanelColor"), 0)
+				FMainMenu.Derma:SetFrameSettings(initTroublePanel, previewCopy["_commonPanelColor"], 0)
 				welcomerBoxLeftText = FMainMenu.Derma.CreateDLabel(initTroublePanel, 345, 128, false, previewCopy["_firstJoinText"])
 				welcomerBoxLeftText:SetFont("HudHintTextLarge")
 				welcomerBoxLeftText:SetPos(10, 10)
-				welcomerBoxLeftText:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
+				welcomerBoxLeftText:SetTextColor( previewCopy["_commonTextColor"] )
 				welcomerBoxLeftText:SetWrap( true )
 				welcomerBoxLeftText:SetContentAlignment( 8 )
 				
-				local wBBPanel = FMainMenu.Derma.CreateDPanel(initTroublePanel, 355, FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"), false )
-				wBBPanel:SetPos(5, 216-FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"))
+				local wBBPanel = FMainMenu.Derma.CreateDPanel(initTroublePanel, 355, previewCopy["_textButtonFontSize"], false )
+				wBBPanel:SetPos(5, 216-previewCopy["_textButtonFontSize"])
 				
-				welcomerBoxButton = FMainMenu.Derma.CreateDLabel(initTroublePanel, 355, FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"), false, previewCopy["_firstJoinURLText"])
+				welcomerBoxButton = FMainMenu.Derma.CreateDLabel(initTroublePanel, 355, previewCopy["_textButtonFontSize"], false, previewCopy["_firstJoinURLText"])
 				welcomerBoxButton:SetFont("HudHintTextLarge")
-				welcomerBoxButton:SetPos(5, 216-FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"))
-				welcomerBoxButton:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
+				welcomerBoxButton:SetPos(5, 216-previewCopy["_textButtonFontSize"])
+				welcomerBoxButton:SetTextColor( previewCopy["_commonTextColor"] )
 				welcomerBoxButton:SetContentAlignment( 5 )
 			end
 			
@@ -218,7 +248,7 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 		end
 		
 		-- Music Preview
-		if previewLevel == 3 && soundSelection == nil then
+		if previewLevel == 3 && FMainMenu.ConfigModulesHelper.isSelectingSound() == false then
 			if cachedMusicContent != previewCopy["_musicContent"] || cachedMusicOption != previewCopy["_musicToggle"] || cachedMusicVolume != previewCopy["_musicVolume"] || cachedMusicLooping != previewCopy["_musicLooping"] then
 				cachedMusicContent = previewCopy["_musicContent"]
 				cachedMusicOption = previewCopy["_musicToggle"]
