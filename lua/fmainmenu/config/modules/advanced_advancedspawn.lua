@@ -6,14 +6,13 @@
 
 FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 
-local propertyCode = 13
+local propertyCode = 61
 local configPropList = {"AdvancedSpawn","AdvancedSpawnPos"}
 local configPropListTwo = {"AdvancedSpawn","AdvancedSpawnPos","CameraPosition","CameraAngle"}
-local infoPopup = nil
 
 FMainMenu.ConfigModules[propertyCode] = {}
 FMainMenu.ConfigModules[propertyCode].previewLevel = 0
-FMainMenu.ConfigModules[propertyCode].category = 1
+FMainMenu.ConfigModules[propertyCode].category = 6
 FMainMenu.ConfigModules[propertyCode].propName = FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnPropName")
 FMainMenu.ConfigModules[propertyCode].liveUpdate = false
 
@@ -50,55 +49,9 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	
 	-- Provides ability for player to get detailed info on the Advanced Spawn system if needed
 	FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnInfoLabel"))
-	local informationButton = FMainMenu.ConfigModulePanels.createTextButtonLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnInfoButtonLabel"))
+	local informationButton = FMainMenu.ConfigModulePanels.createTextButtonLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesAdvancedGeneralInfoButtonLabel"))
 	informationButton.DoClick = function(button)
-		-- FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnInfo")
-		
-		FMainMenu.ConfigModulesHelper.setExternalBlock(true)
-		FMainMenu.configPropertyWindow.configBlockerPanel:SetVisible(true)
-		
-		local screenWidth = ScrW()
-		local screenHeight = ScrH()
-		
-		-- frame setup
-		infoPopup = vgui.Create( "fmainmenu_config_editor" )
-		infoPopup:SetSize( 360, 280 )
-		infoPopup:SetPos(screenWidth/2-180, screenHeight/2-140)
-		infoPopup:SetTitle(FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnInfoWindowTitle"))
-		infoPopup:SetZPos(10)
-		function infoPopup:OnClose()
-			FMainMenu.ConfigModulesHelper.setExternalBlock(false)
-			FMainMenu.configPropertyWindow.configBlockerPanel:SetVisible(false)
-			
-			infoPopup = nil
-		end
-		
-		-- background panel
-		local mainPanel = vgui.Create("fmainmenu_config_editor_panel", infoPopup)
-		mainPanel:SetSize( 350, 250 )
-		mainPanel:AlignLeft(5)
-		mainPanel:AlignTop(25)
-		
-		-- information label
-		local mainLabel = vgui.Create("fmainmenu_config_editor_label", mainPanel)
-		mainLabel:SetText(FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnInfo"))
-		mainLabel:SetSize(350,210)
-		mainLabel:AlignLeft(5)
-		mainLabel:AlignTop(3)
-		mainLabel:SetContentAlignment(7)
-		mainLabel:SetWrap( true )
-		
-		-- close button
-		local closeButton = vgui.Create("fmainmenu_config_editor_button", mainPanel)
-		closeButton:SetText(FMainMenu.GetPhrase("ConfigCommonValueClose"))
-		closeButton:SetSize(300,25)
-		closeButton:AlignRight(25)
-		closeButton:AlignTop(215)
-		closeButton.DoClick = function(button)			
-			infoPopup:Close()
-		end
-			
-		infoPopup:MakePopup()
+		FMainMenu.ConfigModulesHelper.doInformationalWindow(FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnInfoWindowTitle"), FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnInfo"))
 	end
 	
 	return {configPropListTwo, mainPropPanel}
@@ -159,9 +112,7 @@ end
 FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function()
 	local mapName = game.GetMap()
 	
-	if infoPopup != nil then
-		infoPopup:Close()
-	end
+	FMainMenu.ConfigModulesHelper.closeOpenExtraWindows()
 	
 	if FMainMenu.configPropertyWindow.quitting == nil then
 		local varUpdate = {}

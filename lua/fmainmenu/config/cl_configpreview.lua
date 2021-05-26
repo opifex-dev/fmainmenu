@@ -12,7 +12,7 @@
 	1 - background + base menu only
 	2 - 1 but with first time join module simulated on top
 	3 - 1 but with music
-	4 - 1 but with extra derma previews on top
+	4 - 2 but always enabled
 ]]--
 FMainMenu.ConfigPreview = FMainMenu.ConfigPreview || {}
 FMainMenu.ConfigPreview.previewLevel = FMainMenu.ConfigPreview.previewLevel || 0
@@ -26,6 +26,7 @@ local ChangelogBox = nil
 local welcomerBox = nil
 local welcomerBoxLeftText = nil
 local welcomerBoxButton = nil
+local welcomerBoxPanel = nil
 local CLText = nil
 local cachedLink = ""
 local musicStation = nil
@@ -43,6 +44,54 @@ local cachedButtonFontSize = -1
 local cachedButtonFontShadow = -1
 local previewButtonFont = nil
 local previewButtonFontCounter = 1
+
+--Adds custom paint function for custom backgrounds and rounding edges
+local function previewFrameSettings(frame, color, radius, isFrame, commonTextColor)
+	if isFrame then
+		if(radius > 0) then
+			function frame:Paint(width, height)
+				draw.RoundedBox(radius, 0, 0, width, height, color)
+				draw.SimpleText(frame.Title, "Trebuchet18", 8, 12, commonTextColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+			end
+		else
+			function frame:Paint(width, height)
+				surface.SetDrawColor(color)
+				surface.DrawRect(0, 0, width, height)
+				draw.SimpleText(frame.Title, "Trebuchet18", 8, 12, commonTextColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+			end
+		end
+	else
+		if(radius > 0) then
+			function frame:Paint(width, height)
+				draw.RoundedBox(radius, 0, 0, width, height, color)
+			end
+		else
+			function frame:Paint(width, height)
+				surface.SetDrawColor(color)
+				surface.DrawRect(0, 0, width, height)
+			end
+		end
+	end
+end
+
+--Handles the "custom layout" advanced option preview
+local customLayoutSetup = {
+	["Play"] = function(Content, xPos, curYPos, previewCopy)
+		draw.SimpleTextOutlined( Content.Text, previewButtonFont, xPos, curYPos, previewCopy["_textButtonColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_textButtonOutlineThickness"], previewCopy["_textButtonOutlineColor"] )
+		return curYPos + previewCopy["_textButtonFontSize"] + 12
+	end,
+	["URL"] = function(Content, xPos, curYPos, previewCopy)
+		draw.SimpleTextOutlined( Content.Text, previewButtonFont, xPos, curYPos, previewCopy["_textButtonColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_textButtonOutlineThickness"], previewCopy["_textButtonOutlineColor"] )
+		return curYPos + previewCopy["_textButtonFontSize"] + 12
+	end,
+	["Disconnect"] = function(Content, xPos, curYPos, previewCopy)
+		draw.SimpleTextOutlined( Content.Text, previewButtonFont, xPos, curYPos, previewCopy["_textButtonColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_textButtonOutlineThickness"], previewCopy["_textButtonOutlineColor"] )
+		return curYPos + previewCopy["_textButtonFontSize"] + 12
+	end,
+	["Spacer"] = function(Content, xPos, curYPos, previewCopy)
+		return curYPos + ((2/3)*previewCopy["_textButtonFontSize"])
+	end,
+}
 
 hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 	local previewLevel = FMainMenu.ConfigPreview.previewLevel || 0
@@ -153,30 +202,36 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			previewButtonFontCounter = previewButtonFontCounter + 1
 		end
 		
-		-- Play Button
-		draw.SimpleTextOutlined( FMainMenu.GetPhrase("PlayButtonText"), previewButtonFont, xPos, curYPos, previewCopy["_textButtonColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_textButtonOutlineThickness"], previewCopy["_textButtonOutlineColor"] )
-		curYPos = curYPos + previewCopy["_textButtonFontSize"] + 36
-		
-		-- URL Buttons
-		for _,URLButton in ipairs(previewCopy["_URLButtons"]) do
-			draw.SimpleTextOutlined( URLButton.Text, previewButtonFont, xPos, curYPos, previewCopy["_textButtonColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_textButtonOutlineThickness"], previewCopy["_textButtonOutlineColor"] )
-			curYPos = curYPos + previewCopy["_textButtonFontSize"] + 12
-		end
-		
-		-- Disconnect Button
-		if previewCopy["_dcButton"] then
-			curYPos = curYPos + 24
-			if #previewCopy["_URLButtons"] == 0 then
-				curYPos = curYPos - 36
+		if previewCopy["_MenuOverride"] then
+			for _,entry in ipairs(previewCopy["_MenuSetup"]) do
+				curYPos = customLayoutSetup[entry.Type](entry.Content, xPos, curYPos, previewCopy)
 			end
-			draw.SimpleTextOutlined( FMainMenu.GetPhrase("DisconnectButtonText"), previewButtonFont, xPos, curYPos, previewCopy["_textButtonColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_textButtonOutlineThickness"], previewCopy["_textButtonOutlineColor"] )
+		else
+			-- Play Button
+			draw.SimpleTextOutlined( FMainMenu.GetPhrase("PlayButtonText"), previewButtonFont, xPos, curYPos, previewCopy["_textButtonColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_textButtonOutlineThickness"], previewCopy["_textButtonOutlineColor"] )
+			curYPos = curYPos + previewCopy["_textButtonFontSize"] + 36
+			
+			-- URL Buttons
+			for _,URLButton in ipairs(previewCopy["_URLButtons"]) do
+				draw.SimpleTextOutlined( URLButton.Text, previewButtonFont, xPos, curYPos, previewCopy["_textButtonColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_textButtonOutlineThickness"], previewCopy["_textButtonOutlineColor"] )
+				curYPos = curYPos + previewCopy["_textButtonFontSize"] + 12
+			end
+			
+			-- Disconnect Button
+			if previewCopy["_dcButton"] then
+				curYPos = curYPos + 24
+				if #previewCopy["_URLButtons"] == 0 then
+					curYPos = curYPos - 36
+				end
+				draw.SimpleTextOutlined( FMainMenu.GetPhrase("DisconnectButtonText"), previewButtonFont, xPos, curYPos, previewCopy["_textButtonColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_textButtonOutlineThickness"], previewCopy["_textButtonOutlineColor"] )
+			end
 		end
 
 		-- Changelog
 		if previewCopy["_showChangeLog"] then
 			if ChangelogBox == nil then 
 				ChangelogBox = FMainMenu.Derma.CreateDPanel(nil, 256, ScrH()*(1/3), false )
-				FMainMenu.Derma:SetFrameSettings(ChangelogBox, previewCopy["_commonPanelColor"], 0)
+				previewFrameSettings(ChangelogBox, previewCopy["_commonPanelColor"], 0, false, previewCopy["_commonTextColor"])
 				ChangelogBox:SetZPos(1)
 				
 				CLText = FMainMenu.Derma.CreateDLabel(ChangelogBox, 221, (ScrH()*(1/3))-5, false, text)
@@ -198,6 +253,7 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			CLText:SetText(previewCopy["_changeLogText"])
 			CLText:SetContentAlignment( 7 )
 			CLText:SetWrap( true )
+			previewFrameSettings(ChangelogBox, previewCopy["_commonPanelColor"], 0, false, previewCopy["_commonTextColor"])
 		else
 			if ChangelogBox != nil then
 				CLText:Remove()
@@ -206,44 +262,54 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 				CLText = nil
 			end
 		end
-			
+		
 		-- First Time Welcome
-		if previewLevel == 2 and previewCopy["_firstJoinWelcome"] then
+		if previewLevel == 2 and previewCopy["_firstJoinWelcome"] || previewLevel == 4 then
 			if welcomerBox == nil then
 				welcomerBox = FMainMenu.Derma.CreateDFrame(FMainMenu.GetPhrase("WelcomerFrameTitle"), nil, 380, 256)
 				welcomerBox:SetZPos(1)
 				welcomerBox:Center()
 				welcomerBox:ShowCloseButton( false )
 				welcomerBox:SetDraggable( false )
+				previewFrameSettings(welcomerBox, previewCopy["_commonFrameColor"], FMainMenu.Config.DFrameRadius, true, previewCopy["_commonTextColor"])
 				
-				local initTroublePanel = FMainMenu.Derma.CreateDPanel(welcomerBox, 365, 221, false )
-				initTroublePanel:SetPos(5, 25)
-				FMainMenu.Derma:SetFrameSettings(initTroublePanel, previewCopy["_commonPanelColor"], 0)
-				welcomerBoxLeftText = FMainMenu.Derma.CreateDLabel(initTroublePanel, 345, 128, false, previewCopy["_firstJoinText"])
+				welcomerBoxPanel = FMainMenu.Derma.CreateDPanel(welcomerBox, 365, 221, false )
+				welcomerBoxPanel:SetPos(5, 25)
+				previewFrameSettings(welcomerBoxPanel, previewCopy["_commonPanelColor"], 0, false, previewCopy["_commonTextColor"])
+				welcomerBoxLeftText = FMainMenu.Derma.CreateDLabel(welcomerBoxPanel, 345, 128, false, previewCopy["_firstJoinText"])
 				welcomerBoxLeftText:SetFont("HudHintTextLarge")
 				welcomerBoxLeftText:SetPos(10, 10)
 				welcomerBoxLeftText:SetTextColor( previewCopy["_commonTextColor"] )
 				welcomerBoxLeftText:SetWrap( true )
 				welcomerBoxLeftText:SetContentAlignment( 8 )
 				
-				local wBBPanel = FMainMenu.Derma.CreateDPanel(initTroublePanel, 355, previewCopy["_textButtonFontSize"], false )
-				wBBPanel:SetPos(5, 216-previewCopy["_textButtonFontSize"])
+				local wBBPanel = FMainMenu.Derma.CreateDPanel(welcomerBoxPanel, 355, 36, false )
+				wBBPanel:SetPos(5, 180)
+				wBBPanel.Paint = function(self, w, h)
+					surface.SetDrawColor( previewCopy["_commonButtonColor"] )
+					surface.DrawRect( 0, 0, w, h )
+				end
 				
-				welcomerBoxButton = FMainMenu.Derma.CreateDLabel(initTroublePanel, 355, previewCopy["_textButtonFontSize"], false, previewCopy["_firstJoinURLText"])
+				welcomerBoxButton = FMainMenu.Derma.CreateDLabel(welcomerBoxPanel, 355, 36, false, previewCopy["_firstJoinURLText"])
 				welcomerBoxButton:SetFont("HudHintTextLarge")
-				welcomerBoxButton:SetPos(5, 216-previewCopy["_textButtonFontSize"])
+				welcomerBoxButton:SetPos(5, 180)
 				welcomerBoxButton:SetTextColor( previewCopy["_commonTextColor"] )
 				welcomerBoxButton:SetContentAlignment( 5 )
 			end
 			
 			welcomerBoxLeftText:SetText(previewCopy["_firstJoinText"])
 			welcomerBoxButton:SetText(previewCopy["_firstJoinURLText"])
+			welcomerBoxLeftText:SetTextColor( previewCopy["_commonTextColor"] )
+			welcomerBoxButton:SetTextColor( previewCopy["_commonTextColor"] )
+			previewFrameSettings(welcomerBoxPanel, previewCopy["_commonPanelColor"], 0, false, previewCopy["_commonTextColor"])
+			previewFrameSettings(welcomerBox, previewCopy["_commonFrameColor"], FMainMenu.Config.DFrameRadius, true, previewCopy["_commonTextColor"])
 		else
 			if welcomerBox != nil then
 				welcomerBox:Close()
 				welcomerBox = nil
 				welcomerBoxButton = nil
 				welcomerBoxLeftText = nil
+				welcomerBoxPanel = nil
 			end
 		end
 		
@@ -310,6 +376,7 @@ hook.Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			welcomerBox = nil
 			welcomerBoxButton = nil
 			welcomerBoxLeftText = nil
+			welcomerBoxPanel = nil
 		end
 		
 		if musicStation != nil then

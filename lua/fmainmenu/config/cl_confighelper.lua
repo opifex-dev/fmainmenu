@@ -6,6 +6,7 @@
 
 FMainMenu.ConfigModulesHelper = FMainMenu.ConfigModulesHelper || {}
 local soundSelection = nil
+local infoPopup = nil
 
 -- Used to detect changes in the on-screen form from the server-side variable
 FMainMenu.ConfigModulesHelper.numericTextBoxHasChanges = function(boxText, serverSide, precision)
@@ -203,6 +204,7 @@ local panelScrollAjustments = {
 	end,
 }
 
+-- Positioning/Sizing Adjustments for property panels when a scroll bar is needed
 FMainMenu.ConfigModulesHelper.scrollBarAdjustments = function()
 	local mainPanel = FMainMenu.configPropertyWindow.currentProp
 	local widetsPanel = mainPanel:GetChildren()[1]
@@ -216,6 +218,18 @@ FMainMenu.ConfigModulesHelper.scrollBarAdjustments = function()
 	end
 end
 
+-- Closes any open extra windows (sound selector, info popup, etc.)
+FMainMenu.ConfigModulesHelper.closeOpenExtraWindows = function()
+	if soundSelection != nil then
+		soundSelection:Close()
+	end
+	
+	if infoPopup != nil then
+		infoPopup:Close()
+	end
+end
+
+-- Whether the user has the sound editor open
 FMainMenu.ConfigModulesHelper.isSelectingSound = function()
 	if soundSelection != nil then
 		return true
@@ -224,6 +238,7 @@ FMainMenu.ConfigModulesHelper.isSelectingSound = function()
 	return false
 end
 
+-- Opens a sound selection dialog
 FMainMenu.ConfigModulesHelper.doSoundSelection = function(contentBox, volumeBox)
 	FMainMenu.ConfigModulesHelper.setExternalBlock(true)
 	FMainMenu.configPropertyWindow.configBlockerPanel:SetVisible(true)
@@ -365,4 +380,96 @@ FMainMenu.ConfigModulesHelper.doSoundSelection = function(contentBox, volumeBox)
 	end
 		
 	soundSelection:MakePopup()
+end
+
+-- Opens an information dialog
+FMainMenu.ConfigModulesHelper.doInformationalWindow = function(windowTitle, infoText)
+	FMainMenu.ConfigModulesHelper.setExternalBlock(true)
+	FMainMenu.configPropertyWindow.configBlockerPanel:SetVisible(true)
+	
+	local screenWidth = ScrW()
+	local screenHeight = ScrH()
+	
+	-- frame setup
+	infoPopup = vgui.Create( "fmainmenu_config_editor" )
+	infoPopup:SetSize( 360, 280 )
+	infoPopup:SetPos(screenWidth/2-180, screenHeight/2-140)
+	infoPopup:SetTitle(windowTitle)
+	infoPopup:SetZPos(10)
+	function infoPopup:OnClose()
+		FMainMenu.ConfigModulesHelper.setExternalBlock(false)
+		FMainMenu.configPropertyWindow.configBlockerPanel:SetVisible(false)
+		
+		infoPopup = nil
+	end
+	
+	-- background panel
+	local mainPanel = vgui.Create("fmainmenu_config_editor_panel", infoPopup)
+	mainPanel:SetSize( 350, 250 )
+	mainPanel:AlignLeft(5)
+	mainPanel:AlignTop(25)
+	
+	-- information label
+	local mainLabel = vgui.Create("fmainmenu_config_editor_label", mainPanel)
+	mainLabel:SetText(infoText)
+	mainLabel:SetSize(350,210)
+	mainLabel:AlignLeft(5)
+	mainLabel:AlignTop(3)
+	mainLabel:SetContentAlignment(7)
+	mainLabel:SetWrap( true )
+	
+	-- close button
+	local closeButton = vgui.Create("fmainmenu_config_editor_button", mainPanel)
+	closeButton:SetText(FMainMenu.GetPhrase("ConfigCommonValueClose"))
+	closeButton:SetSize(300,25)
+	closeButton:AlignRight(25)
+	closeButton:AlignTop(215)
+	closeButton.DoClick = function(button)			
+		infoPopup:Close()
+	end
+		
+	infoPopup:MakePopup()
+end
+
+-- Reused code between buttons editors for allowing user to confirm action
+FMainMenu.ConfigModulesHelper.doAdvancedConfirmationDialog = function(panelBlocker, confirmFunc, warnText)
+	--Confirmation dialogue
+	panelBlocker:SetVisible(true)
+	local removeConfirm =  vgui.Create("fmainmenu_config_editor_panel", panelBlocker)
+	removeConfirm:SetBGColor(Color(55, 55, 55, 255))
+	removeConfirm:SetSize( 246, 93 )
+	removeConfirm:Center()
+	
+	local leftText = FMainMenu.Derma.CreateDLabel(removeConfirm, 221, 113, false, warnText)
+	leftText:SetFont("HudHintTextLarge")
+	leftText:SetPos(10, 5)
+	leftText:SetTextColor( Color(255,255,255,255) )
+	leftText:SetWrap( true )
+	leftText:SetContentAlignment( 8 )
+	
+	local secondButton = FMainMenu.Derma.CreateDButton(removeConfirm, 108, 32, FMainMenu.GetPhrase("ConfigCommonValueNo"), "")
+	secondButton:SetPos(130, 56)
+	secondButton:SetFont("HudHintTextLarge")
+	secondButton:SetTextColor( Color(255,255,255,255) )
+	FMainMenu.Derma.SetPanelHover(secondButton, 1)
+	secondButton:SetContentAlignment( 5 )
+	FMainMenu.Derma:SetFrameSettings(secondButton, Color(75,75,75, 255), 0)
+	secondButton.DoClick = function()
+		removeConfirm:Remove()
+		panelBlocker:SetVisible(false)
+	end
+	
+	local firstButton = FMainMenu.Derma.CreateDButton(removeConfirm, 108, 32, FMainMenu.GetPhrase("ConfigCommonValueYes"), "")
+	firstButton:SetPos(8, 56)
+	firstButton:SetFont("HudHintTextLarge")
+	firstButton:SetTextColor( Color(255,255,255,255) )
+	FMainMenu.Derma.SetPanelHover(firstButton, 1)
+	firstButton:SetContentAlignment( 5 )
+	FMainMenu.Derma:SetFrameSettings(firstButton, Color(75,75,75, 255), 0)
+	firstButton.DoClick = function()
+		removeConfirm:Remove()
+		panelBlocker:SetVisible(false)
+		
+		confirmFunc()
+	end
 end

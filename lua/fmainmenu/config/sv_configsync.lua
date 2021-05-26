@@ -111,9 +111,10 @@ FayLib.IGC.DefineKey(addonName, "textButtonFontSize", 36, true)
 FayLib.IGC.DefineKey(addonName, "textButtonHoverColor", Color(245,245,165), true)
 FayLib.IGC.DefineKey(addonName, "textButtonHoverSound", "garrysmod/ui_hover.wav", true)
 FayLib.IGC.DefineKey(addonName, "textButtonClickSound", "garrysmod/ui_click.wav", true)
-FayLib.IGC.DefineKey(addonName, "commonPanelColor", Color(45,45,45,200), true)
-FayLib.IGC.DefineKey(addonName, "commonButtonColor", Color(75,75,75, 255), true)
-FayLib.IGC.DefineKey(addonName, "commonTextColor", Color(255,255,255,255), true)
+FayLib.IGC.DefineKey(addonName, "commonFrameColor", Color(70,70,70), true)
+FayLib.IGC.DefineKey(addonName, "commonPanelColor", Color(45,45,45,225), true)
+FayLib.IGC.DefineKey(addonName, "commonButtonColor", Color(75,75,75), true)
+FayLib.IGC.DefineKey(addonName, "commonTextColor", Color(255,255,255), true)
 
 --Configuration GUI Settings
 FayLib.IGC.DefineKey(addonName, "configCanEdit", "superadmin", false)
@@ -167,7 +168,10 @@ FayLib.IGC.LoadConfig(addonName, "config", "fmainmenu")
 FMainMenu.EverySpawn = FayLib.IGC.GetKey(addonName, "EverySpawn")
 
 -- Setup CAMI Privs
-CAMI.RegisterPrivilege( { Name = "FMainMenu_CanEditMenu",    MinAccess = FayLib.IGC.GetKey(addonName, "configCanEdit") or "superadmin" } )
+CAMI.RegisterPrivilege( { 
+	Name = "FMainMenu_CanEditMenu", 
+	MinAccess = FayLib.IGC.GetKey(addonName, "configCanEdit") or "superadmin",
+})
 
 --Language Loader
 FMainMenu.languageLookup = {}
@@ -193,7 +197,17 @@ end
 -- STEP 3 - deal with anything else relating to editing, saving, and refreshing the config
 FMainMenu.RefreshDetect = true
 hook.Add("IGCConfigUpdate", "FMainMenu_IGCCU", function(addonName)
+	-- EverySpawn update
 	FMainMenu.EverySpawn = FayLib.IGC.GetKey(addonName, "EverySpawn")
+	
+	--CanEditConfig update
+	if CAMI.GetPrivilege("FMainMenu_CanEditMenu").MinAccess != FayLib.IGC.GetKey(addonName, "configCanEdit") then
+		CAMI.UnregisterPrivilege("FMainMenu_CanEditMenu")
+		CAMI.RegisterPrivilege( { 
+			Name = "FMainMenu_CanEditMenu", 
+			MinAccess = FayLib.IGC.GetKey(addonName, "configCanEdit") or "superadmin",
+		})
+	end
 	
 	-- Language update
 	if FMainMenu.LangPresets[string.lower(FayLib.IGC.GetKey(addonName, "LangSetting"))] != nil then

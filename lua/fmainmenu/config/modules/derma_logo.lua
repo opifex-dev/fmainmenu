@@ -8,6 +8,13 @@ FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 
 local propertyCode = 41
 local configPropList = {"textLogoColor","logoFont","logoFontSize","logoOutlineColor","logoOutlineThickness","logoShadow"}
+local fontList = {
+	"akbar",
+	"coolvetica",
+	"Roboto",
+	"Marlett",
+	"DermaLarge",
+}
 
 FMainMenu.ConfigModules[propertyCode] = {}
 FMainMenu.ConfigModules[propertyCode].previewLevel = 1
@@ -22,7 +29,11 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 
 	--logo text font
 	mainPropPanel.logoFontOption = FMainMenu.ConfigModulePanels.createComboBox(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesDermaFont"), "Marlett")
-	mainPropPanel.logoFontOption:AddChoice("DermaLarge")
+	for _,font in ipairs(fontList) do
+		if font != "Marlett" then
+			mainPropPanel.logoFontOption:AddChoice(font)
+		end
+	end
 	
 	--logo text font size
 	mainPropPanel.fontSize = FMainMenu.ConfigModulePanels.createLabelBoxComboSmall(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesDermaFontSize"), true)

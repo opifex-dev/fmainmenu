@@ -11,48 +11,6 @@ local configPropList = {"URLButtons"}
 local URLButtonEditor = nil
 local addonName = "fmainmenu"
 
-local function doConfirmation(panelBlocker, confirmFunc, warnText)
-	--Confirmation dialogue
-	panelBlocker:SetVisible(true)
-	local removeConfirm =  vgui.Create("fmainmenu_config_editor_panel", panelBlocker)
-	removeConfirm:SetBGColor(Color(55, 55, 55, 255))
-	removeConfirm:SetSize( 246, 93 )
-	removeConfirm:Center()
-	
-	local leftText = FMainMenu.Derma.CreateDLabel(removeConfirm, 221, 113, false, warnText)
-	leftText:SetFont("HudHintTextLarge")
-	leftText:SetPos(10, 5)
-	leftText:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor"))
-	leftText:SetWrap( true )
-	leftText:SetContentAlignment( 8 )
-	
-	local secondButton = FMainMenu.Derma.CreateDButton(removeConfirm, 108, 32, FMainMenu.GetPhrase("ConfigCommonValueNo"), "")
-	secondButton:SetPos(130, 56)
-	secondButton:SetFont("HudHintTextLarge")
-	secondButton:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
-	FMainMenu.Derma.SetPanelHover(secondButton, 1)
-	secondButton:SetContentAlignment( 5 )
-	FMainMenu.Derma:SetFrameSettings(secondButton, FayLib.IGC.GetSharedKey(addonName, "commonButtonColor"), 0)
-	secondButton.DoClick = function()
-		removeConfirm:Remove()
-		panelBlocker:SetVisible(false)
-	end
-	
-	local firstButton = FMainMenu.Derma.CreateDButton(removeConfirm, 108, 32, FMainMenu.GetPhrase("ConfigCommonValueYes"), "")
-	firstButton:SetPos(8, 56)
-	firstButton:SetFont("HudHintTextLarge")
-	firstButton:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
-	FMainMenu.Derma.SetPanelHover(firstButton, 1)
-	firstButton:SetContentAlignment( 5 )
-	FMainMenu.Derma:SetFrameSettings(firstButton, FayLib.IGC.GetSharedKey(addonName, "commonButtonColor"), 0)
-	firstButton.DoClick = function()
-		removeConfirm:Remove()
-		panelBlocker:SetVisible(false)
-		
-		confirmFunc()
-	end
-end
-
 FMainMenu.ConfigModules[propertyCode] = {}
 FMainMenu.ConfigModules[propertyCode].previewLevel = 1
 FMainMenu.ConfigModules[propertyCode].category = 2
@@ -148,7 +106,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 				buttonRemove:AlignRight(5)
 				buttonRemove:AlignBottom(5)
 				buttonRemove.DoClick = function(button)
-					doConfirmation(panelBlocker, function()
+					FMainMenu.ConfigModulesHelper.doAdvancedConfirmationDialog(panelBlocker, function()
 						-- Remove the button
 						table.remove( mainPropPanel.internalURLButtons, buttonPanel.bIndex )
 						updateCacheVisuals()
@@ -227,7 +185,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 		bottomPanelRevertButton:AlignRight(110)
 		bottomPanelRevertButton:AlignTop(3)
 		bottomPanelRevertButton.DoClick = function(button)
-			doConfirmation(panelBlocker, function()
+			FMainMenu.ConfigModulesHelper.doAdvancedConfirmationDialog(panelBlocker, function()
 				FMainMenu.ConfigModulesHelper.requestVariablesCustom(configPropList, updateCachedTable)
 			end, FMainMenu.GetPhrase("ConfigURLButtonEditorWindowRevertConfirm"))
 		end

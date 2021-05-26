@@ -49,13 +49,13 @@ function FMainMenu.Derma:SetFrameSettings(frame, color, radius, isFrame)
 		if(radius > 0) then
 			function frame:Paint(width, height)
 				draw.RoundedBox(radius, 0, 0, width, height, color)
-				draw.SimpleText(frame.Title, "Trebuchet18", 65, 12, FayLib.IGC.GetSharedKey(addonName, "commonTextColor"), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+				draw.SimpleText(frame.Title, "Trebuchet18", 8, 12, FayLib.IGC.GetSharedKey(addonName, "commonTextColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 			end
 		else
 			function frame:Paint(width, height)
 				surface.SetDrawColor(color)
 				surface.DrawRect(0, 0, width, height)
-				draw.SimpleText(frame.Title, "Trebuchet18", 65, 12, FayLib.IGC.GetSharedKey(addonName, "commonTextColor"), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+				draw.SimpleText(frame.Title, "Trebuchet18", 8, 12, FayLib.IGC.GetSharedKey(addonName, "commonTextColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 			end
 		end
 	else

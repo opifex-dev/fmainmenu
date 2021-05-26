@@ -138,9 +138,7 @@ end
 
 -- Called when property is closed, allows for additional clean up if needed
 FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function()
-	if soundSelection != nil then
-		soundSelection:Close()
-	end
+	FMainMenu.ConfigModulesHelper.closeOpenExtraWindows()
 end
 
 -- Handles saving changes to a property

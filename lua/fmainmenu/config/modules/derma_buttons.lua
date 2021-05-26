@@ -1,6 +1,6 @@
 --[[
 
-	LOGO DERMA STYLE IGC MODULE
+	BUTTON DERMA STYLE IGC MODULE
 
 ]]--
 
@@ -8,6 +8,13 @@ FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 
 local propertyCode = 42
 local configPropList = {"textButtonColor","textButtonOutlineColor","textButtonOutlineThickness","textButtonShadow","textButtonFont","textButtonFontSize","textButtonHoverColor","textButtonHoverSound","textButtonClickSound"}
+local fontList = {
+	"akbar",
+	"coolvetica",
+	"Roboto",
+	"Marlett",
+	"DermaLarge",
+}
 
 -- fix for sound/ needing to be removed for surface.playSound
 local function soundFix(curSound, contentBox)
@@ -31,8 +38,12 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	local mainPropPanel = FMainMenu.ConfigModulesHelper.generatePropertyHeader(FMainMenu.GetPhrase("ConfigPropertiesTextButtonDermaPropName"), FMainMenu.GetPhrase("ConfigPropertiesTextButtonDermaPropDesc"))
 
 	--text button font
-	mainPropPanel.textFontOption = FMainMenu.ConfigModulePanels.createComboBox(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesDermaFont"), "Marlett")
-	mainPropPanel.textFontOption:AddChoice("DermaLarge")
+	mainPropPanel.textFontOption = FMainMenu.ConfigModulePanels.createComboBox(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesDermaFont"), "DermaLarge")
+	for _,font in ipairs(fontList) do
+		if font != "DermaLarge" then
+			mainPropPanel.textFontOption:AddChoice(font)
+		end
+	end
 	
 	--text button font size
 	mainPropPanel.textFontSize = FMainMenu.ConfigModulePanels.createLabelBoxComboSmall(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesDermaFontSize"), true)
