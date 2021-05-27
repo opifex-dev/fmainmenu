@@ -30,6 +30,7 @@ local net_ReadString = net.ReadString
 local LocalPlayer = LocalPlayer
 local gameevent_Listen = gameevent.Listen
 local Player = Player
+local hook_Add = hook.Add
 
 FMainMenu.Lang = FMainMenu.Lang || {}
 
@@ -111,7 +112,7 @@ local function openMenu()
 
 		-- Reinstate DarkRP Scoreboard if needed
 		if DarkRP && FAdmin then
-			hook.Add("ScoreboardShow", "FAdmin_scoreboard", function()
+			hook_Add("ScoreboardShow", "FAdmin_scoreboard", function()
 				if FAdmin.GlobalSetting.FAdmin || OverrideScoreboard:GetBool() then -- Don't show scoreboard when FAdmin is not installed on server
 					return FAdmin.ScoreBoard.ShowScoreBoard()
 				end
@@ -132,7 +133,7 @@ local function openMenu()
 
 	--DarkRP Support
 	if DarkRP then
-		hook.Add( "OnPlayerChangedTeam", "FMainMenu_OPCT", function()
+		hook_Add( "OnPlayerChangedTeam", "FMainMenu_OPCT", function()
 			closePanelGlobal()
 		end )
 	end
@@ -269,7 +270,7 @@ local function openMenu()
 	end
 
 	--Take care of various things that may occur while main menu is active
-	hook.Add( "Think", "FMainMenu_KMV", function()
+	hook_Add( "Think", "FMainMenu_KMV", function()
 		--some addons may interfere by disabling the cursor
 		gui_EnableScreenClicker( true )
 
@@ -298,7 +299,7 @@ end )
 
 --Detect Player Spawn
 gameevent_Listen( "player_spawn" )
-hook.Add("player_spawn", "FMainMenu_PlayerSpawn", function( data )
+hook_Add("player_spawn", "FMainMenu_PlayerSpawn", function( data )
 	if data.userid != LocalPlayer():UserID() then return end
 	if Player( data.userid ):IsBot() then return end
 	if varTable[1] then varTable[1] = false return end
@@ -308,7 +309,7 @@ hook.Add("player_spawn", "FMainMenu_PlayerSpawn", function( data )
 end)
 
 --Detect First Time Spawn
-hook.Add("FMainMenu_OpenMenuInitial", "FMainMenu_IPE", function( )
+hook_Add("FMainMenu_OpenMenuInitial", "FMainMenu_IPE", function( )
 	-- check for Murder gamemode
 	if GAMEMODE && GAMEMODE.RoundStage != nil && GAMEMODE.LootCollected != nil && GAMEMODE.RoundSettings != nil && FMainMenu.EverySpawn then
 		FMainMenu.EverySpawn = false
@@ -320,28 +321,28 @@ hook.Add("FMainMenu_OpenMenuInitial", "FMainMenu_IPE", function( )
 end)
 
 --Don't Draw HUD if in menu
-hook.Add("HUDShouldDraw", "FMainMenu_HSD", function( name )
+hook_Add("HUDShouldDraw", "FMainMenu_HSD", function( name )
 	if LocalPlayer():GetNWBool("FMainMenu_InMenu",false) then
 		return false
 	end
 end)
 
 --Don't show context menu if in menu
-hook.Add("ContextMenuOpen", "FMainMenu_CMO", function( name )
+hook_Add("ContextMenuOpen", "FMainMenu_CMO", function( name )
 	if LocalPlayer():GetNWBool("FMainMenu_InMenu",false) then
 		return false
 	end
 end)
 
 --Don't show spawn menu if in menu
-hook.Add( "SpawnMenuOpen", "FMainMenu_SMO", function()
+hook_Add( "SpawnMenuOpen", "FMainMenu_SMO", function()
 	if LocalPlayer():GetNWBool("FMainMenu_InMenu",false) then
 		return false
 	end
 end )
 
 --Don't apply mouse input to player movemenu if in menu
-hook.Add("InputMouseApply", "FMainMenu_IMA", function( cmd )
+hook_Add("InputMouseApply", "FMainMenu_IMA", function( cmd )
 	if LocalPlayer():GetNWBool("FMainMenu_InMenu",false) then
 		cmd:SetMouseX(0)
 		cmd:SetMouseY(0)
@@ -351,7 +352,7 @@ hook.Add("InputMouseApply", "FMainMenu_IMA", function( cmd )
 end)
 
 --Don't apply keyboard input to player movement or actions if in menu
-hook.Add("PlayerBindPress", "FMainMenu_PBPress", function( ply, bind, pressed )
+hook_Add("PlayerBindPress", "FMainMenu_PBPress", function( ply, bind, pressed )
 	if bind != "messagemode" && bind != "messagemode2" && bind != "+showscores" then
 		return
 	end

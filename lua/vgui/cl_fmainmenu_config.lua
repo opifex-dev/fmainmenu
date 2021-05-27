@@ -113,7 +113,7 @@ function PANEL:PerformLayout()
 			surface_DrawRect(0,0,w,h)
 		end
 
-		function sheet.Tab:Think() 
+		function sheet.Tab:Think()
 			sheet.Tab:SetSize(1, 1)
 			sheet.Tab:SetZPos( 0 )
 		end

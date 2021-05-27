@@ -24,7 +24,6 @@ local util_TableToJSON = util.TableToJSON
 local ipairs = ipairs
 local ScrW = ScrW
 local ScrH = ScrH
-local print = print
 local sound_PlayFile = sound.PlayFile
 local IsValid = IsValid
 local string_reverse = string.reverse
@@ -487,18 +486,11 @@ FMainMenu.ConfigModulesHelper.doAdvancedConfirmationDialog = function(panelBlock
 	removeConfirm:Center()
 
 	local leftText = FMainMenu.Derma.CreateDLabel(removeConfirm, 221, 113, false, warnText)
-	leftText:SetFont("HudHintTextLarge")
 	leftText:SetPos(10, 5)
-	leftText:SetTextColor( Color(255,255,255,255) )
-	leftText:SetWrap( true )
-	leftText:SetContentAlignment( 8 )
 
 	local secondButton = FMainMenu.Derma.CreateDButton(removeConfirm, 108, 32, FMainMenu.GetPhrase("ConfigCommonValueNo"), "")
 	secondButton:SetPos(130, 56)
-	secondButton:SetFont("HudHintTextLarge")
-	secondButton:SetTextColor( Color(255,255,255,255) )
 	FMainMenu.Derma.SetPanelHover(secondButton, 1)
-	secondButton:SetContentAlignment( 5 )
 	FMainMenu.Derma:SetFrameSettings(secondButton, Color(75,75,75, 255), 0)
 	secondButton.DoClick = function()
 		surface_PlaySound("garrysmod/ui_click.wav")
@@ -508,10 +500,7 @@ FMainMenu.ConfigModulesHelper.doAdvancedConfirmationDialog = function(panelBlock
 
 	local firstButton = FMainMenu.Derma.CreateDButton(removeConfirm, 108, 32, FMainMenu.GetPhrase("ConfigCommonValueYes"), "")
 	firstButton:SetPos(8, 56)
-	firstButton:SetFont("HudHintTextLarge")
-	firstButton:SetTextColor( Color(255,255,255,255) )
 	FMainMenu.Derma.SetPanelHover(firstButton, 1)
-	firstButton:SetContentAlignment( 5 )
 	FMainMenu.Derma:SetFrameSettings(firstButton, Color(75,75,75, 255), 0)
 	firstButton.DoClick = function()
 		surface_PlaySound("garrysmod/ui_click.wav")

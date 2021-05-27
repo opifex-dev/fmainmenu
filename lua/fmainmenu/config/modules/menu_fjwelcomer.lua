@@ -27,7 +27,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	mainPropPanel.toggleOption:AddChoice( FMainMenu.GetPhrase("ConfigCommonValueEnabled") )
 
 	-- welcome text
-	mainPropPanel.FJTextBox = FMainMenu.ConfigModulePanels.createLabelBoxComboLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesWelcomerTextLabel"))
+	mainPropPanel.FJTextBox = FMainMenu.ConfigModulePanels.createLabelBoxComboMassive(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesWelcomerTextLabel"))
 
 	-- Button Text
 	mainPropPanel.FJURLTextBox = FMainMenu.ConfigModulePanels.createLabelBoxComboLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesWelcomerURLTextLabel"))

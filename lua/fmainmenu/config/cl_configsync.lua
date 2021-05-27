@@ -30,6 +30,9 @@ for _, f in pairs(files) do
 	include("fmainmenu/lang/" .. f)
 end
 
+-- default lang preset
+FMainMenu.Lang = FMainMenu.LangPresets["en"]
+
 -- set initial values needed when shared config is synced for first time
 hook_Add("IGCSharedConfigReady", "FMainMenu_IGSCR", function()
 	-- every spawn and first join seed
@@ -39,8 +42,6 @@ hook_Add("IGCSharedConfigReady", "FMainMenu_IGSCR", function()
 	-- language
 	if FMainMenu.LangPresets[string_lower(FayLib.IGC.GetSharedKey(addonName, "LangSetting"))] != nil then
 		FMainMenu.Lang = FMainMenu.LangPresets[string_lower(FayLib.IGC.GetSharedKey(addonName, "LangSetting"))]
-	else -- assume English if no valid code given
-		FMainMenu.Lang = FMainMenu.LangPresets["en"]
 	end
 
 	hook_Run("FMainMenu_OpenMenuInitial")

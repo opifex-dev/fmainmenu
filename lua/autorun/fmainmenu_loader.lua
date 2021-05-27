@@ -57,9 +57,9 @@ else
 	include( "fmainmenu/config/cl_configsync.lua" )
 	include("vgui/cl_fmainmenu_config.lua")
 	include("vgui/cl_fmainmenu_mmenu.lua")
-	include( "fmainmenu/config/cl_configmenu.lua" )
 	include("fmainmenu/cl_mainmenu_panels.lua")
 	include( "fmainmenu/cl_mainmenu.lua" )
+	include( "fmainmenu/config/cl_configmenu.lua" )
 end
 
 FMainMenu.Log("Load Complete", false)

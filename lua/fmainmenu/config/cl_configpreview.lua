@@ -48,6 +48,8 @@ local welcomerBox = nil
 local welcomerBoxLeftText = nil
 local welcomerBoxButton = nil
 local welcomerBoxPanel = nil
+local welcomerBoxScrollPanel = nil
+local wBBPanel = nil
 local CLText = nil
 local cachedLink = ""
 local musicStation = nil
@@ -289,42 +291,44 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 		if previewLevel == 2 && previewCopy["_firstJoinWelcome"] || previewLevel == 4 then
 			if welcomerBox == nil then
 				welcomerBox = FMainMenu.Derma.CreateDFrame(FMainMenu.GetPhrase("WelcomerFrameTitle"), nil, 380, 256)
+				previewFrameSettings(welcomerBox, previewCopy["_commonFrameColor"], previewCopy["_commonFrameBevelRadius"], true, previewCopy["_commonTextColor"])
 				welcomerBox:SetZPos(1)
-				welcomerBox:Center()
-				welcomerBox:ShowCloseButton( false )
-				welcomerBox:SetDraggable( false )
-				previewFrameSettings(welcomerBox, previewCopy["_commonFrameColor"], FMainMenu.Config.DFrameRadius, true, previewCopy["_commonTextColor"])
 
 				welcomerBoxPanel = FMainMenu.Derma.CreateDPanel(welcomerBox, 365, 221, false )
 				welcomerBoxPanel:SetPos(5, 25)
 				previewFrameSettings(welcomerBoxPanel, previewCopy["_commonPanelColor"], 0, false, previewCopy["_commonTextColor"])
-				welcomerBoxLeftText = FMainMenu.Derma.CreateDLabel(welcomerBoxPanel, 345, 128, false, previewCopy["_firstJoinText"])
-				welcomerBoxLeftText:SetFont("HudHintTextLarge")
-				welcomerBoxLeftText:SetPos(10, 10)
-				welcomerBoxLeftText:SetTextColor( previewCopy["_commonTextColor"] )
-				welcomerBoxLeftText:SetWrap( true )
-				welcomerBoxLeftText:SetContentAlignment( 8 )
 
-				local wBBPanel = FMainMenu.Derma.CreateDPanel(welcomerBoxPanel, 355, 36, false )
+				welcomerBoxScrollPanel = FMainMenu.Derma.CreateDScrollPanel(welcomerBoxPanel, 365, 211 - previewCopy["_textButtonFontSize"], false )
+				previewFrameSettings(welcomerBoxScrollPanel, previewCopy["_commonPanelColor"], 0)
+
+				welcomerBoxLeftText = FMainMenu.Derma.CreateDLabel(welcomerBoxScrollPanel, 345, 128, false, previewCopy["_firstJoinText"])
+				welcomerBoxLeftText:SetPos(5, 5)
+				welcomerBoxLeftText:SetTextColor( previewCopy["_commonTextColor"] )
+				welcomerBoxLeftText:SetAutoStretchVertical( true )
+
+				wBBPanel = FMainMenu.Derma.CreateDPanel(welcomerBoxPanel, 355, 36, false )
 				wBBPanel:SetPos(5, 180)
-				wBBPanel.Paint = function(self, w, h)
-					surface_SetDrawColor( previewCopy["_commonButtonColor"] )
-					surface_DrawRect( 0, 0, w, h )
-				end
+				previewFrameSettings(wBBPanel, previewCopy["_commonButtonColor"], 0)
 
 				welcomerBoxButton = FMainMenu.Derma.CreateDLabel(welcomerBoxPanel, 355, 36, false, previewCopy["_firstJoinURLText"])
-				welcomerBoxButton:SetFont("HudHintTextLarge")
+				welcomerBoxButton:SetWrap(false)
 				welcomerBoxButton:SetPos(5, 180)
 				welcomerBoxButton:SetTextColor( previewCopy["_commonTextColor"] )
 				welcomerBoxButton:SetContentAlignment( 5 )
 			end
 
+			welcomerBox:SetZPos(-100)
 			welcomerBoxLeftText:SetText(previewCopy["_firstJoinText"])
 			welcomerBoxButton:SetText(previewCopy["_firstJoinURLText"])
 			welcomerBoxLeftText:SetTextColor( previewCopy["_commonTextColor"] )
 			welcomerBoxButton:SetTextColor( previewCopy["_commonTextColor"] )
+			previewFrameSettings(wBBPanel, previewCopy["_commonButtonColor"], 0)
 			previewFrameSettings(welcomerBoxPanel, previewCopy["_commonPanelColor"], 0, false, previewCopy["_commonTextColor"])
-			previewFrameSettings(welcomerBox, previewCopy["_commonFrameColor"], FMainMenu.Config.DFrameRadius, true, previewCopy["_commonTextColor"])
+			previewFrameSettings(welcomerBoxScrollPanel, previewCopy["_commonPanelColor"], 0)
+			welcomerBoxScrollPanel:SetBarColor(previewCopy["_commonScrollPanelBarColor"])
+			welcomerBoxScrollPanel:SetGripColor(previewCopy["_commonScrollPanelGripColor"])
+			welcomerBoxScrollPanel:SetButtonColor(previewCopy["_commonScrollPanelButtonColor"])
+			previewFrameSettings(welcomerBox, previewCopy["_commonFrameColor"], previewCopy["_commonFrameBevelRadius"], true, previewCopy["_commonTextColor"])
 		else
 			if welcomerBox != nil then
 				welcomerBox:Close()
@@ -332,6 +336,8 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 				welcomerBoxButton = nil
 				welcomerBoxLeftText = nil
 				welcomerBoxPanel = nil
+				welcomerBoxScrollPanel = nil
+				wBBPanel = nil
 			end
 		end
 
@@ -399,6 +405,8 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			welcomerBoxButton = nil
 			welcomerBoxLeftText = nil
 			welcomerBoxPanel = nil
+			welcomerBoxScrollPanel = nil
+			wBBPanel = nil
 		end
 
 		if musicStation != nil then

@@ -8,22 +8,22 @@ local FMainMenu = FMainMenu
 
 FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 
-local propertyCode = 44
-local configPropList = {"commonPanelColor"}
+local propertyCode = 45
+local configPropList = {"commonButtonColor"}
 
 FMainMenu.ConfigModules[propertyCode] = {}
 FMainMenu.ConfigModules[propertyCode].previewLevel = 4
 FMainMenu.ConfigModules[propertyCode].category = 4
-FMainMenu.ConfigModules[propertyCode].propName = FMainMenu.GetPhrase("ConfigPropertiesPanelDermaPropName")
+FMainMenu.ConfigModules[propertyCode].propName = FMainMenu.GetPhrase("ConfigPropertiesButtonDermaPropName")
 FMainMenu.ConfigModules[propertyCode].liveUpdate = true
 
 -- Creates the property editing panel
 FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	--Property Panel Setup
-	local mainPropPanel = FMainMenu.ConfigModulesHelper.generatePropertyHeader(FMainMenu.GetPhrase("ConfigPropertiesPanelDermaPropName"), FMainMenu.GetPhrase("ConfigPropertiesPanelDermaPropDesc"))
+	local mainPropPanel = FMainMenu.ConfigModulesHelper.generatePropertyHeader(FMainMenu.GetPhrase("ConfigPropertiesButtonDermaPropName"), FMainMenu.GetPhrase("ConfigPropertiesButtonDermaPropDesc"))
 
-	--dialog box color
-	mainPropPanel.dermaPanelColor = FMainMenu.ConfigModulePanels.createColorPicker(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesPanelDermaPanelColor"))
+	--dialog button color
+	mainPropPanel.dermaButtonColor = FMainMenu.ConfigModulePanels.createColorPicker(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesButtonDermaButtonColor"))
 
 	return {configPropList, mainPropPanel}
 end
@@ -32,7 +32,7 @@ end
 FMainMenu.ConfigModules[propertyCode].isVarChanged = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
-	if !FMainMenu.ConfigModulesHelper.areColorsEqual(parentPanel.lastRecVariable[1], parentPanel.dermaPanelColor:GetColor()) then
+	if !FMainMenu.ConfigModulesHelper.areColorsEqual(parentPanel.lastRecVariable[1], parentPanel.dermaButtonColor:GetColor()) then
 		return true
 	end
 
@@ -44,7 +44,7 @@ FMainMenu.ConfigModules[propertyCode].updatePreview = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 	local previewCopy = FMainMenu.ConfigPreview.previewCopy
 
-	previewCopy["_" .. configPropList[1]] = parentPanel.dermaPanelColor:GetColor()
+	previewCopy["_" .. configPropList[1]] = parentPanel.dermaButtonColor:GetColor()
 end
 
 -- Called when property is closed, allows for additional clean up if needed
@@ -54,7 +54,7 @@ FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function() end
 FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
-	parentPanel.lastRecVariable[1] = parentPanel.dermaPanelColor:GetColor()
+	parentPanel.lastRecVariable[1] = parentPanel.dermaButtonColor:GetColor()
 
 	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, configPropList)
 end
@@ -63,7 +63,7 @@ end
 FMainMenu.ConfigModules[propertyCode].varFetch = function(receivedVarTable)
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
-	parentPanel.dermaPanelColor:SetColor(receivedVarTable[1])
+	parentPanel.dermaButtonColor:SetColor(receivedVarTable[1])
 end
 
 -- Called when the player wishes to reset the property values to those of the server

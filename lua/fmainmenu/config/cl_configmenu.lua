@@ -64,7 +64,7 @@ net_Receive( "FMainMenu_Config_OpenMenu", function( len )
 		FMainMenu.configPropertyWindow:SetPos(screenWidth-250, screenHeight-360)
 		FMainMenu.configPropertyWindow:SetTitle(FMainMenu.GetPhrase("ConfigPropertiesWindowTitle"))
 		FMainMenu.configPropertyWindow.propertyCode = 0
-		FMainMenu.configPropertyWindow:SetZPos(10)
+		FMainMenu.configPropertyWindow:SetZPos(100)
 
 		FMainMenu.configPropertyWindow.currentProp = vgui_Create("fmainmenu_config_editor_panel", FMainMenu.configPropertyWindow)
 		FMainMenu.configPropertyWindow.currentProp:SetSize( 240, 330 )
@@ -85,7 +85,7 @@ net_Receive( "FMainMenu_Config_OpenMenu", function( len )
 		FMainMenu.CurConfigMenu:SetPos(screenWidth-250, screenHeight-620)
 		FMainMenu.CurConfigMenu:SetTitle(FMainMenu.GetPhrase("ConfigPropertiesSelectorTitle"))
 		FMainMenu.CurConfigMenu.unsavedVar = false
-		FMainMenu.CurConfigMenu:SetZPos(10)
+		FMainMenu.CurConfigMenu:SetZPos(100)
 
 		local configSheet = vgui_Create( "fmainmenu_config_editor_sheet", FMainMenu.CurConfigMenu)
 		configSheet:SetSize( 240, 220 )

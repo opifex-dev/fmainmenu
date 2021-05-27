@@ -325,19 +325,14 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 			removeConfirm:Center()
 
 			local leftText = FMainMenu.Derma.CreateDLabel(removeConfirm, 246, 30, false, FMainMenu.GetPhrase("ConfigMenuSetupEditorWindowChooseTypeLabel"))
-			leftText:SetFont("HudHintTextLarge")
 			leftText:SetPos(0, 5)
-			leftText:SetTextColor( Color(255,255,255,255) )
-			leftText:SetContentAlignment( 8 )
+			leftText:SetWrap(false)
 
 			local tempY = 0
 			for _,bType in ipairs(table_GetKeys(buttonSetups)) do
 				local button = FMainMenu.Derma.CreateDButton(removeConfirm, 200, 32, FMainMenu.GetPhrase("ConfigMenuSetupEditorType" .. bType), "")
 				button:SetPos(23, 32 + tempY)
-				button:SetFont("HudHintTextLarge")
-				button:SetTextColor( Color(255,255,255,255) )
 				FMainMenu.Derma.SetPanelHover(button, 1)
-				button:SetContentAlignment( 5 )
 				button.Type = bType
 				FMainMenu.Derma:SetFrameSettings(button, Color(75,75,75, 255), 0)
 				button.DoClick = function(self)
@@ -358,10 +353,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 
 			local cancelButton = FMainMenu.Derma.CreateDButton(removeConfirm, 200, 32, FMainMenu.GetPhrase("ConfigCommonValueCancel"), "")
 			cancelButton:SetPos(23, 208)
-			cancelButton:SetFont("HudHintTextLarge")
-			cancelButton:SetTextColor( Color(255,255,255,255) )
 			FMainMenu.Derma.SetPanelHover(cancelButton, 1)
-			cancelButton:SetContentAlignment( 5 )
 			FMainMenu.Derma:SetFrameSettings(cancelButton, Color(75,75,75, 255), 0)
 			cancelButton.DoClick = function()
 				surface_PlaySound("garrysmod/ui_click.wav")

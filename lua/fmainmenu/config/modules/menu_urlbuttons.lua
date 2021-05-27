@@ -71,7 +71,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 			mainBPanel:AlignTop(25)
 
 			local heightOff = 10
-			for i,button in ipairs(mainPropPanel.internalURLButtons) do
+			for i, button in ipairs(mainPropPanel.internalURLButtons) do
 				local buttonPanel = vgui_Create("fmainmenu_config_editor_panel", mainBPanel)
 				buttonPanel.bIndex = i
 				buttonPanel:SetBGColor(Color(75,75,75))

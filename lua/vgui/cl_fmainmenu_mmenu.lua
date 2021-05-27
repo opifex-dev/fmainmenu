@@ -1,44 +1,6 @@
 FMainMenu.Derma = FMainMenu.Derma || {}
 FMainMenu.Config = FMainMenu.Config || {}
 
---[[
-  _____                               _____ _    _          _____      _   _   _                 
- |  __ \                             / ____| |  (_)        / ____|    | | | | (_)                
- | |  | | ___ _ __ _ __ ___   __ _  | (___ | | ___ _ __   | (___   ___| |_| |_ _ _ __   __ _ ___ 
- | |  | |/ _ \ '__| '_ ` _ \ / _` |  \___ \| |/ / | '_ \   \___ \ / _ \ __| __| | '_ \ / _` / __|
- | |__| |  __/ |  | | | | | | (_| |  ____) |   <| | | | |  ____) |  __/ |_| |_| | | | | (_| \__ \
- |_____/ \___|_|  |_| |_| |_|\__,_| |_____/|_|\_\_|_| |_| |_____/ \___|\__|\__|_|_| |_|\__, |___/
-                                                                                        __/ |    
-                                                                                       |___/     
-]]--
-
---Base Frame Color
-FMainMenu.Config.DFrameBaseColor = Color(75, 75, 75)
-
---Base Panel Color
-FMainMenu.Config.DPanelBaseColor = Color(75, 75, 75)
-
---Scroll Panel Bar Color
-FMainMenu.Config.DScrollPanelBarColor = Color(75, 75, 75)
-
---Scroll Panel Grip Color
-FMainMenu.Config.DScrollPanelGripColor = Color(155, 155, 155)
-
---Scroll Panel Button Color
-FMainMenu.Config.DScrollPanelButtonColor = Color(110, 110, 110)
-
---Pixel Radius of DFrame Corner Bevel
-FMainMenu.Config.DFrameRadius = 5
-
---Color of the button hover overlay
-FMainMenu.Config.hoverOverlayColor = Color(0,0,0, 70)
-
---[[
-
-END CONFIG (DO NOT TOUCH BELOW)
-
-]]--
-
 local Color = Color
 local Material = Material
 local draw_RoundedBox = draw.RoundedBox
@@ -54,10 +16,15 @@ local surface_DrawTexturedRect = surface.DrawTexturedRect
 local surface_PlaySound = surface.PlaySound
 local draw_SimpleTextOutlined = draw.SimpleTextOutlined
 local vgui_Create = vgui.Create
+local derma_DefineControl = derma.DefineControl
 
 local blurMat = Material("pp/blurscreen")
 local colorWhite = Color(255, 255, 255)
 local addonName = "fmainmenu"
+
+--[[
+	HELPER FUNCTIONS
+]]--
 
 --Adds custom paint function for custom backgrounds and rounding edges
 function FMainMenu.Derma:SetFrameSettings(frame, color, radius, isFrame)
@@ -133,7 +100,7 @@ function FMainMenu.Derma.SetPanelHover(frame, hoverType, arg)
 	if hoverType == 1 then
 		function frame:PaintOver(width, height)
 			if frame:IsHovered() then
-				surface_SetDrawColor(FMainMenu.Config.hoverOverlayColor)
+				surface_SetDrawColor(Color(0,0,0,70))
 				surface_DrawRect(0, 0, width, height)
 			end
 		end
@@ -153,15 +120,97 @@ function FMainMenu.Derma.SetPanelHover(frame, hoverType, arg)
 				frame:SetTextColor(FayLib.IGC.GetSharedKey(addonName, "textButtonColor"))
 			end
 			frame:UpdateFGColor()
-			draw_SimpleTextOutlined( arg, "FMM_ButtonFont", 0, 0, FayLib.IGC.GetSharedKey(addonName, "textButtonColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, FayLib.IGC.GetSharedKey(addonName, "textButtonOutlineThickness"), FayLib.IGC.GetSharedKey(addonName, "textButtonOutlineColor") )
+			draw_SimpleTextOutlined( arg, FMainMenu.CurrentTextButtonFont, 0, 0, FayLib.IGC.GetSharedKey(addonName, "textButtonColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, FayLib.IGC.GetSharedKey(addonName, "textButtonOutlineThickness"), FayLib.IGC.GetSharedKey(addonName, "textButtonOutlineColor") )
 		end
 	end
 end
 
+--[[
+	DERMA CONTROLS
+]]--
+
+-- custom dframe
+local PANEL = {}
+function PANEL:Init()
+	self:Center()
+	self:ShowCloseButton( false )
+	self:SetDraggable( false )
+end
+
+derma_DefineControl("fmainmenu_menu_dframe", nil, PANEL, "DFrame")
+
+-- custom dlabel
+local PANEL = {}
+function PANEL:Init()
+	self:SetContentAlignment( 8 )
+	self:SetFont("HudHintTextLarge")
+	self:SetWrap( true )
+	self:SetTextColor( Color(255,255,255,255) )
+end
+
+derma_DefineControl("fmainmenu_menu_dlabel", nil, PANEL, "DLabel")
+
+-- custom dbutton
+local PANEL = {}
+function PANEL:Init()
+	self:SetContentAlignment( 5 )
+	self:SetFont("HudHintTextLarge")
+	self:SetTextColor( Color(255,255,255,255) )
+end
+
+derma_DefineControl("fmainmenu_menu_dbutton", nil, PANEL, "DButton")
+
+-- custom dscrollpanel
+local PANEL = {}
+function PANEL:Init()
+	local sbar = self:GetVBar()
+
+	sbar.BarColor = Color(75, 75, 75)
+	sbar.Paint = function( s, w, h )
+		draw_RoundedBox( 0, 0, 0, w, h, s.BarColor )
+	end
+
+	sbar.btnGrip.GripColor = Color(155, 155, 155)
+	sbar.btnGrip.Paint = function( s, w, h )
+		draw_RoundedBox( 0, 0, 0, w, h, s.GripColor )
+	end
+
+	sbar.btnUp.ButtonColor = Color(110, 110, 110)
+	sbar.btnUp.Paint = function( s, w, h )
+		draw_RoundedBox( 0, 0, 0, w, h, s.ButtonColor )
+	end
+
+	sbar.btnDown.ButtonColor = Color(110, 110, 110)
+	sbar.btnDown.Paint = function( s, w, h )
+		draw_RoundedBox( 0, 0, 0, w, h, s.ButtonColor )
+	end
+end
+
+function PANEL:SetBarColor(newColor)
+	local sbar = self:GetVBar()
+	sbar.BarColor = newColor
+end
+
+function PANEL:SetGripColor(newColor)
+	local sbar = self:GetVBar()
+	sbar.btnGrip.GripColor = newColor
+end
+
+function PANEL:SetButtonColor(newColor)
+	local sbar = self:GetVBar()
+	sbar.btnUp.ButtonColor = newColor
+	sbar.btnDown.ButtonColor = newColor
+end
+
+derma_DefineControl("fmainmenu_menu_dscrollpanel", nil, PANEL, "DScrollPanel")
+
+--[[
+	WRAPPER FUNCTIONS
+]]--
+
 --Creates Derma DFrame Object
 function FMainMenu.Derma.CreateDFrame(name, parent, width, height)
-	local frame = vgui_Create("DFrame", parent)
-	FMainMenu.Derma:SetFrameSettings(frame, FMainMenu.Config.DFrameBaseColor, FMainMenu.Config.DFrameRadius, true)
+	local frame = vgui_Create("fmainmenu_menu_dframe", parent)
 	if name ~= nil then
 		frame.Title = name
 		frame:SetTitle("")
@@ -177,7 +226,6 @@ end
 --Creates Derma DPanel Object
 function FMainMenu.Derma.CreateDPanel(parent, width, height, SToC)
 	local frame = vgui_Create("DPanel", parent)
-	FMainMenu.Derma:SetFrameSettings(frame, FMainMenu.Config.DPanelBaseColor, 0)
 	if SToC then
 		frame:Dock( FILL )
 	end
@@ -189,33 +237,26 @@ end
 
 --Creates Derma DScrollPanel Object
 function FMainMenu.Derma.CreateDScrollPanel(parent, width, height, SToC)
-	local frame = vgui_Create("DScrollPanel", parent)
-	FMainMenu.Derma:SetFrameSettings(frame, FMainMenu.Config.DPanelBaseColor, 0)
+	local frame = vgui_Create("fmainmenu_menu_dscrollpanel", parent)
+
 	if SToC then
 		frame:Dock( FILL )
 	end
+
 	if width ~= nil && height ~= nil then
 		frame:SetSize(width, height)
 	end
-	local sbar = frame:GetVBar()
-	function sbar:Paint( w, h )
-		draw_RoundedBox( 0, 0, 0, w, h, FMainMenu.Config.DScrollPanelBarColor )
-	end
-	function sbar.btnGrip:Paint( w, h )
-		draw_RoundedBox( 0, 0, 0, w, h, FMainMenu.Config.DScrollPanelGripColor )
-	end
-	function sbar.btnUp:Paint( w, h )
-		draw_RoundedBox( 0, 0, 0, w, h, FMainMenu.Config.DScrollPanelButtonColor )
-	end
-	function sbar.btnDown:Paint( w, h )
-		draw_RoundedBox( 0, 0, 0, w, h, FMainMenu.Config.DScrollPanelButtonColor )
-	end
+
+	frame:SetBarColor(FayLib.IGC.GetSharedKey(addonName, "commonScrollPanelBarColor"))
+	frame:SetGripColor(FayLib.IGC.GetSharedKey(addonName, "commonScrollPanelGripColor"))
+	frame:SetButtonColor(FayLib.IGC.GetSharedKey(addonName, "commonScrollPanelButtonColor"))
+
 	return frame
 end
 
 --Creates Derma DLabel Object
 function FMainMenu.Derma.CreateDLabel(parent, width, height, SToC, text)
-	local frame = vgui_Create("DLabel", parent)
+	local frame = vgui_Create("fmainmenu_menu_dlabel", parent)
 	if text ~= nil then
 		frame:SetText(text)
 	end
@@ -230,7 +271,7 @@ end
 
 --Creates Derma DButton Object
 function FMainMenu.Derma.CreateDButton(parent, width, height, text, ttip)
-	local frame = vgui_Create("DButton", parent)
+	local frame = vgui_Create("fmainmenu_menu_dbutton", parent)
 	if width ~= nil && height ~= nil then
 		frame:SetSize(width, height)
 	end
