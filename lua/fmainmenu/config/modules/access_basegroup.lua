@@ -27,6 +27,9 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	mainPropPanel.toggleOption:AddChoice( "admin" )
 	mainPropPanel.toggleOption:AddChoice( "user" )
 
+	-- Note about CAMI functionality
+	FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesConfigAccessCAMILabel"))
+
 	return {configPropList, mainPropPanel}
 end
 

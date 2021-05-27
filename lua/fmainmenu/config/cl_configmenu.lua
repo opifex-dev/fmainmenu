@@ -13,6 +13,7 @@ local net_Start = net.Start
 local net_SendToServer = net.SendToServer
 local hook_Add = hook.Add
 local concommand_Add = concommand.Add
+local surface_PlaySound = surface.PlaySound
 
 FMainMenu.CurConfigMenu = FMainMenu.CurConfigMenu || nil
 FMainMenu.configPropertyWindow = FMainMenu.configPropertyWindow || nil
@@ -135,6 +136,7 @@ net_Receive( "FMainMenu_Config_OpenMenu", function( len )
 			propButton.category = propTable.category
 			propButton.previewLevel = propTable.previewLevel
 			propButton.DoClick = function(button)
+				surface.PlaySound("garrysmod/ui_click.wav")
 				if FMainMenu.configPropertyWindow.propertyCode == propButton.propCode then return end
 				FMainMenu.configPropertyWindow.propertyCode = propButton.propCode
 				local varsList = FMainMenu.ConfigModules[button.propCode].GeneratePanel(configSheets[propButton.category])
@@ -144,6 +146,7 @@ net_Receive( "FMainMenu_Config_OpenMenu", function( len )
 				FMainMenu.ConfigModulesHelper.scrollBarAdjustments()
 				FMainMenu.ConfigPreview.previewLevel = propButton.previewLevel
 			end
+			FMainMenu.Derma.SetPanelHover(propButton, 1)
 
 			sheetTempHeights[propTable.category] = sheetTempHeights[propTable.category] + 30
 		end
@@ -219,8 +222,10 @@ net_Receive( "FMainMenu_Config_OpenMenu", function( len )
 		topInfoBarCloseButton:AlignTop(2.5)
 		topInfoBarCloseButton.DoClick = function(button)
 			if !FMainMenu.CurConfigMenu.unsavedVar then
+				surface_PlaySound("garrysmod/ui_click.wav")
 				closeConfig()
 			else
+				surface_PlaySound("common/warning.wav")
 				-- If the active property has changes, confirm they want to discard
 				topInfoBar:SetKeyboardInputEnabled( false )
 				topInfoBar:SetMouseInputEnabled( false )
@@ -250,6 +255,7 @@ net_Receive( "FMainMenu_Config_OpenMenu", function( len )
 				closeQuestionNo:AlignRight(50)
 				closeQuestionNo:AlignTop(85)
 				closeQuestionNo.DoClick = function(button)
+					surface_PlaySound("garrysmod/ui_click.wav")
 					closeCheck:Close()
 					closeBlocker:Remove()
 					topInfoBar:MakePopup()
@@ -262,6 +268,7 @@ net_Receive( "FMainMenu_Config_OpenMenu", function( len )
 				closeQuestionYes:AlignLeft(50)
 				closeQuestionYes:AlignTop(85)
 				closeQuestionYes.DoClick = function(button)
+					surface_PlaySound("garrysmod/ui_click.wav")
 					closeCheck:Close()
 					closeBlocker:Remove()
 					closeConfig()

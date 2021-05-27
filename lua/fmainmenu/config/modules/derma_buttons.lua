@@ -15,7 +15,7 @@ FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 local propertyCode = 42
 local configPropList = {"textButtonColor","textButtonOutlineColor","textButtonOutlineThickness","textButtonShadow","textButtonFont","textButtonFontSize","textButtonHoverColor","textButtonHoverSound","textButtonClickSound"}
 
--- fix for sound/ needing to be removed for surface.playSound
+-- fix for sound/ needing to be removed for surface.PlaySound
 local function soundFix(curSound, contentBox)
 	local listOfSlashes = {"sound/", "sound\\", "sound\\\\"}
 	for _,slashPossible in ipairs(listOfSlashes) do
@@ -60,6 +60,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	--sound selection button
 	local hoverSoundChooseButton = FMainMenu.ConfigModulePanels.createTextButtonLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesMusicButtonLabel"))
 	hoverSoundChooseButton.DoClick = function(button)
+		surface_PlaySound("garrysmod/ui_click.wav")
 		FMainMenu.ConfigModulesHelper.doSoundSelection(mainPropPanel.textHoverSound, nil)
 	end
 
@@ -69,6 +70,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	--sound selection button
 	local clickSoundChooseButton = FMainMenu.ConfigModulePanels.createTextButtonLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesMusicButtonLabel"))
 	clickSoundChooseButton.DoClick = function(button)
+		surface_PlaySound("garrysmod/ui_click.wav")
 		FMainMenu.ConfigModulesHelper.doSoundSelection(mainPropPanel.textClickSound, nil)
 	end
 

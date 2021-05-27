@@ -6,6 +6,8 @@
 
 local FMainMenu = FMainMenu
 
+local surface_PlaySound = surface.PlaySound
+
 FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 
 local propertyCode = 62
@@ -29,6 +31,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesFirstJoinSeedInfoLabel"))
 	local informationButton = FMainMenu.ConfigModulePanels.createTextButtonLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesAdvancedGeneralInfoButtonLabel"))
 	informationButton.DoClick = function(button)
+		surface_PlaySound("garrysmod/ui_click.wav")
 		FMainMenu.ConfigModulesHelper.doInformationalWindow(FMainMenu.GetPhrase("ConfigPropertiesFirstJoinSeedInfoWindowTitle"), FMainMenu.GetPhrase("ConfigPropertiesFirstJoinSeedInfo"))
 	end
 

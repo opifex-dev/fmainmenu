@@ -14,6 +14,7 @@ local ipairs = ipairs
 local table_remove = table.remove
 local table_Copy = table.Copy
 local table_GetKeys = table.GetKeys
+local surface_PlaySound = surface.PlaySound
 
 FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 
@@ -150,6 +151,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	mainPropPanel.internalMenuSetup = {}
 	mainPropPanel.menuSetupEditorButton = FMainMenu.ConfigModulePanels.createTextButtonLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesMenuSetupEditorButtonLabel"))
 	mainPropPanel.menuSetupEditorButton.DoClick = function(button)
+		surface_PlaySound("garrysmod/ui_click.wav")
 		FMainMenu.ConfigModulesHelper.setExternalBlock(true)
 		FMainMenu.configPropertyWindow.configBlockerPanel:SetVisible(true)
 
@@ -209,6 +211,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 				buttonRemove:AlignRight(5)
 				buttonRemove:AlignBottom(5)
 				buttonRemove.DoClick = function(button)
+					surface_PlaySound("common/warning.wav")
 					FMainMenu.ConfigModulesHelper.doAdvancedConfirmationDialog(panelBlocker, function()
 						-- Remove the button
 						table_remove( mainPropPanel.internalMenuSetup, buttonPanel.bIndex )
@@ -228,6 +231,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 				buttonOrderUp:SetImage("icon16/arrow_up.png")
 				buttonOrderUp.DoClick = function(button)
 					if buttonPanel.bIndex > 1 then
+						surface_PlaySound("garrysmod/ui_click.wav")
 						local temp = table_Copy(mainPropPanel.internalMenuSetup[buttonPanel.bIndex])
 						mainPropPanel.internalMenuSetup[buttonPanel.bIndex] = mainPropPanel.internalMenuSetup[buttonPanel.bIndex-1]
 						mainPropPanel.internalMenuSetup[buttonPanel.bIndex-1] = temp
@@ -235,6 +239,8 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 
 						FMainMenu.ConfigModulesHelper.setUnsaved(FMainMenu.ConfigModules[propertyCode].isVarChanged())
 						FMainMenu.ConfigModules[propertyCode].updatePreview()
+					else
+						surface_PlaySound("common/wpn_denyselect.wav")
 					end
 				end
 
@@ -247,6 +253,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 				buttonOrderDown:SetKeepAspect( true )
 				buttonOrderDown.DoClick = function(button)
 					if buttonPanel.bIndex < #mainPropPanel.internalMenuSetup then
+						surface_PlaySound("garrysmod/ui_click.wav")
 						local temp = table_Copy(mainPropPanel.internalMenuSetup[buttonPanel.bIndex])
 						mainPropPanel.internalMenuSetup[buttonPanel.bIndex] = mainPropPanel.internalMenuSetup[buttonPanel.bIndex + 1]
 						mainPropPanel.internalMenuSetup[buttonPanel.bIndex + 1] = temp
@@ -254,6 +261,8 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 
 						FMainMenu.ConfigModulesHelper.setUnsaved(FMainMenu.ConfigModules[propertyCode].isVarChanged())
 						FMainMenu.ConfigModules[propertyCode].updatePreview()
+					else
+						surface_PlaySound("common/wpn_denyselect.wav")
 					end
 				end
 			end
@@ -280,8 +289,10 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 		bottomPanelSaveButton:AlignRight(5)
 		bottomPanelSaveButton:AlignTop(3)
 		bottomPanelSaveButton.DoClick = function(button)
+			surface_PlaySound("garrysmod/ui_click.wav")
 			MenuSetupEditor:Close()
 		end
+		FMainMenu.Derma.SetPanelHover(bottomPanelSaveButton, 1)
 
 		-- revert button
 		local bottomPanelRevertButton = vgui_Create("fmainmenu_config_editor_button", bottomPanel)
@@ -290,10 +301,12 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 		bottomPanelRevertButton:AlignRight(110)
 		bottomPanelRevertButton:AlignTop(3)
 		bottomPanelRevertButton.DoClick = function(button)
+			surface_PlaySound("common/warning.wav")
 			FMainMenu.ConfigModulesHelper.doAdvancedConfirmationDialog(panelBlocker, function()
 				FMainMenu.ConfigModulesHelper.requestVariablesCustom(configPropList, updateCachedTable)
 			end, FMainMenu.GetPhrase("ConfigURLButtonEditorWindowRevertConfirm"))
 		end
+		FMainMenu.Derma.SetPanelHover(bottomPanelRevertButton, 1)
 
 		-- add button
 		local bottomPanelAddButton = vgui_Create("fmainmenu_config_editor_button", bottomPanel)
@@ -302,6 +315,8 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 		bottomPanelAddButton:AlignLeft(5)
 		bottomPanelAddButton:AlignTop(3)
 		bottomPanelAddButton.DoClick = function(button)
+			surface_PlaySound("garrysmod/ui_click.wav")
+
 			--Confirmation dialogue
 			panelBlocker:SetVisible(true)
 			local removeConfirm =  vgui_Create("fmainmenu_config_editor_panel", panelBlocker)
@@ -326,6 +341,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 				button.Type = bType
 				FMainMenu.Derma:SetFrameSettings(button, Color(75,75,75, 255), 0)
 				button.DoClick = function(self)
+					surface_PlaySound("garrysmod/ui_click.wav")
 					removeConfirm:Remove()
 					panelBlocker:SetVisible(false)
 
@@ -348,10 +364,12 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 			cancelButton:SetContentAlignment( 5 )
 			FMainMenu.Derma:SetFrameSettings(cancelButton, Color(75,75,75, 255), 0)
 			cancelButton.DoClick = function()
+				surface_PlaySound("garrysmod/ui_click.wav")
 				removeConfirm:Remove()
 				panelBlocker:SetVisible(false)
 			end
 		end
+		FMainMenu.Derma.SetPanelHover(bottomPanelAddButton, 1)
 
 		panelBlocker =  vgui_Create("fmainmenu_config_editor_panel", MenuSetupEditor)
 		panelBlocker:SetBGColor(Color(0, 0, 0, 155))
@@ -370,6 +388,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesMenuOverrideInfoLabel"))
 	local informationButton = FMainMenu.ConfigModulePanels.createTextButtonLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesAdvancedGeneralInfoButtonLabel"))
 	informationButton.DoClick = function(button)
+		surface_PlaySound("garrysmod/ui_click.wav")
 		FMainMenu.ConfigModulesHelper.doInformationalWindow(FMainMenu.GetPhrase("ConfigPropertiesMenuOverrideInfoWindowTitle"), FMainMenu.GetPhrase("ConfigPropertiesMenuOverrideInfo"))
 	end
 

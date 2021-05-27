@@ -137,6 +137,7 @@ FMainMenu.ConfigModulePanels.createTextButtonLarge = function(mainPropPanel, tex
 	newButton:AlignLeft(20)
 	newButton:AlignTop(70 + mainPropPanel.tempYPos)
 	newButton.scrollAdjustmentType = 3
+	FMainMenu.Derma.SetPanelHover(newButton, 1)
 
 	mainPropPanel.tempYPos = mainPropPanel.tempYPos + 28
 

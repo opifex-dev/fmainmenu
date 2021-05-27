@@ -16,6 +16,7 @@ local net_WriteTable = net.WriteTable
 local net_WriteString = net.WriteString
 local util_TableToJSON = util.TableToJSON
 local net_SendToServer = CLIENT and net.SendToServer
+local surface_PlaySound = surface.PlaySound
 
 FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 
@@ -58,12 +59,14 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 		FMainMenu.ConfigModules[propertyCode].updatePreview()
 
 		LocalPlayer():SetNoDraw( true )
+		surface_PlaySound("garrysmod/content_downloaded.wav")
 	end
 
 	-- Provides ability for player to get detailed info on the Advanced Spawn system if needed
 	FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnInfoLabel"))
 	local informationButton = FMainMenu.ConfigModulePanels.createTextButtonLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesAdvancedGeneralInfoButtonLabel"))
 	informationButton.DoClick = function(button)
+		surface_PlaySound("garrysmod/ui_click.wav")
 		FMainMenu.ConfigModulesHelper.doInformationalWindow(FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnInfoWindowTitle"), FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnInfo"))
 	end
 

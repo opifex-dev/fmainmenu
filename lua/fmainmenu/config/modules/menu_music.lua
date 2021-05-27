@@ -47,6 +47,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	mainPropPanel.audioFileChooseButton = FMainMenu.ConfigModulePanels.createTextButtonLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesMusicButtonLabel"))
 	mainPropPanel.audioFileChooseButton:SetVisible(false)
 	mainPropPanel.audioFileChooseButton.DoClick = function(button)
+		surface.PlaySound("garrysmod/ui_click.wav")
 		FMainMenu.ConfigModulesHelper.doSoundSelection(mainPropPanel.contentBox, mainPropPanel.textBox)
 	end
 

@@ -48,6 +48,7 @@ function PANEL:Init()
 		surface_DrawText( "X" )
 	end
 	self.closeButton.DoClick = function(button)
+		surface.PlaySound("garrysmod/ui_click.wav")
 		pan:Close()
 	end
 end

@@ -31,6 +31,7 @@ local string_reverse = string.reverse
 local string_find = string.find
 local string_sub = string.sub
 local string_len = string.len
+local surface_PlaySound = surface.PlaySound
 
 FMainMenu.ConfigModulesHelper = FMainMenu.ConfigModulesHelper || {}
 local soundSelection = nil
@@ -61,8 +62,10 @@ FMainMenu.ConfigModulesHelper.setupGeneralPropPanels = function()
 	propPanelSaveButton:AlignTop(5)
 	propPanelSaveButton.DoClick = function(button)
 		FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].saveFunc()
+		surface_PlaySound("friends/friend_join.wav")
 		FMainMenu.ConfigModulesHelper.setUnsaved(false)
 	end
+	FMainMenu.Derma.SetPanelHover(propPanelSaveButton, 1)
 
 	local propPanelRevertButton = vgui_Create("fmainmenu_config_editor_button", propertyGeneralPanel)
 	propPanelRevertButton:SetText(FMainMenu.GetPhrase("ConfigPropertiesRevertPropButton"))
@@ -71,8 +74,10 @@ FMainMenu.ConfigModulesHelper.setupGeneralPropPanels = function()
 	propPanelRevertButton:AlignTop(35)
 	propPanelRevertButton.DoClick = function(button)
 		local varsToRevert = FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].revertFunc()
+		surface_PlaySound("garrysmod/ui_return.wav")
 		FMainMenu.ConfigModulesHelper.requestVariables(varsToRevert)
 	end
+	FMainMenu.Derma.SetPanelHover(propPanelRevertButton, 1)
 end
 
 -- Update active property in editor
@@ -281,7 +286,6 @@ FMainMenu.ConfigModulesHelper.doSoundSelection = function(contentBox, volumeBox)
 	local currentSelection = contentBox:GetText()
 	local screenWidth = ScrW()
 	local screenHeight = ScrH()
-	print(contentBox:GetText())
 
 	-- sound preview
 	local function stopSoundPreview()
@@ -350,7 +354,9 @@ FMainMenu.ConfigModulesHelper.doSoundSelection = function(contentBox, volumeBox)
 	bottomPanelSelectButton:AlignRight(5)
 	bottomPanelSelectButton:AlignTop(3)
 	bottomPanelSelectButton.DoClick = function(button)
+		surface_PlaySound("garrysmod/ui_click.wav")
 		if currentSelection != "" then
+			surface_PlaySound("garrysmod/content_downloaded.wav")
 			contentBox:SetText(currentSelection)
 			contentBox:OnChange()
 			if volumeBox != nil then
@@ -361,6 +367,7 @@ FMainMenu.ConfigModulesHelper.doSoundSelection = function(contentBox, volumeBox)
 
 		soundSelection:Close()
 	end
+	FMainMenu.Derma.SetPanelHover(bottomPanelSelectButton, 1)
 
 	local bottomPanelPlayButton = vgui_Create("fmainmenu_config_editor_button", bottomPanel)
 	bottomPanelPlayButton:SetText(FMainMenu.GetPhrase("ConfigSoundSelectorPlayButtonText"))
@@ -368,10 +375,12 @@ FMainMenu.ConfigModulesHelper.doSoundSelection = function(contentBox, volumeBox)
 	bottomPanelPlayButton:AlignLeft(5)
 	bottomPanelPlayButton:AlignTop(3)
 	bottomPanelPlayButton.DoClick = function(button)
+		surface_PlaySound("garrysmod/ui_click.wav")
 		if currentSelection != "" then
 			soundPreview(currentSelection)
 		end
 	end
+	FMainMenu.Derma.SetPanelHover(bottomPanelPlayButton, 1)
 
 	local bottomPanelStopButton = vgui_Create("fmainmenu_config_editor_button", bottomPanel)
 	bottomPanelStopButton:SetText(FMainMenu.GetPhrase("ConfigSoundSelectorStopButtonText"))
@@ -379,8 +388,10 @@ FMainMenu.ConfigModulesHelper.doSoundSelection = function(contentBox, volumeBox)
 	bottomPanelStopButton:AlignLeft(110)
 	bottomPanelStopButton:AlignTop(3)
 	bottomPanelStopButton.DoClick = function(button)
+		surface_PlaySound("garrysmod/ui_click.wav")
 		stopSoundPreview()
 	end
+	FMainMenu.Derma.SetPanelHover(bottomPanelStopButton, 1)
 
 	local bottomPanelVolSlider = vgui_Create("DNumSlider", bottomPanel)
 	bottomPanelVolSlider:SetSize(250,24)
@@ -458,8 +469,10 @@ FMainMenu.ConfigModulesHelper.doInformationalWindow = function(windowTitle, info
 	closeButton:AlignRight(25)
 	closeButton:AlignTop(215)
 	closeButton.DoClick = function(button)
+		surface_PlaySound("garrysmod/ui_click.wav")
 		infoPopup:Close()
 	end
+	FMainMenu.Derma.SetPanelHover(closeButton, 1)
 
 	infoPopup:MakePopup()
 end
@@ -488,6 +501,7 @@ FMainMenu.ConfigModulesHelper.doAdvancedConfirmationDialog = function(panelBlock
 	secondButton:SetContentAlignment( 5 )
 	FMainMenu.Derma:SetFrameSettings(secondButton, Color(75,75,75, 255), 0)
 	secondButton.DoClick = function()
+		surface_PlaySound("garrysmod/ui_click.wav")
 		removeConfirm:Remove()
 		panelBlocker:SetVisible(false)
 	end
@@ -500,6 +514,7 @@ FMainMenu.ConfigModulesHelper.doAdvancedConfirmationDialog = function(panelBlock
 	firstButton:SetContentAlignment( 5 )
 	FMainMenu.Derma:SetFrameSettings(firstButton, Color(75,75,75, 255), 0)
 	firstButton.DoClick = function()
+		surface_PlaySound("garrysmod/ui_click.wav")
 		removeConfirm:Remove()
 		panelBlocker:SetVisible(false)
 

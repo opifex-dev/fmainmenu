@@ -17,6 +17,7 @@ local net_WriteTable = net.WriteTable
 local net_WriteString = net.WriteString
 local util_TableToJSON = util.TableToJSON
 local net_SendToServer = CLIENT and net.SendToServer
+local surface_PlaySound = surface.PlaySound
 
 FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 
@@ -47,7 +48,6 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	mainPropPanel.cameraPositionRotBoxZ = FMainMenu.ConfigModulePanels.createLabelBoxComboSmall(mainPropPanel, FMainMenu.GetPhrase("ConfigCommonValueZ"), false)
 
 	-- Helpful button to substitute current player coordinates
-
 	local cameraPositionChooseButton = FMainMenu.ConfigModulePanels.createTextButtonLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesCameraSetupCaptureLabel"))
 	cameraPositionChooseButton.DoClick = function(button)
 		local ply = LocalPlayer()
@@ -66,6 +66,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 		FMainMenu.ConfigModules[propertyCode].updatePreview()
 
 		LocalPlayer():SetNoDraw( true )
+		surface_PlaySound("garrysmod/content_downloaded.wav")
 	end
 
 	return {configPropList, mainPropPanel}

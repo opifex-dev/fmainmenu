@@ -13,6 +13,7 @@ local ipairs = ipairs
 local table_remove = table.remove
 local table_Copy = table.Copy
 local table_insert = table.insert
+local surface_PlaySound = surface.PlaySound
 
 FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 
@@ -35,6 +36,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	mainPropPanel.internalURLButtons = {}
 	mainPropPanel.URLButtonsEditorButton = FMainMenu.ConfigModulePanels.createTextButtonLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesURLButtonsEditorButtonLabel"))
 	mainPropPanel.URLButtonsEditorButton.DoClick = function(button)
+		surface_PlaySound("garrysmod/ui_click.wav")
 		FMainMenu.ConfigModulesHelper.setExternalBlock(true)
 		FMainMenu.configPropertyWindow.configBlockerPanel:SetVisible(true)
 
@@ -115,6 +117,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 				buttonRemove:AlignRight(5)
 				buttonRemove:AlignBottom(5)
 				buttonRemove.DoClick = function(button)
+					surface_PlaySound("common/warning.wav")
 					FMainMenu.ConfigModulesHelper.doAdvancedConfirmationDialog(panelBlocker, function()
 						-- Remove the button
 						table_remove( mainPropPanel.internalURLButtons, buttonPanel.bIndex )
@@ -134,6 +137,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 				buttonOrderUp:SetImage("icon16/arrow_up.png")
 				buttonOrderUp.DoClick = function(button)
 					if buttonPanel.bIndex > 1 then
+						surface_PlaySound("garrysmod/ui_click.wav")
 						local temp = table_Copy(mainPropPanel.internalURLButtons[buttonPanel.bIndex])
 						mainPropPanel.internalURLButtons[buttonPanel.bIndex] = mainPropPanel.internalURLButtons[buttonPanel.bIndex-1]
 						mainPropPanel.internalURLButtons[buttonPanel.bIndex-1] = temp
@@ -141,6 +145,8 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 
 						FMainMenu.ConfigModulesHelper.setUnsaved(FMainMenu.ConfigModules[propertyCode].isVarChanged())
 						FMainMenu.ConfigModules[propertyCode].updatePreview()
+					else
+						surface_PlaySound("common/wpn_denyselect.wav")
 					end
 				end
 
@@ -153,6 +159,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 				buttonOrderDown:SetKeepAspect( true )
 				buttonOrderDown.DoClick = function(button)
 					if buttonPanel.bIndex < #mainPropPanel.internalURLButtons then
+						surface_PlaySound("garrysmod/ui_click.wav")
 						local temp = table_Copy(mainPropPanel.internalURLButtons[buttonPanel.bIndex])
 						mainPropPanel.internalURLButtons[buttonPanel.bIndex] = mainPropPanel.internalURLButtons[buttonPanel.bIndex + 1]
 						mainPropPanel.internalURLButtons[buttonPanel.bIndex + 1] = temp
@@ -160,6 +167,8 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 
 						FMainMenu.ConfigModulesHelper.setUnsaved(FMainMenu.ConfigModules[propertyCode].isVarChanged())
 						FMainMenu.ConfigModules[propertyCode].updatePreview()
+					else
+						surface_PlaySound("common/wpn_denyselect.wav")
 					end
 				end
 			end
@@ -186,8 +195,10 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 		bottomPanelSaveButton:AlignRight(5)
 		bottomPanelSaveButton:AlignTop(3)
 		bottomPanelSaveButton.DoClick = function(button)
+			surface_PlaySound("garrysmod/ui_click.wav")
 			URLButtonEditor:Close()
 		end
+		FMainMenu.Derma.SetPanelHover(bottomPanelSaveButton, 1)
 
 		-- revert button
 		local bottomPanelRevertButton = vgui_Create("fmainmenu_config_editor_button", bottomPanel)
@@ -196,10 +207,12 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 		bottomPanelRevertButton:AlignRight(110)
 		bottomPanelRevertButton:AlignTop(3)
 		bottomPanelRevertButton.DoClick = function(button)
+			surface_PlaySound("common/warning.wav")
 			FMainMenu.ConfigModulesHelper.doAdvancedConfirmationDialog(panelBlocker, function()
 				FMainMenu.ConfigModulesHelper.requestVariablesCustom(configPropList, updateCachedTable)
 			end, FMainMenu.GetPhrase("ConfigURLButtonEditorWindowRevertConfirm"))
 		end
+		FMainMenu.Derma.SetPanelHover(bottomPanelRevertButton, 1)
 
 		-- add button
 		local bottomPanelAddButton = vgui_Create("fmainmenu_config_editor_button", bottomPanel)
@@ -208,6 +221,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 		bottomPanelAddButton:AlignLeft(5)
 		bottomPanelAddButton:AlignTop(3)
 		bottomPanelAddButton.DoClick = function(button)
+			surface_PlaySound("garrysmod/ui_click.wav")
 			table_insert( mainPropPanel.internalURLButtons, {
 				Text = "New Button",
 				URL = "Link Here",
@@ -217,6 +231,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 			FMainMenu.ConfigModulesHelper.setUnsaved(FMainMenu.ConfigModules[propertyCode].isVarChanged())
 			FMainMenu.ConfigModules[propertyCode].updatePreview()
 		end
+		FMainMenu.Derma.SetPanelHover(bottomPanelAddButton, 1)
 
 		panelBlocker =  vgui_Create("fmainmenu_config_editor_panel", URLButtonEditor)
 		panelBlocker:SetBGColor(Color(0, 0, 0, 155))

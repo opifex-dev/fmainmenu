@@ -200,6 +200,7 @@ translationList.ConfigPropertiesPanelDermaFrameColor = "Frame Color"
 translationList.ConfigPropertiesConfigAccessPropName = "Config Access"
 translationList.ConfigPropertiesConfigAccessPropDesc = "Control who can view and edit\nthe fmainmenu configuration."
 translationList.ConfigPropertiesConfigAccessToggleLabel = "Config Access Group: "
+translationList.ConfigPropertiesConfigAccessCAMILabel = "NOTE: This setting can have different\neffects depending on your admin mod."
 
 translationList.ConfigPropertiesAdvancedGeneralInfoButtonLabel = "Get Information"
 
