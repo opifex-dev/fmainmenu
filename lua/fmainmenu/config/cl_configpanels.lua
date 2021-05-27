@@ -4,33 +4,39 @@
 
 ]]--
 
+local vgui_Create = vgui.Create
+local FMainMenu = FMainMenu
+
 FMainMenu.ConfigModulePanels = FMainMenu.ConfigModulePanels || {}
 
+-- create single line label
 FMainMenu.ConfigModulePanels.createLabel = function(mainPropPanel, text)
-	local newLabel = vgui.Create("fmainmenu_config_editor_label", mainPropPanel)
+	local newLabel = vgui_Create("fmainmenu_config_editor_label", mainPropPanel)
 	newLabel:SetText(text)
 	newLabel:SetPos(2, 70 + mainPropPanel.tempYPos)
 	newLabel.scrollAdjustmentType = 1
-	
+
 	mainPropPanel.tempYPos = mainPropPanel.tempYPos + 18
-	
+
 	return newLabel
 end
 
+-- create double line label
 FMainMenu.ConfigModulePanels.createLabelLarge = function(mainPropPanel, text)
-	local newLabel = vgui.Create("fmainmenu_config_editor_label", mainPropPanel)
+	local newLabel = vgui_Create("fmainmenu_config_editor_label", mainPropPanel)
 	newLabel:SetText(text)
 	newLabel:SetPos(2, 70 + mainPropPanel.tempYPos)
 	newLabel:SetSize(225, 36)
 	newLabel.scrollAdjustmentType = 1
-	
+
 	mainPropPanel.tempYPos = mainPropPanel.tempYPos + 33
-	
+
 	return newLabel
 end
 
+-- combination of small label and small text box, where the label can be aligned to the left or right of the panel
 FMainMenu.ConfigModulePanels.createLabelBoxComboSmall = function(mainPropPanel, text, textOnLeft)
-	local newLabel = vgui.Create("fmainmenu_config_editor_label", mainPropPanel)
+	local newLabel = vgui_Create("fmainmenu_config_editor_label", mainPropPanel)
 	newLabel:SetText(text)
 	if textOnLeft then
 		newLabel:SetPos(2, 70 + mainPropPanel.tempYPos)
@@ -39,8 +45,8 @@ FMainMenu.ConfigModulePanels.createLabelBoxComboSmall = function(mainPropPanel, 
 		newLabel:SetPos(143, 70 + mainPropPanel.tempYPos)
 		newLabel.scrollAdjustmentType = 2
 	end
-	
-	local newTextBox = vgui.Create("fmainmenu_config_editor_textentry", mainPropPanel)
+
+	local newTextBox = vgui_Create("fmainmenu_config_editor_textentry", mainPropPanel)
 	newTextBox:SetSize( 75, 18 )
 	newTextBox:SetPos( 163, 70 + mainPropPanel.tempYPos )
 	newTextBox.scrollAdjustmentType = 2
@@ -48,19 +54,20 @@ FMainMenu.ConfigModulePanels.createLabelBoxComboSmall = function(mainPropPanel, 
 		FMainMenu.ConfigModulesHelper.setUnsaved(FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].isVarChanged())
 		FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].updatePreview()
 	end
-	
+
 	mainPropPanel.tempYPos = mainPropPanel.tempYPos + 18
-	
+
 	return newTextBox, newLabel
 end
 
+-- single line label with a panel-wide text box below it
 FMainMenu.ConfigModulePanels.createLabelBoxComboLarge = function(mainPropPanel, text)
-	local newLabel = vgui.Create("fmainmenu_config_editor_label", mainPropPanel)
+	local newLabel = vgui_Create("fmainmenu_config_editor_label", mainPropPanel)
 	newLabel:SetText(text)
 	newLabel:SetPos(2, 70 + mainPropPanel.tempYPos)
 	newLabel.scrollAdjustmentType = 1
-	
-	local newTextBox = vgui.Create("fmainmenu_config_editor_textentry", mainPropPanel)
+
+	local newTextBox = vgui_Create("fmainmenu_config_editor_textentry", mainPropPanel)
 	newTextBox:SetSize( 236, 18 )
 	newTextBox:SetPos( 2, 88 + mainPropPanel.tempYPos )
 	newTextBox.scrollAdjustmentType = 4
@@ -68,19 +75,20 @@ FMainMenu.ConfigModulePanels.createLabelBoxComboLarge = function(mainPropPanel, 
 		FMainMenu.ConfigModulesHelper.setUnsaved(FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].isVarChanged())
 		FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].updatePreview()
 	end
-	
+
 	mainPropPanel.tempYPos = mainPropPanel.tempYPos + 36
-	
+
 	return newTextBox, newLabel
 end
 
+-- single line label with a panel-wide multi-line text box below it
 FMainMenu.ConfigModulePanels.createLabelBoxComboMassive = function(mainPropPanel, text)
-	local newLabel = vgui.Create("fmainmenu_config_editor_label", mainPropPanel)
+	local newLabel = vgui_Create("fmainmenu_config_editor_label", mainPropPanel)
 	newLabel:SetText(text)
 	newLabel:SetPos(2, 70 + mainPropPanel.tempYPos)
 	newLabel.scrollAdjustmentType = 1
-	
-	local newTextBox = vgui.Create("fmainmenu_config_editor_textentry", mainPropPanel)
+
+	local newTextBox = vgui_Create("fmainmenu_config_editor_textentry", mainPropPanel)
 	newTextBox:SetSize( 236, 120 )
 	newTextBox:SetPos( 2, 88 + mainPropPanel.tempYPos )
 	newTextBox.scrollAdjustmentType = 4
@@ -90,19 +98,20 @@ FMainMenu.ConfigModulePanels.createLabelBoxComboMassive = function(mainPropPanel
 		FMainMenu.ConfigModulesHelper.setUnsaved(FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].isVarChanged())
 		FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].updatePreview()
 	end
-	
+
 	mainPropPanel.tempYPos = mainPropPanel.tempYPos + 138
-	
+
 	return newTextBox, newLabel
 end
 
+-- label next to combination box with defaultValue automatically added
 FMainMenu.ConfigModulePanels.createComboBox = function(mainPropPanel, text, defaultValue)
-	local newLabel = vgui.Create("fmainmenu_config_editor_label", mainPropPanel)
+	local newLabel = vgui_Create("fmainmenu_config_editor_label", mainPropPanel)
 	newLabel:SetText(text)
 	newLabel:SetPos(2, 70 + mainPropPanel.tempYPos)
 	newLabel.scrollAdjustmentType = 1
-	
-	local newComboBox = vgui.Create("fmainmenu_config_editor_combobox", mainPropPanel)
+
+	local newComboBox = vgui_Create("fmainmenu_config_editor_combobox", mainPropPanel)
 	newComboBox:SetSize( 90, 18 )
 	newComboBox:SetPos( 148, 70 + mainPropPanel.tempYPos )
 	newComboBox:SetValue( defaultValue )
@@ -112,34 +121,36 @@ FMainMenu.ConfigModulePanels.createComboBox = function(mainPropPanel, text, defa
 		FMainMenu.ConfigModulesHelper.setUnsaved(FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].isVarChanged())
 		FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].updatePreview()
 	end
-	
+
 	mainPropPanel.tempYPos = mainPropPanel.tempYPos + 18
-	
+
 	return newComboBox, newLabel
 end
 
+-- centered button with text in it
 FMainMenu.ConfigModulePanels.createTextButtonLarge = function(mainPropPanel, text)
 	mainPropPanel.tempYPos = mainPropPanel.tempYPos + 9
 
-	local newButton = vgui.Create("fmainmenu_config_editor_button", mainPropPanel)
+	local newButton = vgui_Create("fmainmenu_config_editor_button", mainPropPanel)
 	newButton:SetText(text)
 	newButton:SetSize(200,25)
 	newButton:AlignLeft(20)
 	newButton:AlignTop(70 + mainPropPanel.tempYPos)
 	newButton.scrollAdjustmentType = 3
-	
+
 	mainPropPanel.tempYPos = mainPropPanel.tempYPos + 28
-	
+
 	return newButton
 end
 
+-- color selection panel
 FMainMenu.ConfigModulePanels.createColorPicker = function(mainPropPanel, text)
-	local newLabel = vgui.Create("fmainmenu_config_editor_label", mainPropPanel)
+	local newLabel = vgui_Create("fmainmenu_config_editor_label", mainPropPanel)
 	newLabel:SetText(text)
 	newLabel:SetPos(2, 70 + mainPropPanel.tempYPos)
 	newLabel.scrollAdjustmentType = 1
-	
-	local colorBox = vgui.Create("DColorMixer", mainPropPanel)
+
+	local colorBox = vgui_Create("DColorMixer", mainPropPanel)
 	colorBox:SetSize( 236, 216 )
 	colorBox:SetPos(2, 88 + mainPropPanel.tempYPos)
 	colorBox.scrollAdjustmentType = 4
@@ -147,8 +158,8 @@ FMainMenu.ConfigModulePanels.createColorPicker = function(mainPropPanel, text)
 		FMainMenu.ConfigModulesHelper.setUnsaved(FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].isVarChanged())
 		FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].updatePreview()
 	end
-	
+
 	mainPropPanel.tempYPos = mainPropPanel.tempYPos + 237
-	
+
 	return colorBox, newLabel
 end

@@ -10,6 +10,19 @@ If you want to read through the file anyways to see what's going on, then have f
 !!!WARNING!!!
 ]]--
 
+local FayLib = FayLib
+local Vector = Vector
+local Angle = Angle
+local Color = Color
+local CAMI = CAMI
+local file_Find = file.Find
+local pairs = pairs
+local include = include
+local AddCSLuaFile = AddCSLuaFile
+local string_lower = string.lower
+local FMainMenu = FMainMenu
+local hook_Add = hook.Add
+
 local addonName = "fmainmenu" --easy reference instead of copy-pasting over and over
 
 
@@ -168,22 +181,22 @@ FayLib.IGC.LoadConfig(addonName, "config", "fmainmenu")
 FMainMenu.EverySpawn = FayLib.IGC.GetKey(addonName, "EverySpawn")
 
 -- Setup CAMI Privs
-CAMI.RegisterPrivilege( { 
-	Name = "FMainMenu_CanEditMenu", 
+CAMI.RegisterPrivilege( {
+	Name = "FMainMenu_CanEditMenu",
 	MinAccess = FayLib.IGC.GetKey(addonName, "configCanEdit") or "superadmin",
 })
 
 --Language Loader
 FMainMenu.languageLookup = {}
 FMainMenu.languageReverseLookup = {}
-local files = file.Find("fmainmenu/lang/*.lua", "LUA")
+local files = file_Find("fmainmenu/lang/*.lua", "LUA")
 for _, f in pairs(files) do
-	include("fmainmenu/lang/"..f)
-	AddCSLuaFile("fmainmenu/lang/"..f)
+	include("fmainmenu/lang/" .. f)
+	AddCSLuaFile("fmainmenu/lang/" .. f)
 end
 
-if FMainMenu.LangPresets[string.lower(FayLib.IGC.GetKey(addonName, "LangSetting"))] != nil then
-	FMainMenu.Lang = FMainMenu.LangPresets[string.lower(FayLib.IGC.GetKey(addonName, "LangSetting"))]
+if FMainMenu.LangPresets[string_lower(FayLib.IGC.GetKey(addonName, "LangSetting"))] != nil then
+	FMainMenu.Lang = FMainMenu.LangPresets[string_lower(FayLib.IGC.GetKey(addonName, "LangSetting"))]
 else -- assume English if no valid code given, also reset language var
 	FMainMenu.Lang = FMainMenu.LangPresets["en"]
 	FayLib.IGC.SetKey(addonName, "LangSetting", "en")
@@ -196,22 +209,22 @@ end
 
 -- STEP 3 - deal with anything else relating to editing, saving, and refreshing the config
 FMainMenu.RefreshDetect = true
-hook.Add("IGCConfigUpdate", "FMainMenu_IGCCU", function(addonName)
+hook_Add("IGCConfigUpdate", "FMainMenu_IGCCU", function(addonName)
 	-- EverySpawn update
 	FMainMenu.EverySpawn = FayLib.IGC.GetKey(addonName, "EverySpawn")
-	
+
 	--CanEditConfig update
 	if CAMI.GetPrivilege("FMainMenu_CanEditMenu").MinAccess != FayLib.IGC.GetKey(addonName, "configCanEdit") then
 		CAMI.UnregisterPrivilege("FMainMenu_CanEditMenu")
-		CAMI.RegisterPrivilege( { 
-			Name = "FMainMenu_CanEditMenu", 
+		CAMI.RegisterPrivilege( {
+			Name = "FMainMenu_CanEditMenu",
 			MinAccess = FayLib.IGC.GetKey(addonName, "configCanEdit") or "superadmin",
 		})
 	end
-	
+
 	-- Language update
-	if FMainMenu.LangPresets[string.lower(FayLib.IGC.GetKey(addonName, "LangSetting"))] != nil then
-		FMainMenu.Lang = FMainMenu.LangPresets[string.lower(FayLib.IGC.GetKey(addonName, "LangSetting"))]
+	if FMainMenu.LangPresets[string_lower(FayLib.IGC.GetKey(addonName, "LangSetting"))] != nil then
+		FMainMenu.Lang = FMainMenu.LangPresets[string_lower(FayLib.IGC.GetKey(addonName, "LangSetting"))]
 	else -- assume English if no valid code given, also reset language var
 		FMainMenu.Lang = FMainMenu.LangPresets["en"]
 		FayLib.IGC.SetKey(addonName, "LangSetting", "en")
@@ -219,17 +232,6 @@ hook.Add("IGCConfigUpdate", "FMainMenu_IGCCU", function(addonName)
 		FayLib.IGC.SyncShared(addonName)
 		FMainMenu.Log("Your language configuration was invalid, so it was reset to English", true)
 	end
-	
+
 	FMainMenu.RefreshDetect = true
 end)
-
-
-
---[[
--- this will have to be dealt with in the config GUI at config update time
-
---Dropbox Link Patch
-if string.find(FMainMenu.Config.musicContent, "dropbox") != nil then
-	FMainMenu.Config.musicContent = string.Replace(FMainMenu.Config.musicContent, "?dl=0", "?dl=1")
-end
-]]--

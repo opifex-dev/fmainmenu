@@ -4,6 +4,10 @@
 
 ]]--
 
+local FMainMenu = FMainMenu
+local tonumber = tonumber
+local Color = Color
+
 FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 
 local propertyCode = 24
@@ -19,28 +23,28 @@ FMainMenu.ConfigModules[propertyCode].liveUpdate = true
 FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	--Property Panel Setup
 	local mainPropPanel = FMainMenu.ConfigModulesHelper.generatePropertyHeader(FMainMenu.GetPhrase("ConfigPropertiesBackgroundPropName"), FMainMenu.GetPhrase("ConfigPropertiesBackgroundPropDesc"))
-	
+
 	-- blur amount
 	mainPropPanel.blurBox = FMainMenu.ConfigModulePanels.createLabelBoxComboSmall(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesBackgroundBlurLabel"), true)
-	
+
 	-- tint color
 	mainPropPanel.tintBox = FMainMenu.ConfigModulePanels.createColorPicker(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesBackgroundTintLabel"))
-	
+
 	return {configPropList, mainPropPanel}
 end
 
 -- Determines whether the local property settings differ from the servers, meaning the user has changed it
 FMainMenu.ConfigModules[propertyCode].isVarChanged = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
-	
-	if parentPanel.lastRecVariable[1] != tonumber(parentPanel.blurBox:GetText()) then 
+
+	if parentPanel.lastRecVariable[1] != tonumber(parentPanel.blurBox:GetText()) then
 		return true
 	end
-	
+
 	if !FMainMenu.ConfigModulesHelper.areColorsEqual(parentPanel.lastRecVariable[2], parentPanel.tintBox:GetColor()) then
 		return true
 	end
-	
+
 	return false
 end
 
@@ -50,9 +54,9 @@ FMainMenu.ConfigModules[propertyCode].updatePreview = function()
 	local previewCopy = FMainMenu.ConfigPreview.previewCopy
 
 	if tonumber(parentPanel.blurBox:GetText()) == nil then return end
-		
-	previewCopy["_"..configPropList[1]] = tonumber(parentPanel.blurBox:GetText())
-	previewCopy["_"..configPropList[2]] = parentPanel.tintBox:GetColor()
+
+	previewCopy["_" .. configPropList[1]] = tonumber(parentPanel.blurBox:GetText())
+	previewCopy["_" .. configPropList[2]] = parentPanel.tintBox:GetColor()
 end
 
 -- Called when property is closed, allows for additional clean up if needed
@@ -61,19 +65,19 @@ FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function() end
 -- Handles saving changes to a property
 FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
-		
+
 	if tonumber(parentPanel.blurBox:GetText()) == nil then return end
-		
+
 	parentPanel.lastRecVariable[1] = tonumber(parentPanel.blurBox:GetText())
 	parentPanel.lastRecVariable[2] = parentPanel.tintBox:GetColor()
-	
+
 	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, configPropList)
 end
 
 -- Called when the current values are being overwritten by the server
 FMainMenu.ConfigModules[propertyCode].varFetch = function(receivedVarTable)
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
-	
+
 	parentPanel.blurBox:SetText(receivedVarTable[1])
 	parentPanel.tintBox:SetColor(Color(receivedVarTable[2].r, receivedVarTable[2].g, receivedVarTable[2].b, receivedVarTable[2].a))
 end

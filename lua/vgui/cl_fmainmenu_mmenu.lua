@@ -39,6 +39,22 @@ END CONFIG (DO NOT TOUCH BELOW)
 
 ]]--
 
+local Color = Color
+local Material = Material
+local draw_RoundedBox = draw.RoundedBox
+local draw_SimpleText = draw.SimpleText
+local FayLib = FayLib
+local surface_SetDrawColor = surface.SetDrawColor
+local surface_DrawRect = surface.DrawRect
+local ScrW = ScrW
+local ScrH = ScrH
+local surface_SetMaterial = surface.SetMaterial
+local render_UpdateScreenEffectTexture = render.UpdateScreenEffectTexture
+local surface_DrawTexturedRect = surface.DrawTexturedRect
+local surface_PlaySound = surface.PlaySound
+local draw_SimpleTextOutlined = draw.SimpleTextOutlined
+local vgui_Create = vgui.Create
+
 local blurMat = Material("pp/blurscreen")
 local colorWhite = Color(255, 255, 255)
 local addonName = "fmainmenu"
@@ -46,27 +62,27 @@ local addonName = "fmainmenu"
 --Adds custom paint function for custom backgrounds and rounding edges
 function FMainMenu.Derma:SetFrameSettings(frame, color, radius, isFrame)
 	if isFrame then
-		if(radius > 0) then
+		if radius > 0 then
 			function frame:Paint(width, height)
-				draw.RoundedBox(radius, 0, 0, width, height, color)
-				draw.SimpleText(frame.Title, "Trebuchet18", 8, 12, FayLib.IGC.GetSharedKey(addonName, "commonTextColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+				draw_RoundedBox(radius, 0, 0, width, height, color)
+				draw_SimpleText(frame.Title, "Trebuchet18", 8, 12, FayLib.IGC.GetSharedKey(addonName, "commonTextColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 			end
 		else
 			function frame:Paint(width, height)
-				surface.SetDrawColor(color)
-				surface.DrawRect(0, 0, width, height)
-				draw.SimpleText(frame.Title, "Trebuchet18", 8, 12, FayLib.IGC.GetSharedKey(addonName, "commonTextColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+				surface_SetDrawColor(color)
+				surface_DrawRect(0, 0, width, height)
+				draw_SimpleText(frame.Title, "Trebuchet18", 8, 12, FayLib.IGC.GetSharedKey(addonName, "commonTextColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 			end
 		end
 	else
-		if(radius > 0) then
+		if radius > 0 then
 			function frame:Paint(width, height)
-				draw.RoundedBox(radius, 0, 0, width, height, color)
+				draw_RoundedBox(radius, 0, 0, width, height, color)
 			end
 		else
 			function frame:Paint(width, height)
-				surface.SetDrawColor(color)
-				surface.DrawRect(0, 0, width, height)
+				surface_SetDrawColor(color)
+				surface_DrawRect(0, 0, width, height)
 			end
 		end
 	end
@@ -76,20 +92,20 @@ end
 function FMainMenu.Derma:SetFrameCombo(frame, color, blur)
 	function frame:Paint(width, height)
 		local scrW, scrH = ScrW(), ScrH()
-	
-		surface.SetDrawColor(colorWhite)
-		surface.SetMaterial(blurMat)
-		
+
+		surface_SetDrawColor(colorWhite)
+		surface_SetMaterial(blurMat)
+
 		for i = 1, 3 do
-			blurMat:SetFloat("$blur", (i / 3) * (blur or 8))
+			blurMat:SetFloat("$blur", (i / 3) * (blur || 8))
 			blurMat:Recompute()
 
-			render.UpdateScreenEffectTexture()
-			surface.DrawTexturedRect(0, 0, scrW, scrH)
+			render_UpdateScreenEffectTexture()
+			surface_DrawTexturedRect(0, 0, scrW, scrH)
 		end
-		
-		surface.SetDrawColor(color)
-		surface.DrawRect(0, 0, width, height)
+
+		surface_SetDrawColor(color)
+		surface_DrawRect(0, 0, width, height)
 	end
 end
 
@@ -98,16 +114,16 @@ function FMainMenu.Derma:SetFrameBlur(frame, amount)
 	function frame:Paint(width, height)
 		local x, y = 0, 0
 		local scrW, scrH = ScrW(), ScrH()
-	
-		surface.SetDrawColor(colorWhite)
-		surface.SetMaterial(blurMat)
-		
+
+		surface_SetDrawColor(colorWhite)
+		surface_SetMaterial(blurMat)
+
 		for i = 1, 3 do
-			blurMat:SetFloat("$blur", (i / 3) * (amount or 8))
+			blurMat:SetFloat("$blur", (i / 3) * (amount || 8))
 			blurMat:Recompute()
 
-			render.UpdateScreenEffectTexture()
-			surface.DrawTexturedRect(x * -1, y * -1, scrW, scrH)
+			render_UpdateScreenEffectTexture()
+			surface_DrawTexturedRect(x * -1, y * -1, scrW, scrH)
 		end
 	end
 end
@@ -117,8 +133,8 @@ function FMainMenu.Derma.SetPanelHover(frame, hoverType, arg)
 	if hoverType == 1 then
 		function frame:PaintOver(width, height)
 			if frame:IsHovered() then
-				surface.SetDrawColor(FMainMenu.Config.hoverOverlayColor)
-				surface.DrawRect(0, 0, width, height)
+				surface_SetDrawColor(FMainMenu.Config.hoverOverlayColor)
+				surface_DrawRect(0, 0, width, height)
 			end
 		end
 	elseif hoverType == 2 then
@@ -127,7 +143,7 @@ function FMainMenu.Derma.SetPanelHover(frame, hoverType, arg)
 			if frame:IsHovered() then
 				if frame.POHover == false then
 					frame.POHover = true
-					surface.PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonHoverSound"))
+					surface_PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonHoverSound"))
 				end
 				frame:SetTextColor(FayLib.IGC.GetSharedKey(addonName, "textButtonHoverColor"))
 			else
@@ -137,20 +153,20 @@ function FMainMenu.Derma.SetPanelHover(frame, hoverType, arg)
 				frame:SetTextColor(FayLib.IGC.GetSharedKey(addonName, "textButtonColor"))
 			end
 			frame:UpdateFGColor()
-			draw.SimpleTextOutlined( arg, "FMM_ButtonFont", 0, 0, FayLib.IGC.GetSharedKey(addonName, "textButtonColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, FayLib.IGC.GetSharedKey(addonName, "textButtonOutlineThickness"), FayLib.IGC.GetSharedKey(addonName, "textButtonOutlineColor") )
+			draw_SimpleTextOutlined( arg, "FMM_ButtonFont", 0, 0, FayLib.IGC.GetSharedKey(addonName, "textButtonColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, FayLib.IGC.GetSharedKey(addonName, "textButtonOutlineThickness"), FayLib.IGC.GetSharedKey(addonName, "textButtonOutlineColor") )
 		end
 	end
 end
 
 --Creates Derma DFrame Object
 function FMainMenu.Derma.CreateDFrame(name, parent, width, height)
-	local frame = vgui.Create("DFrame", parent)
+	local frame = vgui_Create("DFrame", parent)
 	FMainMenu.Derma:SetFrameSettings(frame, FMainMenu.Config.DFrameBaseColor, FMainMenu.Config.DFrameRadius, true)
-	if(name ~= nil) then
+	if name ~= nil then
 		frame.Title = name
 		frame:SetTitle("")
 	end
-	if(width ~= nil && height ~= nil) then
+	if width ~= nil && height ~= nil then
 		frame:SetSize(width, height)
 	end
 	frame:Center()
@@ -160,12 +176,12 @@ end
 
 --Creates Derma DPanel Object
 function FMainMenu.Derma.CreateDPanel(parent, width, height, SToC)
-	local frame = vgui.Create("DPanel", parent)
+	local frame = vgui_Create("DPanel", parent)
 	FMainMenu.Derma:SetFrameSettings(frame, FMainMenu.Config.DPanelBaseColor, 0)
-	if(SToC) then
+	if SToC then
 		frame:Dock( FILL )
 	end
-	if(width ~= nil && height ~= nil) then
+	if width ~= nil && height ~= nil then
 		frame:SetSize(width, height)
 	end
 	return frame
@@ -173,40 +189,40 @@ end
 
 --Creates Derma DScrollPanel Object
 function FMainMenu.Derma.CreateDScrollPanel(parent, width, height, SToC)
-	local frame = vgui.Create("DScrollPanel", parent)
+	local frame = vgui_Create("DScrollPanel", parent)
 	FMainMenu.Derma:SetFrameSettings(frame, FMainMenu.Config.DPanelBaseColor, 0)
-	if(SToC) then
+	if SToC then
 		frame:Dock( FILL )
 	end
-	if(width ~= nil && height ~= nil) then
+	if width ~= nil && height ~= nil then
 		frame:SetSize(width, height)
 	end
 	local sbar = frame:GetVBar()
 	function sbar:Paint( w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, FMainMenu.Config.DScrollPanelBarColor )
+		draw_RoundedBox( 0, 0, 0, w, h, FMainMenu.Config.DScrollPanelBarColor )
 	end
 	function sbar.btnGrip:Paint( w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, FMainMenu.Config.DScrollPanelGripColor )
+		draw_RoundedBox( 0, 0, 0, w, h, FMainMenu.Config.DScrollPanelGripColor )
 	end
 	function sbar.btnUp:Paint( w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, FMainMenu.Config.DScrollPanelButtonColor )
+		draw_RoundedBox( 0, 0, 0, w, h, FMainMenu.Config.DScrollPanelButtonColor )
 	end
 	function sbar.btnDown:Paint( w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, FMainMenu.Config.DScrollPanelButtonColor )
+		draw_RoundedBox( 0, 0, 0, w, h, FMainMenu.Config.DScrollPanelButtonColor )
 	end
 	return frame
 end
 
 --Creates Derma DLabel Object
 function FMainMenu.Derma.CreateDLabel(parent, width, height, SToC, text)
-	local frame = vgui.Create("DLabel", parent)
-	if(text ~= nil) then
+	local frame = vgui_Create("DLabel", parent)
+	if text ~= nil then
 		frame:SetText(text)
 	end
-	if(SToC) then
+	if SToC then
 		frame:Dock( FILL )
 	end
-	if(width ~= nil && height ~= nil) then
+	if width ~= nil && height ~= nil then
 		frame:SetSize(width, height)
 	end
 	return frame
@@ -214,8 +230,8 @@ end
 
 --Creates Derma DButton Object
 function FMainMenu.Derma.CreateDButton(parent, width, height, text, ttip)
-	local frame = vgui.Create("DButton", parent)
-	if(width ~= nil && height ~= nil) then
+	local frame = vgui_Create("DButton", parent)
+	if width ~= nil && height ~= nil then
 		frame:SetSize(width, height)
 	end
 	if text ~= nil then

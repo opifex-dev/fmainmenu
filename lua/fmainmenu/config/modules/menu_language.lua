@@ -4,6 +4,9 @@
 
 ]]--
 
+local FMainMenu = FMainMenu
+local pairs = pairs
+
 FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 
 local propertyCode = 21
@@ -19,7 +22,7 @@ FMainMenu.ConfigModules[propertyCode].liveUpdate = false
 FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	--Property Panel Setup
 	local mainPropPanel = FMainMenu.ConfigModulesHelper.generatePropertyHeader(FMainMenu.GetPhrase("ConfigPropertiesLanguagePropName"), FMainMenu.GetPhrase("ConfigPropertiesLanguagePropDesc"))
-	
+
 	-- Hear Other Players Toggle
 	mainPropPanel.toggleOption = FMainMenu.ConfigModulePanels.createComboBox(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesLanguageLabel"), "English")
 	for _,v in pairs(FMainMenu.languageLookup) do
@@ -27,25 +30,25 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 			mainPropPanel.toggleOption:AddChoice( v )
 		end
 	end
-	
+
 	return {configPropList, mainPropPanel}
 end
 
 -- Determines whether the local property settings differ from the servers, meaning the user has changed it
 FMainMenu.ConfigModules[propertyCode].isVarChanged = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
-	
+
 	local serverVar = ""
-	if FMainMenu.languageLookup[parentPanel.lastRecVariable[1]] then 
+	if FMainMenu.languageLookup[parentPanel.lastRecVariable[1]] then
 		serverVar = FMainMenu.languageLookup[parentPanel.lastRecVariable[1]]
 	else
 		serverVar = "English"
 	end
-	
+
 	if serverVar != parentPanel.toggleOption:GetText() then
 		return true
 	end
-	
+
 	return false
 end
 
@@ -58,18 +61,18 @@ FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function() end
 -- Handles saving changes to a property
 FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
-		
-	if(FMainMenu.languageReverseLookup[parentPanel.toggleOption:GetText()] == nil) then return end
+
+	if FMainMenu.languageReverseLookup[parentPanel.toggleOption:GetText()] == nil then return end
 
 	parentPanel.lastRecVariable[1] = FMainMenu.languageReverseLookup[parentPanel.toggleOption:GetText()]
-	
+
 	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, configPropList)
 end
 
 -- Called when the current values are being overwritten by the server
 FMainMenu.ConfigModules[propertyCode].varFetch = function(receivedVarTable)
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
-	
+
 	parentPanel.toggleOption:SetValue(FMainMenu.languageLookup[parentPanel.lastRecVariable[1]])
 end
 

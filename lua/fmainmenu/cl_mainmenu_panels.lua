@@ -1,3 +1,21 @@
+local Color = Color
+local surface_CreateFont = surface.CreateFont
+local hook_Add = hook.Add
+local FMainMenu = FMainMenu
+local FayLib = FayLib
+local tostring = tostring
+local surface_SetFont = surface.SetFont
+local surface_GetTextSize = surface.GetTextSize
+local vgui_Create = vgui.Create
+local surface_PlaySound = surface.PlaySound
+local gui_OpenURL = gui.OpenURL
+local ScrH = ScrH
+local ScrW = ScrW
+local file_Write = file.Write
+local RunConsoleCommand = RunConsoleCommand
+local draw_SimpleTextOutlined = draw.SimpleTextOutlined
+local string_JavascriptSafe = string.JavascriptSafe
+
 FMainMenu.Panels = FMainMenu.Panels || {}
 FMainMenu.Lang = FMainMenu.Lang || {}
 
@@ -11,7 +29,7 @@ FMainMenu.FontCounter = FMainMenu.FontCounter || 0
 
 --Create fonts that will be used in the menu
 function FMainMenu.Panels.createNewFont(fontName, fontBase, fontSize, fontShadow)
-	surface.CreateFont( fontName, {
+	surface_CreateFont( fontName, {
 		font = fontBase,
 		extended = false,
 		size = fontSize,
@@ -30,44 +48,48 @@ function FMainMenu.Panels.createNewFont(fontName, fontBase, fontSize, fontShadow
 	})
 end
 
-hook.Add("IGCSharedConfigReady", "FMainMenu_Panels_SharedReady", function()
-	FMainMenu.Panels.createNewFont("FMM_LogoFont", 
-		FayLib.IGC.GetSharedKey(addonName, "logoFont"), 
-		FayLib.IGC.GetSharedKey(addonName, "logoFontSize"), 
+-- Create initial fonts when config first synced from server
+hook_Add("IGCSharedConfigReady", "FMainMenu_Panels_SharedReady", function()
+	FMainMenu.Panels.createNewFont("FMM_LogoFont",
+		FayLib.IGC.GetSharedKey(addonName, "logoFont"),
+		FayLib.IGC.GetSharedKey(addonName, "logoFontSize"),
 		FayLib.IGC.GetSharedKey(addonName, "logoShadow"))
-	
-	FMainMenu.Panels.createNewFont("FMM_ButtonFont", 
-		FayLib.IGC.GetSharedKey(addonName, "textButtonFont"), 
-		FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"), 
+
+	FMainMenu.Panels.createNewFont("FMM_ButtonFont",
+		FayLib.IGC.GetSharedKey(addonName, "textButtonFont"),
+		FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"),
 		FayLib.IGC.GetSharedKey(addonName, "textButtonShadow"))
 end)
 
-hook.Add("IGCSharedConfigUpdate", "FMainMenu_Panels_SharedConfigUpdate", function(addonConfigName)
+-- Update fonts when needed
+hook_Add("IGCSharedConfigUpdate", "FMainMenu_Panels_SharedConfigUpdate", function(addonConfigName)
 	if addonConfigName == addonName then
 		FMainMenu.FontCounter = FMainMenu.FontCounter + 1
-		
-		FMainMenu.Panels.createNewFont("FMM_LogoFont"..tostring(FMainMenu.FontCounter), 
-			FayLib.IGC.GetSharedKey(addonName, "logoFont"), 
-			FayLib.IGC.GetSharedKey(addonName, "logoFontSize"), 
+
+		FMainMenu.Panels.createNewFont("FMM_LogoFont" .. tostring(FMainMenu.FontCounter),
+			FayLib.IGC.GetSharedKey(addonName, "logoFont"),
+			FayLib.IGC.GetSharedKey(addonName, "logoFontSize"),
 			FayLib.IGC.GetSharedKey(addonName, "logoShadow"))
-		
-		FMainMenu.Panels.createNewFont("FMM_ButtonFont"..tostring(FMainMenu.FontCounter), 
-			FayLib.IGC.GetSharedKey(addonName, "textButtonFont"), 
-			FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"), 
+
+		FMainMenu.Panels.createNewFont("FMM_ButtonFont" .. tostring(FMainMenu.FontCounter),
+			FayLib.IGC.GetSharedKey(addonName, "textButtonFont"),
+			FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"),
 			FayLib.IGC.GetSharedKey(addonName, "textButtonShadow"))
-		
-		FMainMenu.CurrentLogoFont = "FMM_LogoFont"..tostring(FMainMenu.FontCounter)
-		FMainMenu.CurrentTextButtonFont = "FMM_ButtonFont"..tostring(FMainMenu.FontCounter)
+
+		FMainMenu.CurrentLogoFont = "FMM_LogoFont" .. tostring(FMainMenu.FontCounter)
+		FMainMenu.CurrentTextButtonFont = "FMM_ButtonFont" .. tostring(FMainMenu.FontCounter)
 	end
 end)
 
+-- Assigns buttons with the need text colors, fonts, etc.
 local function buttonSetup(button, text, fontName)
 	button:SetPaintBackground(false)
 	button:SetText(text)
 	button:SetFont(fontName)
 	button:SetTextColor(FayLib.IGC.GetSharedKey(addonName, "textButtonColor"))
-	surface.SetFont(fontName)
-	local fontWidth = surface.GetTextSize( text )
+	surface_SetFont(fontName)
+
+	local fontWidth = surface_GetTextSize( text )
 	button:SetSize(fontWidth, FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"))
 	button:SetContentAlignment(4)
 	FMainMenu.Derma.SetPanelHover(button, 2, text)
@@ -75,34 +97,35 @@ end
 
 -- Creates Menu Button (functionality set manually)
 function FMainMenu.Panels.CreateButton(text)
-	local TextButton = vgui.Create("DButton", m_border)
+	local TextButton = vgui_Create("DButton", m_border)
 	buttonSetup(TextButton, text, FMainMenu.CurrentTextButtonFont)
 	return TextButton
 end
 
 -- Creates Menu URL Button (opens URL when clicked)
 function FMainMenu.Panels.CreateURLButton(text, URL)
-	local URLButton = vgui.Create("DButton", m_border)
+	local URLButton = vgui_Create("DButton", m_border)
 	buttonSetup(URLButton, text, FMainMenu.CurrentTextButtonFont)
 	URLButton.IntURL = URL
 	URLButton.DoClick = function()
-		surface.PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
-		gui.OpenURL( URLButton.IntURL )
+		surface_PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
+		gui_OpenURL( URLButton.IntURL )
 	end
-	
+
 	return URLButton
 end
 
 -- Creates Changelog Box with specified text
 function FMainMenu.Panels.CreateChangeLog(text)
-	local CLPanel = FMainMenu.Derma.CreateDPanel(m_border, 256, ScrH()*(1/3), false )
+	local CLPanel = FMainMenu.Derma.CreateDPanel(m_border, 256, ScrH() * (1 / 3), false )
 	if FayLib.IGC.GetSharedKey(addonName, "changeLogMoveToBottom") then
-		CLPanel:SetPos(ScrW()-266, (ScrH()*(2/3)) - 10)
+		CLPanel:SetPos(ScrW() - 266, (ScrH() * (2 / 3)) - 10)
 	else
-		CLPanel:SetPos(ScrW()-266, 10)
+		CLPanel:SetPos(ScrW() - 266, 10)
 	end
 	FMainMenu.Derma:SetFrameSettings(CLPanel, FayLib.IGC.GetSharedKey(addonName, "commonPanelColor"), 0)
-	local CLText = FMainMenu.Derma.CreateDLabel(CLPanel, 221, (ScrH()*(1/3))-5, false, text)
+
+	local CLText = FMainMenu.Derma.CreateDLabel(CLPanel, 221, (ScrH() * (1 / 3)) - 5, false, text)
 	CLText:SetFont("HudHintTextLarge")
 	CLText:SetPos(10, 5)
 	CLText:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
@@ -121,16 +144,18 @@ function FMainMenu.Panels.CreateWelcomer()
 	troubleFrame:ShowCloseButton( false )
 	troubleFrame:SetDraggable( false )
 	FMainMenu.Derma:SetFrameSettings(troubleFrame, FayLib.IGC.GetSharedKey(addonName, "commonFrameColor"), FMainMenu.Config.DFrameRadius, true)
+
 	local initTroublePanel = FMainMenu.Derma.CreateDPanel(troubleFrame, 365, 221, false )
 	initTroublePanel:SetPos(5, 25)
 	FMainMenu.Derma:SetFrameSettings(initTroublePanel, FayLib.IGC.GetSharedKey(addonName, "commonPanelColor"), 0)
+
 	local leftText = FMainMenu.Derma.CreateDLabel(initTroublePanel, 345, 128, false, FayLib.IGC.GetSharedKey(addonName, "firstJoinText"))
 	leftText:SetFont("HudHintTextLarge")
 	leftText:SetPos(10, 10)
 	leftText:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
 	leftText:SetWrap( true )
 	leftText:SetContentAlignment( 8 )
-	
+
 	local firstButton = FMainMenu.Derma.CreateDButton(initTroublePanel, 355, FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"), FayLib.IGC.GetSharedKey(addonName, "firstJoinURLText"), "")
 	firstButton:SetPos(5, 216-FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"))
 	firstButton:SetFont("HudHintTextLarge")
@@ -139,10 +164,10 @@ function FMainMenu.Panels.CreateWelcomer()
 	firstButton:SetContentAlignment( 5 )
 	FMainMenu.Derma:SetFrameSettings(firstButton, FayLib.IGC.GetSharedKey(addonName, "commonButtonColor"), 0)
 	firstButton.DoClick = function()
-		surface.PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
-		file.Write("fmainmenu/"..FMainMenu.firstJoinSeed..".txt", "true")
+		surface_PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
+		file_Write("fmainmenu/" .. FMainMenu.firstJoinSeed .. ".txt", "true")
 		if FayLib.IGC.GetSharedKey(addonName, "firstJoinURLEnabled") == true then
-			gui.OpenURL( FayLib.IGC.GetSharedKey(addonName, "firstJoinURL") )
+			gui_OpenURL( FayLib.IGC.GetSharedKey(addonName, "firstJoinURL") )
 		end
 		troubleFrame:Close()
 		blocker:Remove()
@@ -154,20 +179,23 @@ function FMainMenu.Panels.CreateConfirmDC()
 	local blocker = FMainMenu.Derma.CreateDPanel(nil, ScrW(), ScrH(), false )
 	blocker:SetPaintBackground( false )
 	FMainMenu.Derma:SetFrameSettings(blocker, blockerColor, 0)
+
 	local troubleFrame = FMainMenu.Derma.CreateDFrame(FMainMenu.GetPhrase("DisconnectFrameTitle"), nil, 256, 128)
 	troubleFrame:Center()
 	troubleFrame:ShowCloseButton( false )
 	FMainMenu.Derma:SetFrameSettings(troubleFrame, FayLib.IGC.GetSharedKey(addonName, "commonFrameColor"), FMainMenu.Config.DFrameRadius, true)
+
 	local initTroublePanel = FMainMenu.Derma.CreateDPanel(troubleFrame, 246, 93, false )
 	initTroublePanel:SetPos(5, 25)
 	FMainMenu.Derma:SetFrameSettings(initTroublePanel, FayLib.IGC.GetSharedKey(addonName, "commonPanelColor"), 0)
+
 	local leftText = FMainMenu.Derma.CreateDLabel(initTroublePanel, 221, 113, false, FMainMenu.GetPhrase("DisconnectConfirmText"))
 	leftText:SetFont("HudHintTextLarge")
 	leftText:SetPos(10, 10)
 	leftText:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor"))
 	leftText:SetWrap( true )
 	leftText:SetContentAlignment( 8 )
-	
+
 	local secondButton = FMainMenu.Derma.CreateDButton(initTroublePanel, 108, 32, FMainMenu.GetPhrase("ConfigCommonValueNo"), "")
 	secondButton:SetPos(130, 56)
 	secondButton:SetFont("HudHintTextLarge")
@@ -176,11 +204,11 @@ function FMainMenu.Panels.CreateConfirmDC()
 	secondButton:SetContentAlignment( 5 )
 	FMainMenu.Derma:SetFrameSettings(secondButton, FayLib.IGC.GetSharedKey(addonName, "commonButtonColor"), 0)
 	secondButton.DoClick = function()
-		surface.PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
+		surface_PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
 		troubleFrame:Close()
 		blocker:Remove()
 	end
-	
+
 	local firstButton = FMainMenu.Derma.CreateDButton(initTroublePanel, 108, 32, FMainMenu.GetPhrase("ConfigCommonValueYes"), "")
 	firstButton:SetPos(8, 56)
 	firstButton:SetFont("HudHintTextLarge")
@@ -189,7 +217,7 @@ function FMainMenu.Panels.CreateConfirmDC()
 	firstButton:SetContentAlignment( 5 )
 	FMainMenu.Derma:SetFrameSettings(firstButton, FayLib.IGC.GetSharedKey(addonName, "commonButtonColor"), 0)
 	firstButton.DoClick = function()
-		surface.PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
+		surface_PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
 		RunConsoleCommand( "disconnect" )
 	end
 end
@@ -199,10 +227,19 @@ function FMainMenu.Panels.SetupBasics()
 	if m_border != nil then FMainMenu.Panels.Destroy() end
 	m_border = FMainMenu.Derma.CreateDPanel(nil, ScrW(), ScrH(), false)
 	m_border:SetPaintBackgroundEnabled(false)
-	
+
+	-- tint and blur
 	local tintColor = FayLib.IGC.GetSharedKey(addonName, "BackgroundColorTint")
 	local blurAmount = FayLib.IGC.GetSharedKey(addonName, "BackgroundBlurAmount")
-	
+
+	if tintColor.alpha == 0 then
+		tintColor = false
+	end
+
+	if blurAmount == 0 then
+		blurAmount = false
+	end
+
 	if tintColor != false && blurAmount == false then
 		FMainMenu.Derma:SetFrameSettings(m_border, tintColor, 0)
 	elseif tintColor == false && blurAmount != false then
@@ -210,10 +247,11 @@ function FMainMenu.Panels.SetupBasics()
 	elseif tintColor != false && blurAmount != false then
 		FMainMenu.Derma:SetFrameCombo(m_border, tintColor, blurAmount)
 	end
-	
+
+	-- logo
 	if FayLib.IGC.GetSharedKey(addonName, "logoIsText") then
-		surface.SetFont(FMainMenu.CurrentLogoFont)
-		local fontWidth = surface.GetTextSize(FayLib.IGC.GetSharedKey(addonName, "logoContent"))
+		surface_SetFont(FMainMenu.CurrentLogoFont)
+		local fontWidth = surface_GetTextSize(FayLib.IGC.GetSharedKey(addonName, "logoContent"))
 		local logo = FMainMenu.Derma.CreateDLabel(m_border, fontWidth, FayLib.IGC.GetSharedKey(addonName, "logoFontSize"), false, "")
 		if !FayLib.IGC.GetSharedKey(addonName, "GarrysModStyle") then
 			logo:SetPos(ScrW() * 0.04, (ScrH() * 0.5) - FayLib.IGC.GetSharedKey(addonName, "logoFontSize") - 64)
@@ -224,10 +262,10 @@ function FMainMenu.Panels.SetupBasics()
 		logo:SetTextColor(FayLib.IGC.GetSharedKey(addonName, "textLogoColor"))
 		logo:SetContentAlignment( 1 )
 		function logo:Paint()
-			draw.SimpleTextOutlined( FayLib.IGC.GetSharedKey(addonName, "logoContent"), FMainMenu.CurrentLogoFont, 0, 0, FayLib.IGC.GetSharedKey(addonName, "textLogoColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, FayLib.IGC.GetSharedKey(addonName, "logoOutlineThickness"), FayLib.IGC.GetSharedKey(addonName, "logoOutlineColor") )
+			draw_SimpleTextOutlined( FayLib.IGC.GetSharedKey(addonName, "logoContent"), FMainMenu.CurrentLogoFont, 0, 0, FayLib.IGC.GetSharedKey(addonName, "textLogoColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, FayLib.IGC.GetSharedKey(addonName, "logoOutlineThickness"), FayLib.IGC.GetSharedKey(addonName, "logoOutlineColor") )
 		end
 	else
-		local logo = vgui.Create("DHTML", m_border)
+		local logo = vgui_Create("DHTML", m_border)
 		logo:SetSize(ScrW() * 0.5, 192)
 		if !FayLib.IGC.GetSharedKey(addonName, "GarrysModStyle") then
 			logo:SetPos(ScrW() * 0.04, (ScrH() * 0.5) - 256)
@@ -261,20 +299,20 @@ function FMainMenu.Panels.SetupBasics()
 			<body>
 				<img id="img"></img>
 				<script>
-					var url = "]] .. string.JavascriptSafe(FayLib.IGC.GetSharedKey(addonName, "logoContent")) .. [[";
+					var url = "]] .. string_JavascriptSafe(FayLib.IGC.GetSharedKey(addonName, "logoContent")) .. [[";
 					document.getElementById("img").src = url;
 				</script>
 			</body>
 		</html>
 		]])
 	end
-	
+
 	return BackPanel
 end
 
 -- Destroys Menu
 function FMainMenu.Panels.Destroy()
-	if m_border != nil then 
+	if m_border != nil then
 		local mb = m_border
 		mb:Remove()
 		m_border = nil
