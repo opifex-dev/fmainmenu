@@ -211,27 +211,34 @@ derma_DefineControl("fmainmenu_menu_dscrollpanel", nil, PANEL, "DScrollPanel")
 --Creates Derma DFrame Object
 function FMainMenu.Derma.CreateDFrame(name, parent, width, height)
 	local frame = vgui_Create("fmainmenu_menu_dframe", parent)
+
 	if name ~= nil then
 		frame.Title = name
 		frame:SetTitle("")
 	end
+
 	if width ~= nil && height ~= nil then
 		frame:SetSize(width, height)
 	end
+
 	frame:Center()
 	frame:MakePopup()
+
 	return frame
 end
 
 --Creates Derma DPanel Object
 function FMainMenu.Derma.CreateDPanel(parent, width, height, SToC)
 	local frame = vgui_Create("DPanel", parent)
+
 	if SToC then
 		frame:Dock( FILL )
 	end
+
 	if width ~= nil && height ~= nil then
 		frame:SetSize(width, height)
 	end
+
 	return frame
 end
 
@@ -257,26 +264,35 @@ end
 --Creates Derma DLabel Object
 function FMainMenu.Derma.CreateDLabel(parent, width, height, SToC, text)
 	local frame = vgui_Create("fmainmenu_menu_dlabel", parent)
+
 	if text ~= nil then
 		frame:SetText(text)
 	end
+
 	if SToC then
 		frame:Dock( FILL )
 	end
+
 	if width ~= nil && height ~= nil then
 		frame:SetSize(width, height)
 	end
+
 	return frame
 end
 
 --Creates Derma DButton Object
 function FMainMenu.Derma.CreateDButton(parent, width, height, text, ttip)
 	local frame = vgui_Create("fmainmenu_menu_dbutton", parent)
+
 	if width ~= nil && height ~= nil then
 		frame:SetSize(width, height)
 	end
+
 	if text ~= nil then
 		frame:SetText(text)
 	end
+
+	FMainMenu.Derma.SetPanelHover(frame, 1)
+
 	return frame
 end

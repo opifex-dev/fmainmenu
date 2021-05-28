@@ -13,8 +13,8 @@ STEPS TO CREATE LANGUAGE:
 local prefix = "en"
 local fancyName = "English"
 
-FMainMenu.LangPresets[prefix] = {} -- ignore this one line
-local translationList = FMainMenu.LangPresets[prefix]
+FMainMenu.LangPresets[prefix] = {} -- ignore this line
+local translationList = FMainMenu.LangPresets[prefix] -- ignore this line
 
 translationList.WelcomerFrameTitle = "Welcome To The Server"
 translationList.DisconnectFrameTitle = "Confirm Disconnect"

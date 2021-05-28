@@ -254,11 +254,11 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 		-- Changelog
 		if previewCopy["_showChangeLog"] then
 			if ChangelogBox == nil then
-				ChangelogBox = FMainMenu.Derma.CreateDPanel(nil, 256, ScrH() * (1 / 3), false )
+				ChangelogBox = FMainMenu.Derma.CreateDPanel(nil, 256, 450, false )
 				previewFrameSettings(ChangelogBox, previewCopy["_commonPanelColor"], 0, false, previewCopy["_commonTextColor"])
 				ChangelogBox:SetZPos(1)
 
-				CLText = FMainMenu.Derma.CreateDLabel(ChangelogBox, 221, (ScrH() * (1 / 3)) - 5, false, text)
+				CLText = FMainMenu.Derma.CreateDLabel(ChangelogBox, 221, 440, false, text)
 				CLText:SetFont("HudHintTextLarge")
 				CLText:SetPos(10, 5)
 				CLText:SetTextColor( previewCopy["_commonPanelColor"] )
@@ -267,7 +267,7 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			end
 
 			if previewCopy["_changeLogMoveToBottom"] then
-				ChangelogBox:SetPos(width-266, height * (2 / 3))
+				ChangelogBox:SetPos(width-266, height-460)
 			else
 				ChangelogBox:SetPos(width-266, 10)
 			end
@@ -298,7 +298,7 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 				welcomerBoxPanel:SetPos(5, 25)
 				previewFrameSettings(welcomerBoxPanel, previewCopy["_commonPanelColor"], 0, false, previewCopy["_commonTextColor"])
 
-				welcomerBoxScrollPanel = FMainMenu.Derma.CreateDScrollPanel(welcomerBoxPanel, 365, 211 - previewCopy["_textButtonFontSize"], false )
+				welcomerBoxScrollPanel = FMainMenu.Derma.CreateDScrollPanel(welcomerBoxPanel, 365, 175, false )
 				previewFrameSettings(welcomerBoxScrollPanel, previewCopy["_commonPanelColor"], 0)
 
 				welcomerBoxLeftText = FMainMenu.Derma.CreateDLabel(welcomerBoxScrollPanel, 345, 128, false, previewCopy["_firstJoinText"])

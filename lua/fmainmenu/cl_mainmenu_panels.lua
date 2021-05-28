@@ -99,6 +99,7 @@ end
 function FMainMenu.Panels.CreateButton(text)
 	local TextButton = vgui_Create("DButton", m_border)
 	buttonSetup(TextButton, text, FMainMenu.CurrentTextButtonFont)
+
 	return TextButton
 end
 
@@ -117,15 +118,15 @@ end
 
 -- Creates Changelog Box with specified text
 function FMainMenu.Panels.CreateChangeLog(text)
-	local CLPanel = FMainMenu.Derma.CreateDPanel(m_border, 256, ScrH() * (1 / 3), false )
+	local CLPanel = FMainMenu.Derma.CreateDPanel(m_border, 256, 450, false )
 	if FayLib.IGC.GetSharedKey(addonName, "changeLogMoveToBottom") then
-		CLPanel:SetPos(ScrW() - 266, (ScrH() * (2 / 3)) - 10)
+		CLPanel:SetPos(ScrW() - 266, ScrH() - 460)
 	else
 		CLPanel:SetPos(ScrW() - 266, 10)
 	end
 	FMainMenu.Derma:SetFrameSettings(CLPanel, FayLib.IGC.GetSharedKey(addonName, "commonPanelColor"), 0)
 
-	local CLText = FMainMenu.Derma.CreateDLabel(CLPanel, 221, (ScrH() * (1 / 3)) - 5, false, text)
+	local CLText = FMainMenu.Derma.CreateDLabel(CLPanel, 221, 440, false, text)
 	CLText:SetPos(10, 5)
 	CLText:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
 	CLText:SetContentAlignment( 7 )
@@ -144,7 +145,7 @@ function FMainMenu.Panels.CreateWelcomer()
 	initWelcomePanel:SetPos(5, 25)
 	FMainMenu.Derma:SetFrameSettings(initWelcomePanel, FayLib.IGC.GetSharedKey(addonName, "commonPanelColor"), 0)
 
-	local initWelcomeScrollPanel = FMainMenu.Derma.CreateDScrollPanel(initWelcomePanel, 365, 211 - FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"), false )
+	local initWelcomeScrollPanel = FMainMenu.Derma.CreateDScrollPanel(initWelcomePanel, 365, 175, false )
 	FMainMenu.Derma:SetFrameSettings(initWelcomeScrollPanel, FayLib.IGC.GetSharedKey(addonName, "commonPanelColor"), 0)
 
 	local leftText = FMainMenu.Derma.CreateDLabel(initWelcomeScrollPanel, 345, 216, false, FayLib.IGC.GetSharedKey(addonName, "firstJoinText"))
@@ -152,10 +153,9 @@ function FMainMenu.Panels.CreateWelcomer()
 	leftText:SetAutoStretchVertical( true )
 	leftText:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
 
-	local firstButton = FMainMenu.Derma.CreateDButton(initWelcomePanel, 355, FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"), FayLib.IGC.GetSharedKey(addonName, "firstJoinURLText"), "")
-	firstButton:SetPos(5, 216 - FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize"))
+	local firstButton = FMainMenu.Derma.CreateDButton(initWelcomePanel, 355, 36, FayLib.IGC.GetSharedKey(addonName, "firstJoinURLText"), "")
+	firstButton:SetPos(5, 180)
 	firstButton:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
-	FMainMenu.Derma.SetPanelHover(firstButton, 1)
 	FMainMenu.Derma:SetFrameSettings(firstButton, FayLib.IGC.GetSharedKey(addonName, "commonButtonColor"), 0)
 	firstButton.DoClick = function()
 		surface_PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
@@ -188,7 +188,6 @@ function FMainMenu.Panels.CreateConfirmDC()
 	local secondButton = FMainMenu.Derma.CreateDButton(initDisconnectPanel, 108, 32, FMainMenu.GetPhrase("ConfigCommonValueNo"), "")
 	secondButton:SetPos(130, 56)
 	secondButton:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
-	FMainMenu.Derma.SetPanelHover(secondButton, 1)
 	FMainMenu.Derma:SetFrameSettings(secondButton, FayLib.IGC.GetSharedKey(addonName, "commonButtonColor"), 0)
 	secondButton.DoClick = function()
 		surface_PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
@@ -199,7 +198,6 @@ function FMainMenu.Panels.CreateConfirmDC()
 	local firstButton = FMainMenu.Derma.CreateDButton(initDisconnectPanel, 108, 32, FMainMenu.GetPhrase("ConfigCommonValueYes"), "")
 	firstButton:SetPos(8, 56)
 	firstButton:SetTextColor( FayLib.IGC.GetSharedKey(addonName, "commonTextColor") )
-	FMainMenu.Derma.SetPanelHover(firstButton, 1)
 	FMainMenu.Derma:SetFrameSettings(firstButton, FayLib.IGC.GetSharedKey(addonName, "commonButtonColor"), 0)
 	firstButton.DoClick = function()
 		surface_PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
@@ -237,6 +235,7 @@ function FMainMenu.Panels.SetupBasics()
 	if FayLib.IGC.GetSharedKey(addonName, "logoIsText") then
 		surface_SetFont(FMainMenu.CurrentLogoFont)
 		local fontWidth = surface_GetTextSize(FayLib.IGC.GetSharedKey(addonName, "logoContent"))
+
 		local logo = FMainMenu.Derma.CreateDLabel(m_border, fontWidth, FayLib.IGC.GetSharedKey(addonName, "logoFontSize"), false, "")
 		if !FayLib.IGC.GetSharedKey(addonName, "GarrysModStyle") then
 			logo:SetPos(ScrW() * 0.04, (ScrH() * 0.5) - FayLib.IGC.GetSharedKey(addonName, "logoFontSize") - 64)

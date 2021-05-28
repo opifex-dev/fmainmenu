@@ -86,15 +86,19 @@ local function openMenu()
 				local fadetime = 10 * FayLib.IGC.GetSharedKey(addonName, "musicFade")
 				local curVol = FayLib.IGC.GetSharedKey(addonName, "musicVolume")
 				local volSub = curVol / fadetime
+
 				timer_Create("FMainMenu_Music_Fade", 0.1, fadetime, function()
 					curVol = curVol - volSub
+
 					if curVol < 0 then
 						curVol = 0
 					end
+
 					if musicStation != "" then
 						musicStation:SetVolume(curVol)
 					end
 				end)
+
 				timer_Simple(FayLib.IGC.GetSharedKey(addonName, "musicFade") + 1, function()
 					if musicStation != "" then
 						musicStation:Stop()
@@ -225,12 +229,7 @@ local function openMenu()
 
 	--Changelog
 	if FayLib.IGC.GetSharedKey(addonName, "showChangeLog") then
-		local finalLog = ""
-		local cLExplode = string_Explode("\n", FayLib.IGC.GetSharedKey(addonName, "changeLogText"))
-		for _,v in ipairs(cLExplode) do
-			finalLog = finalLog .. v .. "\n"
-		end
-		FMainMenu.Panels.CreateChangeLog(finalLog)
+		FMainMenu.Panels.CreateChangeLog(FayLib.IGC.GetSharedKey(addonName, "changeLogText"))
 	end
 
 	--Music Support
@@ -266,6 +265,7 @@ local function openMenu()
 
 	file_CreateDir( "fmainmenu/" )
 	if !file_Exists( "fmainmenu/" .. FMainMenu.firstJoinSeed .. ".txt", "DATA" ) && FayLib.IGC.GetSharedKey(addonName, "firstJoinWelcome") then
+		surface_PlaySound("garrysmod/content_downloaded.wav")
 		FMainMenu.Panels.CreateWelcomer()
 	end
 
@@ -276,6 +276,7 @@ local function openMenu()
 
 		--Take care of some GUIs that can open and draw on top of the menu
 		local VGUIWorld = vgui_GetWorldPanel()
+
 		--Hide DarkRP Votes
 		if DarkRP then
 			for _,panel in ipairs(VGUIWorld:GetChildren()) do

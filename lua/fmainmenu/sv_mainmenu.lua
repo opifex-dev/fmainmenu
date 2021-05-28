@@ -60,18 +60,22 @@ net_Receive( "FMainMenu_CloseMainMenu", function( len, ply )
 		ply:UnLock()
 		ply:SetMoveType(MOVETYPE_WALK)
 		ply:SetViewEntity(ply)
+
 		if FayLib.IGC.GetKey(addonName, "AdvancedSpawn") && FayLib.IGC.GetKey(addonName, "AdvancedSpawnPos") then
 			ply:SetRenderMode(RENDERMODE_NORMAL)
 			ply:SetColor( ply.PreviousFMainMenuColor )
 			ply:SetNWBool("FMainMenu_TempSpawn",true)
+
 			if FMainMenu.EverySpawn then
 				net_Start("FMainMenu_VarChange")
 					net_WriteInt( 1, 4 )
 					net_WriteBool( )
 				net_Send(ply)
 			end
+
 			ply:Spawn()
 		end
+
 		hook_Run( "FMainMenu_MenuClosed", ply )
 	end
 end )
@@ -83,6 +87,7 @@ local function setupCam()
 	cam:SetRenderMode(RENDERMODE_TRANSCOLOR)
 	cam:SetColor(camColor)
 	cam:DrawShadow( false )
+
 	local cameraPos = ""
 	if FayLib.IGC.GetKey(addonName, "CameraPosition")[game_GetMap()] then
 		cameraPos = FayLib.IGC.GetKey(addonName, "CameraPosition")[game_GetMap()] + Vector(0,0,64)
@@ -90,7 +95,9 @@ local function setupCam()
 		cameraPos = Vector(-1286.149658, 1187.535156, -11371.772461)
 		FMainMenu.Log(FMainMenu.GetPhrase("LogNoCamPos"), true)
 	end
+
 	cam:SetPos( cameraPos )
+
 	local cameraAng = ""
 	if FayLib.IGC.GetKey(addonName, "CameraAngle")[game_GetMap()] then
 		cameraAng = FayLib.IGC.GetKey(addonName, "CameraAngle")[game_GetMap()]
@@ -98,7 +105,9 @@ local function setupCam()
 		cameraAng = Angle(42.586422, -40.820980, 0.000000)
 		FMainMenu.Log(FMainMenu.GetPhrase("LogNoCamAng"), true)
 	end
+
 	cam:SetAngles( cameraAng )
+
 	cam:Spawn()
 	cam:Activate()
 	cam:SetMoveType(MOVETYPE_NONE)
@@ -175,6 +184,7 @@ local function checkDRPBabyGod(ply)
 		if GAMEMODE.Config.babygod then
 			GAMEMODE.Config.babygod = false
 		end
+
 		if (GAMEMODE.Config.babygodtime > 0 && !ply.IsSleeping && !ply.Babygod) && (ply:GetNWBool("FMainMenu_InMenu",false) == false || ply:GetNWBool("FMainMenu_InMenu",false) && !FayLib.IGC.GetKey(addonName, "AdvancedSpawn")) then
 			enableBabyGod(ply)
 		end
@@ -190,20 +200,25 @@ local function spawnPlayerFunc(ply)
 	if FMainMenu.RefreshDetect then
 		refreshMM()
 	end
+
 	if cam == "" then
 		setupCam()
 	end
+
 	if ply:GetNWBool("FMainMenu_TempSpawn",false) then
 		ply:SetNWBool("FMainMenu_TempSpawn",false)
 		return
 	end
+
 	ply:SetNWBool("FMainMenu_InMenu",true)
 	ply:SetViewEntity( cam )
+
 	if FayLib.IGC.GetKey(addonName, "AdvancedSpawn") then
 		ply:StripWeapons()
 		ply.PreviousFMainMenuColor = ply:GetColor()
 		ply:SetRenderMode(RENDERMODE_TRANSALPHA)
 		ply:SetColor( invisPlayerColor )
+
 		local pPOS = ""
 		if FayLib.IGC.GetKey(addonName, "AdvancedSpawnPos")[game_GetMap()] then
 			pPOS = FayLib.IGC.GetKey(addonName, "AdvancedSpawnPos")[game_GetMap()] + Vector(0,0,64)
@@ -211,6 +226,7 @@ local function spawnPlayerFunc(ply)
 			pPOS = Vector(-172.215729, -24.837690, -12064.818359)
 			FMainMenu.Log(FMainMenu.GetPhrase("LogNoAdvSpawnPos"), true)
 		end
+
 		timer_Simple(0,function()
 			ply:SetPos(pPOS - Vector(0,0,64))
 			timer_Simple(0,function()
@@ -229,6 +245,7 @@ end
 --Detect player first spawn for menu
 hook_Add( "PlayerInitialSpawn", "FMainMenu_PIS", function( ply )
 	if ply:IsBot() then return end
+
 	ply:SetNWBool("FMainMenu_TempSpawn",false)
 	if !FMainMenu.EverySpawn then
 		spawnPlayerFunc(ply)
@@ -238,6 +255,7 @@ end )
 --Detect player spawn for menu
 hook_Add( "PlayerSpawn", "FMainMenu_PS", function( ply )
 	if ply:IsBot() then return end
+
 	if FMainMenu.EverySpawn then
 		spawnPlayerFunc(ply)
 	end
@@ -250,10 +268,12 @@ hook_Add( "InitPostEntity", "FMainMenu_IPE", function()
 	-- check for Murder gamemode
 	if GAMEMODE && GAMEMODE.RoundStage != nil && GAMEMODE.RoundCount != nil then
 		local murderTrigger = false
+
 		if FMainMenu.EverySpawn then
 			FMainMenu.EverySpawn = false
 			FMainMenu.Log(FMainMenu.GetPhrase("LogMurderEverySpawn"), false)
 		end
+
 		hook_Add( "Think", "FMainMenu_Murder_Think", function()
 			if GAMEMODE:GetRound() == GAMEMODE.Round.Playing && murderCache != GAMEMODE.Round.Playing && !murderTrigger then
 				murderTrigger = true
@@ -340,15 +360,18 @@ timer_Create("FMainMenu_PVoiceCheck", 0.2, 0, function()
 		if (ROLE_TRAITOR != nil && ROLE_DETECTIVE != nil && TEAM_TERROR != nil && talker.traitor_gvoice != nil) && (talker:IsActiveTraitor() && talker.traitor_gvoice == false) then
 			playerTalkCheck[talker:UserID()] = false
 		end
+
 		if FayLib.IGC.GetKey(addonName, "PlayerVoiceDistance") <= 0 && !checkMute(talker) then
 			playerTalkCheck[talker:UserID()] = true
 		elseif FayLib.IGC.GetKey(addonName, "PlayerVoiceDistance") > 0 then
 			local cameraPos = ""
+
 			if FayLib.IGC.GetKey(addonName, "CameraPosition")[game_GetMap()] then
 				cameraPos = FayLib.IGC.GetKey(addonName, "CameraPosition")[game_GetMap()] + Vector(0,0,64)
 			else
 				cameraPos = Vector(-1286.149658, 1187.535156, -11371.772461)
 			end
+
 			if (cameraPos:DistToSqr( talker:GetPos() ) <= FayLib.IGC.GetKey(addonName, "PlayerVoiceDistance")) && !checkMute(talker) then
 				playerTalkCheck[talker:UserID()] = true
 			elseif (cameraPos:DistToSqr( talker:GetPos() ) > FayLib.IGC.GetKey(addonName, "PlayerVoiceDistance")) then
@@ -580,6 +603,20 @@ local function camUpdate(ply)
 	ply:SetViewEntity(innerCam)
 end
 
+-- can take colors that lost their userdata status during net message transmission and turn them back in a given table
+local function fixTableColors(varTable)
+	local keyList = table_GetKeys(varTable)
+	for i = 1, #keyList do
+		if type(varTable[keyList[i]]) == "table" then
+			local innerTable = varTable[keyList[i]]
+			local innerKeyList = table_GetKeys(innerTable)
+			if #innerKeyList == 4 && innerTable.a != nil && innerTable.r != nil && innerTable.g != nil && innerTable.b != nil then
+				varTable[keyList[i]] = Color(innerTable.r, innerTable.g, innerTable.b, innerTable.a)
+			end
+		end
+	end
+end
+
 -- used to handle updates to menu camera position and angle for the live preview
 local tVarUpdateHandler = {
 	["CameraPosition"] = function(ply)
@@ -644,17 +681,8 @@ net_Receive( "FMainMenu_Config_UpdateVar", function( len, ply )
 	local receivedStr = net_ReadString()
 	local varTable = util_JSONToTable( receivedStr )
 
-	-- add fix for "Colors will not have the color metatable" bug
-	local keyList = table_GetKeys(varTable)
-	for i = 1, #keyList do
-		if type(varTable[keyList[i]]) == "table" then
-			local innerTable = varTable[keyList[i]]
-			local innerKeyList = table_GetKeys(innerTable)
-			if #innerKeyList == 4 && innerTable.a != nil && innerTable.r != nil && innerTable.g != nil && innerTable.b != nil then
-				varTable[keyList[i]] = Color(innerTable.r, innerTable.g, innerTable.b, innerTable.a)
-			end
-		end
-	end
+	-- fix for "Colors will not have the color metatable" bug
+	fixTableColors(varTable)
 
 	-- If player has access to config, then save changes to config
 	CAMI.PlayerHasAccess(ply, "FMainMenu_CanEditMenu", function(hasPriv, reason)
@@ -679,17 +707,8 @@ net_Receive( "FMainMenu_Config_UpdateTempVariable", function(len, ply)
 			local varNames = net_ReadTable()
 			local varTable = util_JSONToTable(net_ReadString())
 
-			-- add fix for "Colors will not have the color metatable" bug
-			local keyList = table_GetKeys(varTable)
-			for i = 1, #keyList do
-				if type(varTable[keyList[i]]) == "table" then
-					local innerTable = varTable[keyList[i]]
-					local innerKeyList = table_GetKeys(innerTable)
-					if #innerKeyList == 4 && innerTable.a != nil && innerTable.r != nil && innerTable.g != nil && innerTable.b != nil then
-						varTable[keyList[i]] = Color(innerTable.r, innerTable.g, innerTable.b, innerTable.a)
-					end
-				end
-			end
+			-- fix for "Colors will not have the color metatable" bug
+			fixTableColors(varTable)
 
 			-- update temp variables as needed for player
 			local counter = 1

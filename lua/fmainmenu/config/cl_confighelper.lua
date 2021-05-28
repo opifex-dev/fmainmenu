@@ -490,7 +490,6 @@ FMainMenu.ConfigModulesHelper.doAdvancedConfirmationDialog = function(panelBlock
 
 	local secondButton = FMainMenu.Derma.CreateDButton(removeConfirm, 108, 32, FMainMenu.GetPhrase("ConfigCommonValueNo"), "")
 	secondButton:SetPos(130, 56)
-	FMainMenu.Derma.SetPanelHover(secondButton, 1)
 	FMainMenu.Derma:SetFrameSettings(secondButton, Color(75,75,75, 255), 0)
 	secondButton.DoClick = function()
 		surface_PlaySound("garrysmod/ui_click.wav")
@@ -500,7 +499,6 @@ FMainMenu.ConfigModulesHelper.doAdvancedConfirmationDialog = function(panelBlock
 
 	local firstButton = FMainMenu.Derma.CreateDButton(removeConfirm, 108, 32, FMainMenu.GetPhrase("ConfigCommonValueYes"), "")
 	firstButton:SetPos(8, 56)
-	FMainMenu.Derma.SetPanelHover(firstButton, 1)
 	FMainMenu.Derma:SetFrameSettings(firstButton, Color(75,75,75, 255), 0)
 	firstButton.DoClick = function()
 		surface_PlaySound("garrysmod/ui_click.wav")

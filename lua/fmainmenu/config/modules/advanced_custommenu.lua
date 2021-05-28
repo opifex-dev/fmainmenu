@@ -332,7 +332,6 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 			for _,bType in ipairs(table_GetKeys(buttonSetups)) do
 				local button = FMainMenu.Derma.CreateDButton(removeConfirm, 200, 32, FMainMenu.GetPhrase("ConfigMenuSetupEditorType" .. bType), "")
 				button:SetPos(23, 32 + tempY)
-				FMainMenu.Derma.SetPanelHover(button, 1)
 				button.Type = bType
 				FMainMenu.Derma:SetFrameSettings(button, Color(75,75,75, 255), 0)
 				button.DoClick = function(self)
@@ -353,7 +352,6 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 
 			local cancelButton = FMainMenu.Derma.CreateDButton(removeConfirm, 200, 32, FMainMenu.GetPhrase("ConfigCommonValueCancel"), "")
 			cancelButton:SetPos(23, 208)
-			FMainMenu.Derma.SetPanelHover(cancelButton, 1)
 			FMainMenu.Derma:SetFrameSettings(cancelButton, Color(75,75,75, 255), 0)
 			cancelButton.DoClick = function()
 				surface_PlaySound("garrysmod/ui_click.wav")
