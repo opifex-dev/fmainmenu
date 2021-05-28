@@ -1,11 +1,13 @@
 --[[
 
-	ADVANCED SPAWN IGC MODULE
+	CUSTOM MENU LAYOUT IGC MODULE
 
 ]]--
 
-local vgui_Create = CLIENT and vgui.Create
 local FMainMenu = FMainMenu
+
+-- localized global calls
+local vgui_Create = CLIENT and vgui.Create
 local table_insert = table.insert
 local ScrW = ScrW
 local ScrH = ScrH

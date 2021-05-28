@@ -1,10 +1,12 @@
 --[[
 
-	LOGO DERMA STYLE IGC MODULE
+	LOGO STYLE IGC MODULE
 
 ]]--
 
 local FMainMenu = FMainMenu
+
+-- localized global calls
 local ipairs = ipairs
 local tonumber = tonumber
 

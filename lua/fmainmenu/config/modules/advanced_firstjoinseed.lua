@@ -1,11 +1,12 @@
 --[[
 
-	FIRST JOIN SEED BUTTON IGC MODULE
+	FIRST JOIN SEED IGC MODULE
 
 ]]--
 
 local FMainMenu = FMainMenu
 
+-- localized global calls
 local surface_PlaySound = surface.PlaySound
 
 FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}

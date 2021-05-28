@@ -1,11 +1,16 @@
+local FMainMenu = FMainMenu
+local FayLib = FayLib
+
+FMainMenu.Lang = FMainMenu.Lang || {}
+
+-- localized global calls
+local hook_Remove = hook.Remove
+local hook_Run = hook.Run
 local net_Receive = net.Receive
 local net_ReadInt = net.ReadInt
 local net_ReadBool = net.ReadBool
-local FMainMenu = FMainMenu
-local hook_Remove = hook.Remove
 local DarkRP = DarkRP
 local gui_EnableScreenClicker = gui.EnableScreenClicker
-local FayLib = FayLib
 local timer_Create = timer.Create
 local timer_Simple = timer.Simple
 local FAdmin = FAdmin
@@ -15,7 +20,6 @@ local ScrW = ScrW
 local ScrH = ScrH
 local surface_PlaySound = surface.PlaySound
 local ipairs = ipairs
-local string_Explode = string.Explode
 local sound_PlayFile = sound.PlayFile
 local IsValid = IsValid
 local sound_PlayURL = sound.PlayURL
@@ -32,8 +36,7 @@ local gameevent_Listen = gameevent.Listen
 local Player = Player
 local hook_Add = hook.Add
 
-FMainMenu.Lang = FMainMenu.Lang || {}
-
+-- variables related to below functionality
 local closePanelGlobal = ""
 local musicStation = ""
 local oneTimeFlag = false
@@ -77,7 +80,7 @@ local function openMenu()
 	--Creates function that can close panel
 	function closePanelGlobal()
 		-- cleanup
-		hook.Remove("Think", "FMainMenu_KMV")
+		hook_Remove("Think", "FMainMenu_KMV")
 		gui_EnableScreenClicker( false )
 
 		-- stop music and fade out, if needed
@@ -124,9 +127,9 @@ local function openMenu()
 		end
 
 		-- related hooks
-		hook.Remove("Think","FMainMenu_DarkRPThink")
-		hook.Remove( "OnPlayerChangedTeam", "FMainMenu_OPCT")
-		hook.Run( "FMainMenu_Client_MenuClosed" )
+		hook_Remove("Think","FMainMenu_DarkRPThink")
+		hook_Remove( "OnPlayerChangedTeam", "FMainMenu_OPCT")
+		hook_Run( "FMainMenu_Client_MenuClosed" )
 
 		-- signal server
 		net_Start("FMainMenu_CloseMainMenu")

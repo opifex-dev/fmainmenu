@@ -1,10 +1,12 @@
 --[[
 
-	URL BUTTONS MODULE
+	URL BUTTONS IGC MODULE
 
 ]]--
 
 local FMainMenu = FMainMenu
+
+-- localized global calls
 local ScrW = ScrW
 local ScrH = ScrH
 local vgui_Create = CLIENT and vgui.Create

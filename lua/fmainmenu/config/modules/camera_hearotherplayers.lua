@@ -4,9 +4,11 @@
 
 ]]--
 
+local FMainMenu = FMainMenu
+
+-- localized global calls
 local ents_CreateClientProp = CLIENT and ents.CreateClientProp
 local Color = Color
-local FMainMenu = FMainMenu
 local Angle = Angle
 local tonumber = tonumber
 local math_sqrt = math.sqrt

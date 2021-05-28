@@ -11,6 +11,9 @@ If you want to read through the file anyways to see what's going on, then have f
 ]]--
 
 local FayLib = FayLib
+local FMainMenu = FMainMenu
+
+-- localized global calls
 local Vector = Vector
 local Angle = Angle
 local Color = Color
@@ -20,9 +23,9 @@ local pairs = pairs
 local include = include
 local AddCSLuaFile = AddCSLuaFile
 local string_lower = string.lower
-local FMainMenu = FMainMenu
 local hook_Add = hook.Add
 
+-- variables related to below functionality
 local addonName = "fmainmenu" --easy reference instead of copy-pasting over and over
 
 

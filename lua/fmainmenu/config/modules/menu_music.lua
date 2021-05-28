@@ -1,13 +1,15 @@
 --[[
 
-	MUSIC IGC MODULE
+	BACKGROUND MUSIC IGC MODULE
 
 ]]--
 
+-- localized global calls
 local FMainMenu = FMainMenu
 local tonumber = tonumber
 local string_find = string.find
 local string_Replace = string.Replace
+local surface_PlaySound = CLIENT and surface.PlaySound
 
 FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 
@@ -47,7 +49,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	mainPropPanel.audioFileChooseButton = FMainMenu.ConfigModulePanels.createTextButtonLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesMusicButtonLabel"))
 	mainPropPanel.audioFileChooseButton:SetVisible(false)
 	mainPropPanel.audioFileChooseButton.DoClick = function(button)
-		surface.PlaySound("garrysmod/ui_click.wav")
+		surface_PlaySound("garrysmod/ui_click.wav")
 		FMainMenu.ConfigModulesHelper.doSoundSelection(mainPropPanel.contentBox, mainPropPanel.textBox)
 	end
 

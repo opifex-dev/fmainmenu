@@ -1,11 +1,14 @@
+local FMainMenu = FMainMenu
+local FayLib = FayLib
+
 FMainMenu.Derma = FMainMenu.Derma || {}
 FMainMenu.Config = FMainMenu.Config || {}
 
+-- localized global calls
 local Color = Color
 local Material = Material
 local draw_RoundedBox = draw.RoundedBox
 local draw_SimpleText = draw.SimpleText
-local FayLib = FayLib
 local surface_SetDrawColor = surface.SetDrawColor
 local surface_DrawRect = surface.DrawRect
 local ScrW = ScrW
@@ -18,6 +21,7 @@ local draw_SimpleTextOutlined = draw.SimpleTextOutlined
 local vgui_Create = vgui.Create
 local derma_DefineControl = derma.DefineControl
 
+-- variables related to below functionality
 local blurMat = Material("pp/blurscreen")
 local colorWhite = Color(255, 255, 255)
 local addonName = "fmainmenu"

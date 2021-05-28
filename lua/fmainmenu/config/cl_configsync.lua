@@ -10,14 +10,18 @@ If you want to read through the file anyways to see what's going on, then have f
 !!!WARNING!!!
 ]]--
 
+local FayLib = FayLib
+local FMainMenu = FMainMenu
+
+-- localized global calls
 local file_Find = file.Find
 local pairs = pairs
 local include = include
 local hook_Add = hook.Add
-local FayLib = FayLib
 local string_lower = string.lower
 local hook_Run = hook.Run
 
+-- variables related to below functionality
 local addonName = "fmainmenu" --easy reference instead of copy-pasting over and over
 
 FMainMenu.EverySpawn = false

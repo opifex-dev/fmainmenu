@@ -1,3 +1,4 @@
+-- localized global calls
 local Color = Color
 local draw_RoundedBox = draw.RoundedBox
 local surface_SetDrawColor = surface.SetDrawColor
@@ -8,6 +9,7 @@ local surface_SetTextPos = surface.SetTextPos
 local surface_DrawText = surface.DrawText
 local derma_DefineControl = derma.DefineControl
 local ipairs = ipairs
+local surface_PlaySound = surface.PlaySound
 
 -- custom frame with close button
 local PANEL = {}
@@ -48,7 +50,7 @@ function PANEL:Init()
 		surface_DrawText( "X" )
 	end
 	self.closeButton.DoClick = function(button)
-		surface.PlaySound("garrysmod/ui_click.wav")
+		surface_PlaySound("garrysmod/ui_click.wav")
 		pan:Close()
 	end
 end

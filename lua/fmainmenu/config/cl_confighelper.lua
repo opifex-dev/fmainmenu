@@ -4,10 +4,12 @@
 
 ]]--
 
+local FMainMenu = FMainMenu
+
+-- localized global calls
 local tonumber = tonumber
 local math_Round = math.Round
 local vgui_Create = vgui.Create
-local FMainMenu = FMainMenu
 local Color = Color
 local net_Start = net.Start
 local net_WriteTable = net.WriteTable
@@ -32,6 +34,7 @@ local string_sub = string.sub
 local string_len = string.len
 local surface_PlaySound = surface.PlaySound
 
+-- variable related to below functionality
 FMainMenu.ConfigModulesHelper = FMainMenu.ConfigModulesHelper || {}
 local soundSelection = nil
 local infoPopup = nil

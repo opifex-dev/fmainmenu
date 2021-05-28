@@ -5,6 +5,8 @@
 ]]--
 
 local FMainMenu = FMainMenu
+
+-- localized global calls
 local pairs = pairs
 
 FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}

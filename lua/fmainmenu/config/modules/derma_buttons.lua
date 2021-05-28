@@ -1,14 +1,17 @@
 --[[
 
-	BUTTON DERMA STYLE IGC MODULE
+	TEXT BUTTON STYLE IGC MODULE
 
 ]]--
 
+local FMainMenu = FMainMenu
+
+-- localized global calls
 local ipairs = ipairs
 local string_find = string.find
 local string_Replace = string.Replace
-local FMainMenu = FMainMenu
 local tonumber = tonumber
+local surface_PlaySound = surface_PlaySound
 
 FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 

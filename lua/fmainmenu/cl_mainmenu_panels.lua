@@ -1,8 +1,13 @@
+local FayLib = FayLib
+local FMainMenu = FMainMenu
+
+FMainMenu.Panels = FMainMenu.Panels || {}
+FMainMenu.Lang = FMainMenu.Lang || {}
+
+-- localized global calls
 local Color = Color
 local surface_CreateFont = surface.CreateFont
 local hook_Add = hook.Add
-local FMainMenu = FMainMenu
-local FayLib = FayLib
 local tostring = tostring
 local surface_SetFont = surface.SetFont
 local surface_GetTextSize = surface.GetTextSize
@@ -16,9 +21,7 @@ local RunConsoleCommand = RunConsoleCommand
 local draw_SimpleTextOutlined = draw.SimpleTextOutlined
 local string_JavascriptSafe = string.JavascriptSafe
 
-FMainMenu.Panels = FMainMenu.Panels || {}
-FMainMenu.Lang = FMainMenu.Lang || {}
-
+-- variables related to below functionality
 local m_border = nil
 local blockerColor = Color(0,0,0,0)
 local addonName = "fmainmenu"

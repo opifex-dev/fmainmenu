@@ -1,8 +1,13 @@
+local FMainMenu = FMainMenu
+local FayLib = FayLib
+
+FMainMenu.Lang = FMainMenu.Lang || {}
+
+-- localized global calls
 local Color = Color
 local util_AddNetworkString = util.AddNetworkString
 local util_PrecacheModel = util.PrecacheModel
 local net_Receive = net.Receive
-local FayLib = FayLib
 local net_Start = net.Start
 local net_WriteInt = net.WriteInt
 local net_WriteBool = net.WriteBool
@@ -11,7 +16,6 @@ local hook_Run = hook.Run
 local ents_Create = ents.Create
 local game_GetMap = game.GetMap
 local Vector = Vector
-local FMainMenu = FMainMenu
 local Angle = Angle
 local FindMetaTable = FindMetaTable
 local IsValid = IsValid
@@ -35,8 +39,7 @@ local util_JSONToTable = util.JSONToTable
 local table_GetKeys = table.GetKeys
 local type = type
 
-FMainMenu.Lang = FMainMenu.Lang || {}
-
+-- variables related to functionality below
 local cam = ""
 local camColor = Color(0,0,0,0)
 local invisPlayerColor = Color(255,255,255,0)

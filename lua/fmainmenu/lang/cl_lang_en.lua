@@ -1,3 +1,5 @@
+local FMainMenu = FMainMenu
+
 FMainMenu.Lang = FMainMenu.Lang || {}
 FMainMenu.LangPresets = FMainMenu.LangPresets || {}
 -- IGNORE ABOVE CODE

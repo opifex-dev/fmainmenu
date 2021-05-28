@@ -1,10 +1,13 @@
 --[[
 
-	FRAME DERMA STYLE IGC MODULE
+	DERMA FRAME STYLE IGC MODULE
 
 ]]--
 
 local FMainMenu = FMainMenu
+
+-- localized global calls
+local tonumber = tonumber
 
 FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 

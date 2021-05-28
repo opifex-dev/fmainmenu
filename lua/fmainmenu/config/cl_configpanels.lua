@@ -4,10 +4,12 @@
 
 ]]--
 
-local vgui_Create = vgui.Create
 local FMainMenu = FMainMenu
 
 FMainMenu.ConfigModulePanels = FMainMenu.ConfigModulePanels || {}
+
+-- localized global calls
+local vgui_Create = vgui.Create
 
 -- create single line label
 FMainMenu.ConfigModulePanels.createLabel = function(mainPropPanel, text)

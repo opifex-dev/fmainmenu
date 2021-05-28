@@ -1,3 +1,10 @@
+local FMainMenu = FMainMenu
+
+FMainMenu.ConfigPreview = FMainMenu.ConfigPreview || {}
+FMainMenu.ConfigPreview.previewLevel = FMainMenu.ConfigPreview.previewLevel || 0
+FMainMenu.ConfigPreview.previewCopy = FMainMenu.ConfigPreview.previewCopy || {}
+
+-- localized global calls
 local Material = Material
 local Color = Color
 local draw_RoundedBox = draw.RoundedBox
@@ -9,7 +16,6 @@ local hook_Add = hook.Add
 local ScrW = ScrW
 local ScrH = ScrH
 local tostring = tostring
-local FMainMenu = FMainMenu
 local vgui_Create = vgui.Create
 local string_JavascriptSafe = string.JavascriptSafe
 local ipairs = ipairs
@@ -20,26 +26,7 @@ local surface_SetMaterial = surface.SetMaterial
 local render_UpdateScreenEffectTexture = render.UpdateScreenEffectTexture
 local surface_DrawTexturedRect = surface.DrawTexturedRect
 
---[[
-	Preview Hooks
-	
-	The below HUDPaint and HUDPaintBackground hooks will be used to render a real-time preview of vgui changes the player is making in the editor.
-	I will also be listing all the possible states below so I don't forget.
-	
-	NOTE: We can likely utilize the updatePreview function I made for the other previews by keeping a copy of all needed variables to simulate the menu,
-	and using the updatePreview function to modify whatever property the user is editing
-	
-	previewLevel:
-	0 - no GUI, background only
-	1 - background + base menu only
-	2 - 1 but with first time join module simulated on top
-	3 - 1 but with music
-	4 - 2 but always enabled
-]]--
-FMainMenu.ConfigPreview = FMainMenu.ConfigPreview || {}
-FMainMenu.ConfigPreview.previewLevel = FMainMenu.ConfigPreview.previewLevel || 0
-FMainMenu.ConfigPreview.previewCopy = FMainMenu.ConfigPreview.previewCopy || {}
-
+-- variables used for keeping track of various aspects of the preview and also detecting changes between variables (ie. we don't want to recreate the fonts every frame)
 local blurMat = Material("pp/blurscreen")
 local colorWhite = Color(255, 255, 255)
 local HTMLLogo = nil
@@ -97,6 +84,15 @@ local function previewFrameSettings(frame, color, radius, isFrame, commonTextCol
 	end
 end
 
+-- common setup code between URL and File based background music previews
+local function musicStationSetup(station)
+	if ( IsValid( station ) ) then
+		station:EnableLooping(previewCopy["_musicLooping"])
+		station:SetVolume(previewCopy["_musicVolume"])
+		musicStation = station
+	end
+end
+
 --Handles the "custom layout" advanced option preview
 local customLayoutSetup = {
 	["Play"] = function(Content, xPos, curYPos, previewCopy)
@@ -116,6 +112,23 @@ local customLayoutSetup = {
 	end,
 }
 
+--[[
+	Preview Hooks
+	
+	The below HUDPaint and HUDPaintBackground hooks will be used to render a real-time preview of vgui changes the player is making in the editor.
+	I will also be listing all the possible states below so I don't forget.
+	
+	NOTE: We can likely utilize the updatePreview function I made for the other previews by keeping a copy of all needed variables to simulate the menu,
+	and using the updatePreview function to modify whatever property the user is editing
+	
+	previewLevel:
+	0 - no GUI, background only
+	1 - background + base menu only
+	2 - 1 but with first time join module simulated on top
+	3 - 1 but with music
+	4 - 2 but always enabled
+]]--
+
 -- live preview for main menu
 hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 	local previewLevel = FMainMenu.ConfigPreview.previewLevel || 0
@@ -132,11 +145,13 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 				cachedLink = ""
 			end
 
+			-- position adjustment for gmod style
 			local titleH = (height * 0.5) - previewCopy["_logoFontSize"] - 64
 			if previewCopy["_GarrysModStyle"] then
 				titleH = width * 0.04
 			end
 
+			-- if font value changed, create new font
 			if previewCopy["_logoFont"] != cachedLogoFont || previewCopy["_logoFontSize"] != cachedLogoFontSize || previewCopy["_logoShadow"] != cachedLogoFontShadow then
 				previewLogoFont = "FMM_PreviewLogoFont" .. tostring(previewLogoFontCounter)
 				FMainMenu.Panels.createNewFont(previewLogoFont, previewCopy["_logoFont"], previewCopy["_logoFontSize"], previewCopy["_logoShadow"])
@@ -146,8 +161,10 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 				previewLogoFontCounter = previewLogoFontCounter + 1
 			end
 
+			-- draw the text
 			draw_SimpleTextOutlined( previewCopy["_logoContent"], previewLogoFont, width * 0.04, titleH, previewCopy["_textLogoColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_logoOutlineThickness"], previewCopy["_logoOutlineColor"] )
 		else
+			-- recreate HTML panel if content box changed
 			if HTMLLogo == nil || cachedLink != previewCopy["_logoContent"] then
 				if HTMLLogo != nil then HTMLLogo:Remove() end
 				HTMLLogo = vgui_Create("DHTML")
@@ -208,6 +225,7 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			normalSize = previewCopy["_logoFontSize"]
 		end
 
+		-- determine menu buttons start point
 		local curYPos = (ScrH() * 0.5) - 32
 		if previewCopy["_GarrysModStyle"] then
 			local additive = 64
@@ -217,6 +235,7 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			curYPos = additive + normalSize
 		end
 
+		-- update menu button font if needed
 		if previewCopy["_textButtonFont"] != cachedButtonFont || previewCopy["_textButtonFontSize"] != cachedButtonFontSize || previewCopy["_textButtonShadow"] != cachedButtonFontShadow then
 			previewButtonFont = "FMM_PreviewButtonFont" .. tostring(previewButtonFontCounter)
 			FMainMenu.Panels.createNewFont(previewButtonFont, previewCopy["_textButtonFont"], previewCopy["_textButtonFontSize"], previewCopy["_textButtonShadow"])
@@ -226,11 +245,11 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			previewButtonFontCounter = previewButtonFontCounter + 1
 		end
 
-		if previewCopy["_MenuOverride"] then
+		if previewCopy["_MenuOverride"] then -- custom layout
 			for _,entry in ipairs(previewCopy["_MenuSetup"]) do
 				curYPos = customLayoutSetup[entry.Type](entry.Content, xPos, curYPos, previewCopy)
 			end
-		else
+		else -- default layout
 			-- Play Button
 			draw_SimpleTextOutlined( FMainMenu.GetPhrase("PlayButtonText"), previewButtonFont, xPos, curYPos, previewCopy["_textButtonColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_textButtonOutlineThickness"], previewCopy["_textButtonOutlineColor"] )
 			curYPos = curYPos + previewCopy["_textButtonFontSize"] + 36
@@ -266,17 +285,16 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 				CLText:SetWrap( true )
 			end
 
+			-- adjust position to changes in config
 			if previewCopy["_changeLogMoveToBottom"] then
 				ChangelogBox:SetPos(width-266, height-460)
 			else
 				ChangelogBox:SetPos(width-266, 10)
 			end
 
-			CLText:SetFont("HudHintTextLarge")
+			-- adjust other related settings to changes in config
 			CLText:SetTextColor( previewCopy["_commonTextColor"] )
 			CLText:SetText(previewCopy["_changeLogText"])
-			CLText:SetContentAlignment( 7 )
-			CLText:SetWrap( true )
 			previewFrameSettings(ChangelogBox, previewCopy["_commonPanelColor"], 0, false, previewCopy["_commonTextColor"])
 		else
 			if ChangelogBox != nil then
@@ -290,9 +308,10 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 		-- First Time Welcome
 		if previewLevel == 2 && previewCopy["_firstJoinWelcome"] || previewLevel == 4 then
 			if welcomerBox == nil then
+				-- panel setup
 				welcomerBox = FMainMenu.Derma.CreateDFrame(FMainMenu.GetPhrase("WelcomerFrameTitle"), nil, 380, 256)
 				previewFrameSettings(welcomerBox, previewCopy["_commonFrameColor"], previewCopy["_commonFrameBevelRadius"], true, previewCopy["_commonTextColor"])
-				welcomerBox:SetZPos(1)
+				welcomerBox:SetZPos(-100)
 
 				welcomerBoxPanel = FMainMenu.Derma.CreateDPanel(welcomerBox, 365, 221, false )
 				welcomerBoxPanel:SetPos(5, 25)
@@ -317,7 +336,7 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 				welcomerBoxButton:SetContentAlignment( 5 )
 			end
 
-			welcomerBox:SetZPos(-100)
+			-- adjust various settings to changes in config
 			welcomerBoxLeftText:SetText(previewCopy["_firstJoinText"])
 			welcomerBoxButton:SetText(previewCopy["_firstJoinURLText"])
 			welcomerBoxLeftText:SetTextColor( previewCopy["_commonTextColor"] )
@@ -343,6 +362,7 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 
 		-- Music Preview
 		if previewLevel == 3 && FMainMenu.ConfigModulesHelper.isSelectingSound() == false then
+			-- check if music must be changed
 			if cachedMusicContent != previewCopy["_musicContent"] || cachedMusicOption != previewCopy["_musicToggle"] || cachedMusicVolume != previewCopy["_musicVolume"] || cachedMusicLooping != previewCopy["_musicLooping"] then
 				cachedMusicContent = previewCopy["_musicContent"]
 				cachedMusicOption = previewCopy["_musicToggle"]
@@ -357,25 +377,17 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 				if previewCopy["_musicToggle"] == 1 then
 					--file
 					sound_PlayFile( previewCopy["_musicContent"] , "noblock", function( station, errCode, errStr )
-						if ( IsValid( station ) ) then
-							station:EnableLooping(previewCopy["_musicLooping"])
-							station:SetVolume(previewCopy["_musicVolume"])
-							musicStation = station
-						end
+						musicStationSetup(station)
 					end)
 				elseif previewCopy["_musicToggle"] == 2 then
 					--url
 					sound_PlayURL( previewCopy["_musicContent"] , "noblock", function( station, errCode, errStr )
-						if ( IsValid( station ) ) then
-							station:EnableLooping(previewCopy["_musicLooping"])
-							station:SetVolume(previewCopy["_musicVolume"])
-							musicStation = station
-						end
+						musicStationSetup(station)
 					end)
 				end
 			end
 		else
-			if musicStation != nil then
+			if musicStation != nil then -- music stops when no longer needed
 				cachedMusicContent = ""
 				cachedMusicOption = nil
 				cachedMusicVolume = nil
@@ -386,6 +398,7 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			end
 		end
 	else
+		-- cleanup when we no longer want the preview to render
 		if HTMLLogo != nil then
 			HTMLLogo:Remove()
 			HTMLLogo = nil

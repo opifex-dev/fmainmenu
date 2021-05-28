@@ -1,9 +1,12 @@
+local FMainMenu = FMainMenu
+
+-- localized global calls
+local surface_PlaySound = surface.PlaySound
 local include = include
 local file_Find = file.Find
 local pairs = pairs
 local net_Receive = net.Receive
 local net_ReadBool = net.ReadBool
-local FMainMenu = FMainMenu
 local ScrW = ScrW
 local ScrH = ScrH
 local vgui_Create = vgui.Create
@@ -13,8 +16,8 @@ local net_Start = net.Start
 local net_SendToServer = net.SendToServer
 local hook_Add = hook.Add
 local concommand_Add = concommand.Add
-local surface_PlaySound = surface.PlaySound
 
+-- variables related to below functionality
 FMainMenu.CurConfigMenu = FMainMenu.CurConfigMenu || nil
 FMainMenu.configPropertyWindow = FMainMenu.configPropertyWindow || nil
 local addonName = "fmainmenu"
@@ -136,7 +139,7 @@ net_Receive( "FMainMenu_Config_OpenMenu", function( len )
 			propButton.category = propTable.category
 			propButton.previewLevel = propTable.previewLevel
 			propButton.DoClick = function(button)
-				surface.PlaySound("garrysmod/ui_click.wav")
+				surface_PlaySound("garrysmod/ui_click.wav")
 				if FMainMenu.configPropertyWindow.propertyCode == propButton.propCode then return end
 				FMainMenu.configPropertyWindow.propertyCode = propButton.propCode
 				local varsList = FMainMenu.ConfigModules[button.propCode].GeneratePanel(configSheets[propButton.category])

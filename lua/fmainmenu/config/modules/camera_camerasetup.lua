@@ -5,6 +5,8 @@
 ]]--
 
 local FMainMenu = FMainMenu
+
+-- localized global calls
 local LocalPlayer = LocalPlayer
 local math_Round = math.Round
 local game_GetMap = game.GetMap
