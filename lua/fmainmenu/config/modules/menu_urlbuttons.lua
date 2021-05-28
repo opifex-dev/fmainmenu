@@ -211,6 +211,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 		bottomPanelRevertButton.DoClick = function(button)
 			surface_PlaySound("common/warning.wav")
 			FMainMenu.ConfigModulesHelper.doAdvancedConfirmationDialog(panelBlocker, function()
+				surface_PlaySound("buttons/combine_button7.wav")
 				FMainMenu.ConfigModulesHelper.requestVariablesCustom(configPropList, updateCachedTable)
 			end, FMainMenu.GetPhrase("ConfigURLButtonEditorWindowRevertConfirm"))
 		end

@@ -104,7 +104,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	elseif parentPanel.toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
 		parentPanel.lastRecVariable[1] = false
 	else
-		return
+		return true
 	end
 
 	if parentPanel.marginOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesMarginSelectTwo") then
@@ -112,7 +112,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	elseif parentPanel.marginOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesMarginSelectOne") then
 		parentPanel.lastRecVariable[2] = false
 	else
-		return
+		return true
 	end
 
 	parentPanel.lastRecVariable[3] = parentPanel.textBox:GetText()

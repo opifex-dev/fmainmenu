@@ -63,9 +63,13 @@ FMainMenu.ConfigModulesHelper.setupGeneralPropPanels = function()
 	propPanelSaveButton:AlignLeft(20)
 	propPanelSaveButton:AlignTop(5)
 	propPanelSaveButton.DoClick = function(button)
-		FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].saveFunc()
-		surface_PlaySound("friends/friend_join.wav")
-		FMainMenu.ConfigModulesHelper.setUnsaved(false)
+		local failed = FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].saveFunc()
+		if !failed then
+			surface_PlaySound("friends/friend_join.wav")
+			FMainMenu.ConfigModulesHelper.setUnsaved(false)
+		else
+			surface_PlaySound("common/wpn_denyselect.wav")
+		end
 	end
 	FMainMenu.Derma.SetPanelHover(propPanelSaveButton, 1)
 
@@ -76,7 +80,7 @@ FMainMenu.ConfigModulesHelper.setupGeneralPropPanels = function()
 	propPanelRevertButton:AlignTop(35)
 	propPanelRevertButton.DoClick = function(button)
 		local varsToRevert = FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].revertFunc()
-		surface_PlaySound("garrysmod/ui_return.wav")
+		surface_PlaySound("buttons/combine_button7.wav")
 		FMainMenu.ConfigModulesHelper.requestVariables(varsToRevert)
 	end
 	FMainMenu.Derma.SetPanelHover(propPanelRevertButton, 1)

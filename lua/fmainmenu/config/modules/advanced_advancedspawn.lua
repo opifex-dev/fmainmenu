@@ -60,7 +60,6 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 		FMainMenu.ConfigModulesHelper.setUnsaved(FMainMenu.ConfigModules[propertyCode].isVarChanged())
 		FMainMenu.ConfigModules[propertyCode].updatePreview()
 
-		LocalPlayer():SetNoDraw( true )
 		surface_PlaySound("garrysmod/content_downloaded.wav")
 	end
 
@@ -71,6 +70,8 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 		surface_PlaySound("garrysmod/ui_click.wav")
 		FMainMenu.ConfigModulesHelper.doInformationalWindow(FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnInfoWindowTitle"), FMainMenu.GetPhrase("ConfigPropertiesAdvancedSpawnInfo"))
 	end
+
+	LocalPlayer():SetNoDraw( true )
 
 	return {configPropListTwo, mainPropPanel}
 end
@@ -130,6 +131,8 @@ end
 FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function()
 	FMainMenu.ConfigModulesHelper.closeOpenExtraWindows()
 
+	LocalPlayer():SetNoDraw( false )
+
 	if FMainMenu.configPropertyWindow.quitting == nil then
 		local varUpdate = {}
 		varUpdate[1] = table_Copy(FMainMenu.ConfigPreview.previewCopy["_CameraPosition"])
@@ -147,21 +150,19 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	local mapName = game_GetMap()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
-	if tonumber(parentPanel.cameraPositionPosBoxX:GetText()) == nil then return end
-	if tonumber(parentPanel.cameraPositionPosBoxY:GetText()) == nil then return end
-	if tonumber(parentPanel.cameraPositionPosBoxZ:GetText()) == nil then return end
+	if tonumber(parentPanel.cameraPositionPosBoxX:GetText()) == nil then return true end
+	if tonumber(parentPanel.cameraPositionPosBoxY:GetText()) == nil then return true end
+	if tonumber(parentPanel.cameraPositionPosBoxZ:GetText()) == nil then return true end
 
 	if parentPanel.advancedSpawnOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
 		parentPanel.lastRecVariable[1] = true
 	elseif parentPanel.advancedSpawnOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
 		parentPanel.lastRecVariable[1] = false
 	else
-		return
+		return true
 	end
 
 	parentPanel.lastRecVariable[2][mapName] = Vector(tonumber(parentPanel.cameraPositionPosBoxX:GetText()), tonumber(parentPanel.cameraPositionPosBoxY:GetText()), tonumber(parentPanel.cameraPositionPosBoxZ:GetText()))
-
-	LocalPlayer():SetNoDraw( false )
 
 	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, configPropList)
 end
@@ -186,7 +187,5 @@ end
 
 -- Called when the player wishes to reset the property values to those of the server
 FMainMenu.ConfigModules[propertyCode].revertFunc = function()
-	LocalPlayer():SetNoDraw( false )
-
 	return configPropListTwo
 end

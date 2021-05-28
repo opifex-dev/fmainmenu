@@ -11,7 +11,7 @@ local ipairs = ipairs
 local string_find = string.find
 local string_Replace = string.Replace
 local tonumber = tonumber
-local surface_PlaySound = surface_PlaySound
+local surface_PlaySound = surface.PlaySound
 
 FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 
@@ -175,15 +175,15 @@ FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function() end
 FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
-	if tonumber(parentPanel.textOutlineThickness:GetText()) == nil then return end
-	if tonumber(parentPanel.textFontSize:GetText()) == nil then return end
+	if tonumber(parentPanel.textOutlineThickness:GetText()) == nil then return true end
+	if tonumber(parentPanel.textFontSize:GetText()) == nil then return true end
 
 	if parentPanel.textShadowOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
 		parentPanel.lastRecVariable[4] = false
 	elseif parentPanel.textShadowOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
 		parentPanel.lastRecVariable[4] = true
 	else
-		return
+		return true
 	end
 
 	parentPanel.lastRecVariable[1] = parentPanel.textColor:GetColor()

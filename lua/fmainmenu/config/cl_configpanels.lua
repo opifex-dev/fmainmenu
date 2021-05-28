@@ -52,7 +52,7 @@ FMainMenu.ConfigModulePanels.createLabelBoxComboSmall = function(mainPropPanel, 
 	newTextBox:SetSize( 75, 18 )
 	newTextBox:SetPos( 163, 70 + mainPropPanel.tempYPos )
 	newTextBox.scrollAdjustmentType = 2
-	function newTextBox:OnChange()
+	function newTextBox:OnChange(self)
 		FMainMenu.ConfigModulesHelper.setUnsaved(FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].isVarChanged())
 		FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].updatePreview()
 	end

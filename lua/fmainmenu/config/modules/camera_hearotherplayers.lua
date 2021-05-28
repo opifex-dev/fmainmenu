@@ -111,14 +111,14 @@ end
 FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
-	if tonumber(parentPanel.distanceBox:GetText()) == nil then return end
+	if tonumber(parentPanel.distanceBox:GetText()) == nil then return true end
 
 	if parentPanel.toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
 		parentPanel.lastRecVariable[1] = true
 	elseif parentPanel.toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
 		parentPanel.lastRecVariable[1] = false
 	else
-		return
+		return true
 	end
 
 	local newPHDist = tonumber(parentPanel.distanceBox:GetText())

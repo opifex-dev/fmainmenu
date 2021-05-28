@@ -62,7 +62,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	elseif parentPanel.cameraEverySpawnOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesEverySpawnOptionTwo") then
 		parentPanel.lastRecVariable[1] = false
 	else
-		return
+		return true
 	end
 
 	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, configPropList)

@@ -66,7 +66,7 @@ FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function() end
 FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
-	if tonumber(parentPanel.blurBox:GetText()) == nil then return end
+	if tonumber(parentPanel.blurBox:GetText()) == nil then return true end
 
 	parentPanel.lastRecVariable[1] = tonumber(parentPanel.blurBox:GetText())
 	parentPanel.lastRecVariable[2] = parentPanel.tintBox:GetColor()

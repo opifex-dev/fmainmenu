@@ -72,7 +72,7 @@ net_Receive( "FMainMenu_CloseMainMenu", function( len, ply )
 			if FMainMenu.EverySpawn then
 				net_Start("FMainMenu_VarChange")
 					net_WriteInt( 1, 4 )
-					net_WriteBool( )
+					net_WriteBool( true )
 				net_Send(ply)
 			end
 

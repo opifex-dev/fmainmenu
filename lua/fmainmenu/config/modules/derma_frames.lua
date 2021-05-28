@@ -67,7 +67,7 @@ FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function() end
 FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
-	if tonumber(parentPanel.dermaFrameBevel:GetText()) == nil then return end
+	if tonumber(parentPanel.dermaFrameBevel:GetText()) == nil then return true end
 
 	parentPanel.lastRecVariable[1] = parentPanel.dermaFrameColor:GetColor()
 	parentPanel.lastRecVariable[2] = tonumber(parentPanel.dermaFrameBevel:GetText())

@@ -119,15 +119,15 @@ FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function() end
 FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
-	if tonumber(parentPanel.fontSize:GetText()) == nil then return end
-	if tonumber(parentPanel.fontThickness:GetText()) == nil then return end
+	if tonumber(parentPanel.fontSize:GetText()) == nil then return true end
+	if tonumber(parentPanel.fontThickness:GetText()) == nil then return true end
 
 	if parentPanel.logoShadowOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
 		parentPanel.lastRecVariable[6] = false
 	elseif parentPanel.logoShadowOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
 		parentPanel.lastRecVariable[6] = true
 	else
-		return
+		return true
 	end
 
 	parentPanel.lastRecVariable[1] = parentPanel.logoColor:GetColor()

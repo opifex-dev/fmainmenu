@@ -152,7 +152,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 		elseif parentPanel.canBuyOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
 			parentPanel.lastRecVariable[1] = true
 		else
-			return
+			return true
 		end
 
 		if parentPanel.canChatSoundOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
@@ -160,7 +160,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 		elseif parentPanel.canChatSoundOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
 			parentPanel.lastRecVariable[2] = true
 		else
-			return
+			return true
 		end
 
 		if parentPanel.canUseOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
@@ -168,7 +168,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 		elseif parentPanel.canUseOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
 			parentPanel.lastRecVariable[3] = true
 		else
-			return
+			return true
 		end
 
 		if parentPanel.canUsePocketOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
@@ -176,7 +176,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 		elseif parentPanel.canUsePocketOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
 			parentPanel.lastRecVariable[4] = true
 		else
-			return
+			return true
 		end
 
 		if parentPanel.canDropWeaponOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
@@ -184,7 +184,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 		elseif parentPanel.canDropWeaponOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
 			parentPanel.lastRecVariable[5] = true
 		else
-			return
+			return true
 		end
 
 		if parentPanel.canReqHitsOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
@@ -192,7 +192,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 		elseif parentPanel.canReqHitsOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
 			parentPanel.lastRecVariable[6] = true
 		else
-			return
+			return true
 		end
 
 		if parentPanel.canReqWarrantsOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
@@ -200,7 +200,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 		elseif parentPanel.canReqWarrantsOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
 			parentPanel.lastRecVariable[7] = true
 		else
-			return
+			return true
 		end
 
 	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, configPropList)

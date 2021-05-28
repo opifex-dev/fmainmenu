@@ -71,7 +71,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	elseif parentPanel.toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
 		parentPanel.lastRecVariable[1] = true
 	else
-		return
+		return true
 	end
 
 	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, configPropList)

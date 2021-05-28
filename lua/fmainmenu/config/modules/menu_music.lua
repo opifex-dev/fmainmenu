@@ -110,6 +110,9 @@ FMainMenu.ConfigModules[propertyCode].updatePreview = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 	local previewCopy = FMainMenu.ConfigPreview.previewCopy
 
+	if tonumber(parentPanel.textBox:GetText()) == nil then return true end
+	if tonumber(parentPanel.fadeBox:GetText()) == nil then return true end
+
 	if parentPanel.toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesMusicTypeOptionOneLabel") then
 		previewCopy["_" .. configPropList[1]] = 1
 		parentPanel.contentBox:SetVisible(true)
@@ -133,14 +136,8 @@ FMainMenu.ConfigModules[propertyCode].updatePreview = function()
 		previewCopy["_" .. configPropList[2]] = false
 	end
 
-	if tonumber(parentPanel.textBox:GetText()) != nil then
-		previewCopy["_" .. configPropList[3]] = tonumber(parentPanel.textBox:GetText())
-	end
-
-	if tonumber(parentPanel.fadeBox:GetText()) != nil then
-		previewCopy["_" .. configPropList[4]] = tonumber(parentPanel.fadeBox:GetText())
-	end
-
+	previewCopy["_" .. configPropList[3]] = tonumber(parentPanel.textBox:GetText())
+	previewCopy["_" .. configPropList[4]] = tonumber(parentPanel.fadeBox:GetText())
 	previewCopy["_" .. configPropList[5]] = parentPanel.contentBox:GetText()
 end
 
@@ -153,6 +150,9 @@ end
 FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
+	if tonumber(parentPanel.textBox:GetText()) == nil then return true end
+	if tonumber(parentPanel.fadeBox:GetText()) == nil then return true end
+
 	if parentPanel.toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesMusicTypeOptionOneLabel") then
 		parentPanel.lastRecVariable[1] = 1
 	elseif parentPanel.toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesMusicTypeOptionTwoLabel") then
@@ -160,7 +160,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	elseif parentPanel.toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
 		parentPanel.lastRecVariable[1] = 0
 	else
-		return
+		return true
 	end
 
 	if parentPanel.loopOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
@@ -168,21 +168,11 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	elseif parentPanel.loopOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
 		parentPanel.lastRecVariable[2] = false
 	else
-		return
+		return true
 	end
 
-	if tonumber(parentPanel.textBox:GetText()) != nil then
-		parentPanel.lastRecVariable[3] = tonumber(parentPanel.textBox:GetText())
-	else
-		return
-	end
-
-	if tonumber(parentPanel.fadeBox:GetText()) != nil then
-		parentPanel.lastRecVariable[4] = tonumber(parentPanel.fadeBox:GetText())
-	else
-		return
-	end
-
+	parentPanel.lastRecVariable[3] = tonumber(parentPanel.textBox:GetText())
+	parentPanel.lastRecVariable[4] = tonumber(parentPanel.fadeBox:GetText())
 	parentPanel.lastRecVariable[5] = parentPanel.contentBox:GetText()
 
 	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, configPropList)

@@ -67,9 +67,10 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 		FMainMenu.ConfigModulesHelper.setUnsaved(FMainMenu.ConfigModules[propertyCode].isVarChanged())
 		FMainMenu.ConfigModules[propertyCode].updatePreview()
 
-		LocalPlayer():SetNoDraw( true )
 		surface_PlaySound("garrysmod/content_downloaded.wav")
 	end
+
+	LocalPlayer():SetNoDraw( true )
 
 	return {configPropList, mainPropPanel}
 end
@@ -78,8 +79,6 @@ end
 FMainMenu.ConfigModules[propertyCode].isVarChanged = function()
 	local mapName = game_GetMap()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
-
-	LocalPlayer():SetNoDraw( false )
 
 	if FMainMenu.ConfigModulesHelper.numericTextBoxHasChanges(parentPanel.cameraPositionPosBoxX:GetText(), parentPanel.lastRecVariable[1][mapName].x, 3) then
 		return true
@@ -131,24 +130,24 @@ FMainMenu.ConfigModules[propertyCode].updatePreview = function()
 end
 
 -- Called when property is closed, allows for additional clean up if needed
-FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function() end
+FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function()
+	LocalPlayer():SetNoDraw( false )
+end
 
 -- Handles saving changes to a property
 FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	local mapName = game_GetMap()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
-	if tonumber(parentPanel.cameraPositionPosBoxX:GetText()) == nil then return end
-	if tonumber(parentPanel.cameraPositionPosBoxY:GetText()) == nil then return end
-	if tonumber(parentPanel.cameraPositionPosBoxZ:GetText()) == nil then return end
-	if tonumber(parentPanel.cameraPositionRotBoxX:GetText()) == nil then return end
-	if tonumber(parentPanel.cameraPositionRotBoxY:GetText()) == nil then return end
-	if tonumber(parentPanel.cameraPositionRotBoxZ:GetText()) == nil then return end
+	if tonumber(parentPanel.cameraPositionPosBoxX:GetText()) == nil then return true end
+	if tonumber(parentPanel.cameraPositionPosBoxY:GetText()) == nil then return true end
+	if tonumber(parentPanel.cameraPositionPosBoxZ:GetText()) == nil then return true end
+	if tonumber(parentPanel.cameraPositionRotBoxX:GetText()) == nil then return true end
+	if tonumber(parentPanel.cameraPositionRotBoxY:GetText()) == nil then return true end
+	if tonumber(parentPanel.cameraPositionRotBoxZ:GetText()) == nil then return true end
 
 	parentPanel.lastRecVariable[1][mapName] = Vector(tonumber(parentPanel.cameraPositionPosBoxX:GetText()), tonumber(parentPanel.cameraPositionPosBoxY:GetText()), tonumber(parentPanel.cameraPositionPosBoxZ:GetText()))
 	parentPanel.lastRecVariable[2][mapName] = Angle(tonumber(parentPanel.cameraPositionRotBoxX:GetText()), tonumber(parentPanel.cameraPositionRotBoxY:GetText()), tonumber(parentPanel.cameraPositionRotBoxZ:GetText()))
-
-	LocalPlayer():SetNoDraw( false )
 
 	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, configPropList)
 end
@@ -171,7 +170,5 @@ end
 
 -- Called when the player wishes to reset the property values to those of the server
 FMainMenu.ConfigModules[propertyCode].revertFunc = function()
-	LocalPlayer():SetNoDraw( false )
-
 	return configPropList
 end

@@ -64,7 +64,7 @@ FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function() end
 FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
-	if FMainMenu.languageReverseLookup[parentPanel.toggleOption:GetText()] == nil then return end
+	if FMainMenu.languageReverseLookup[parentPanel.toggleOption:GetText()] == nil then return true end
 
 	parentPanel.lastRecVariable[1] = FMainMenu.languageReverseLookup[parentPanel.toggleOption:GetText()]
 

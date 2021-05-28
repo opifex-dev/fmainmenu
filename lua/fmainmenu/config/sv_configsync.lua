@@ -36,11 +36,25 @@ FayLib.IGC.DefineKey(addonName, "CameraPosition", {
 	["gm_flatgrass"] = Vector(-1286.149658, 1187.535156, -11371.772461),
 	["gm_construct"] = Vector(-3209.8747558594, 2191.6071777344, 560.40161132813),
 	["rp_downtown_v4c_v2"] = Vector(-1405.6032714844, 884.40338134766, -40.81294631958),
+	["gm_bigcity"] = Vector(-3183.138, 1376.926, -10482.841),
+	["gm_fork"] = Vector(-669.877, -1953.063, -5393.276),
+	["gm_genesis"] = Vector(-9010.60, 8492.713, -5539.08),
+	["gm_valley"] = Vector(-2523.905, 6557.433, -901.93),
+	["cinema_theatron"] = Vector(6.35, -553.92, 46.165),
+	["ttt_minecraft_b5"] = Vector(-2308.407, -247.849, 1075.52),
+	["ttt_clue_se"] = Vector(9.009, -490.066, 152.318),
 }, false)
 FayLib.IGC.DefineKey(addonName, "CameraAngle", {
 	["gm_flatgrass"] = Angle(42.586422, -40.820980, 0.000000),
 	["gm_construct"] = Angle(16.977416992188, -34.643817901611, 0),
 	["rp_downtown_v4c_v2"] = Angle(27.0013256073, -54.60368347168, 0),
+	["gm_bigcity"] = Angle(-0.091, -43.275, 0),
+	["gm_fork"] = Angle(25.237, -115.795, 0),
+	["gm_genesis"] = Angle(19.122, -47.361, 0),
+	["gm_valley"] = Angle(-8.473, -121.394, 0),
+	["cinema_theatron"] = Angle(1.461, 90.681, 0),
+	["ttt_minecraft_b5"] = Angle(29.543, 16.836, 0),
+	["ttt_clue_se"] = Angle(9.29, 45.155, 0),
 }, false)
 FayLib.IGC.DefineKey(addonName, "EverySpawn", true, true)
 FayLib.IGC.DefineKey(addonName, "AdvancedSpawn", false, false)
@@ -126,7 +140,7 @@ FayLib.IGC.DefineKey(addonName, "textButtonColor", Color(255,255,255), true)
 FayLib.IGC.DefineKey(addonName, "textButtonOutlineColor", Color(0,0,0), true)
 FayLib.IGC.DefineKey(addonName, "textButtonOutlineThickness", 0, true)
 FayLib.IGC.DefineKey(addonName, "textButtonShadow", true, true)
-FayLib.IGC.DefineKey(addonName, "textButtonFont", "Trebuchet24", true)
+FayLib.IGC.DefineKey(addonName, "textButtonFont", "DermaLarge", true)
 FayLib.IGC.DefineKey(addonName, "textButtonFontSize", 36, true)
 FayLib.IGC.DefineKey(addonName, "textButtonHoverColor", Color(245,245,165), true)
 FayLib.IGC.DefineKey(addonName, "textButtonHoverSound", "garrysmod/ui_hover.wav", true)

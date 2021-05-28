@@ -85,7 +85,7 @@ local function previewFrameSettings(frame, color, radius, isFrame, commonTextCol
 end
 
 -- common setup code between URL and File based background music previews
-local function musicStationSetup(station)
+local function musicStationSetup(station, previewCopy)
 	if ( IsValid( station ) ) then
 		station:EnableLooping(previewCopy["_musicLooping"])
 		station:SetVolume(previewCopy["_musicVolume"])
@@ -377,12 +377,12 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 				if previewCopy["_musicToggle"] == 1 then
 					--file
 					sound_PlayFile( previewCopy["_musicContent"] , "noblock", function( station, errCode, errStr )
-						musicStationSetup(station)
+						musicStationSetup(station, previewCopy)
 					end)
 				elseif previewCopy["_musicToggle"] == 2 then
 					--url
 					sound_PlayURL( previewCopy["_musicContent"] , "noblock", function( station, errCode, errStr )
-						musicStationSetup(station)
+						musicStationSetup(station, previewCopy)
 					end)
 				end
 			end

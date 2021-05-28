@@ -128,22 +128,20 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	elseif parentPanel.toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
 		parentPanel.lastRecVariable[1] = true
 	else
-		return
+		return true
 	end
-
-	parentPanel.lastRecVariable[2] = parentPanel.FJTextBox:GetText()
-
-	parentPanel.lastRecVariable[3] = parentPanel.FJURLTextBox:GetText()
-
-	parentPanel.lastRecVariable[4] = parentPanel.FJURLBox:GetText()
 
 	if parentPanel.urlToggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
 		parentPanel.lastRecVariable[5] = false
 	elseif parentPanel.urlToggleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
 		parentPanel.lastRecVariable[5] = true
 	else
-		return
+		return true
 	end
+
+	parentPanel.lastRecVariable[2] = parentPanel.FJTextBox:GetText()
+	parentPanel.lastRecVariable[3] = parentPanel.FJURLTextBox:GetText()
+	parentPanel.lastRecVariable[4] = parentPanel.FJURLBox:GetText()
 
 	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, configPropList)
 end

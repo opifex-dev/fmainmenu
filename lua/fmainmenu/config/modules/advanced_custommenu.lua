@@ -305,6 +305,7 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 		bottomPanelRevertButton.DoClick = function(button)
 			surface_PlaySound("common/warning.wav")
 			FMainMenu.ConfigModulesHelper.doAdvancedConfirmationDialog(panelBlocker, function()
+				surface_PlaySound("buttons/combine_button7.wav")
 				FMainMenu.ConfigModulesHelper.requestVariablesCustom(configPropList, updateCachedTable)
 			end, FMainMenu.GetPhrase("ConfigURLButtonEditorWindowRevertConfirm"))
 		end
@@ -458,7 +459,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	elseif parentPanel.menuSetupOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDisabled") then
 		parentPanel.lastRecVariable[1] = false
 	else
-		return
+		return true
 	end
 
 	parentPanel.lastRecVariable[2] = table_Copy(parentPanel.internalMenuSetup)

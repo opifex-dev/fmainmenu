@@ -167,7 +167,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 		elseif parentPanel.playerSpawnEffectOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
 			parentPanel.lastRecVariable[1] = true
 		else
-			return
+			return true
 		end
 
 		if parentPanel.playerSpawnNPCOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
@@ -175,7 +175,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 		elseif parentPanel.playerSpawnNPCOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
 			parentPanel.lastRecVariable[2] = true
 		else
-			return
+			return true
 		end
 
 		if parentPanel.playerSpawnPropOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
@@ -183,7 +183,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 		elseif parentPanel.playerSpawnPropOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
 			parentPanel.lastRecVariable[3] = true
 		else
-			return
+			return true
 		end
 
 		if parentPanel.playerSpawnRagdollOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
@@ -191,7 +191,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 		elseif parentPanel.playerSpawnRagdollOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
 			parentPanel.lastRecVariable[4] = true
 		else
-			return
+			return true
 		end
 
 		if parentPanel.playerSpawnSENTOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
@@ -199,7 +199,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 		elseif parentPanel.playerSpawnSENTOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
 			parentPanel.lastRecVariable[5] = true
 		else
-			return
+			return true
 		end
 
 		if parentPanel.playerSpawnSWEPOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
@@ -207,7 +207,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 		elseif parentPanel.playerSpawnSWEPOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
 			parentPanel.lastRecVariable[6] = true
 		else
-			return
+			return true
 		end
 
 		if parentPanel.playerSpawnVehicleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
@@ -215,7 +215,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 		elseif parentPanel.playerSpawnVehicleOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
 			parentPanel.lastRecVariable[7] = true
 		else
-			return
+			return true
 		end
 
 		if parentPanel.playerGiveSWEPOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueDenied") then
@@ -223,7 +223,7 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 		elseif parentPanel.playerGiveSWEPOption:GetValue() == FMainMenu.GetPhrase("ConfigCommonValueAllowed") then
 			parentPanel.lastRecVariable[8] = true
 		else
-			return
+			return true
 		end
 
 	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, configPropList)
