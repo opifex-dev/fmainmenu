@@ -4,15 +4,12 @@ local FayLib = FayLib
 FMainMenu.Lang = FMainMenu.Lang || {}
 
 -- localized global calls
-local hook_Remove = hook.Remove
-local hook_Run = hook.Run
 local net_Receive = net.Receive
 local net_ReadInt = net.ReadInt
 local net_ReadBool = net.ReadBool
 local DarkRP = DarkRP
 local gui_EnableScreenClicker = gui.EnableScreenClicker
 local timer_Create = timer.Create
-local timer_Simple = timer.Simple
 local FAdmin = FAdmin
 local net_Start = net.Start
 local net_SendToServer = net.SendToServer
@@ -34,7 +31,7 @@ local net_ReadString = net.ReadString
 local LocalPlayer = LocalPlayer
 local gameevent_Listen = gameevent.Listen
 local Player = Player
-local hook_Add = hook.Add
+local timer_Remove = timer.Remove
 
 -- variables related to below functionality
 local closePanelGlobal = ""
@@ -42,6 +39,7 @@ local musicStation = ""
 local oneTimeFlag = false
 local varTable = {false}
 local addonName = "fmainmenu"
+local musicPlaying = false
 
 --Used to sync server menu state with client
 net_Receive( "FMainMenu_VarChange", function( len )
@@ -60,6 +58,58 @@ local function refreshMM()
 	end
 end
 
+-- Force Kills active background music
+local function killMusicStation()
+	timer_Remove("FMainMenu_Music_Fade")
+	timer_Remove("FMainMenu_Music_Kill")
+	musicStation:Stop()
+	musicStation = ""
+end
+
+-- Stops actively playing background music
+local function stopMusicStation()
+	if FayLib.IGC.GetSharedKey(addonName, "musicFade") > 0 then
+		local fadetime = 10 * FayLib.IGC.GetSharedKey(addonName, "musicFade")
+		local curVol = FayLib.IGC.GetSharedKey(addonName, "musicVolume")
+		local volSub = curVol / fadetime
+
+		-- fade out based on configured time
+		timer_Create("FMainMenu_Music_Fade", 0.1, fadetime, function()
+			curVol = curVol - volSub
+
+			if curVol < 0 then
+				curVol = 0
+			end
+
+			if musicStation != "" then
+				musicStation:SetVolume(curVol)
+			end
+		end)
+
+		-- kill music channel after fade complete
+		timer_Create("FMainMenu_Music_Kill", FayLib.IGC.GetSharedKey(addonName, "musicFade") + 1, 1, function()
+			if musicStation != "" then
+				killMusicStation()
+			end
+		end)
+	else
+		killMusicStation()
+	end
+end
+
+-- common setup code between URL and File based background music
+local function musicStationSetup(station)
+	if ( IsValid( station ) ) then
+		station:EnableLooping(FayLib.IGC.GetSharedKey(addonName, "musicLooping"))
+		station:SetVolume(FayLib.IGC.GetSharedKey(addonName, "musicVolume"))
+		musicStation = station
+
+		if !musicPlaying then
+			stopMusicStation()
+		end
+	end
+end
+
 --Opens GUI portion of menu
 local function openMenu()
 	--Config Refresh Detect
@@ -69,9 +119,9 @@ local function openMenu()
 
 	--DarkRP Support
 	if DarkRP then
-		hook_Remove("ScoreboardShow", "FAdmin_scoreboard")
+		hook.Remove("ScoreboardShow", "FAdmin_scoreboard")
 		DarkRP.openF1Menu()
-		hook_Add("Think","FMainMenu_DarkRPThink", function()
+		hook.Add("Think","FMainMenu_DarkRPThink", function()
 			DarkRP.closeF4Menu()
 			DarkRP.closeF1Menu()
 		end)
@@ -80,38 +130,13 @@ local function openMenu()
 	--Creates function that can close panel
 	function closePanelGlobal()
 		-- cleanup
-		hook_Remove("Think", "FMainMenu_KMV")
+		hook.Remove("Think", "FMainMenu_KMV")
 		gui_EnableScreenClicker( false )
 
 		-- stop music and fade out, if needed
+		musicPlaying = false
 		if musicStation != "" then
-			if FayLib.IGC.GetSharedKey(addonName, "musicFade") > 0 then
-				local fadetime = 10 * FayLib.IGC.GetSharedKey(addonName, "musicFade")
-				local curVol = FayLib.IGC.GetSharedKey(addonName, "musicVolume")
-				local volSub = curVol / fadetime
-
-				timer_Create("FMainMenu_Music_Fade", 0.1, fadetime, function()
-					curVol = curVol - volSub
-
-					if curVol < 0 then
-						curVol = 0
-					end
-
-					if musicStation != "" then
-						musicStation:SetVolume(curVol)
-					end
-				end)
-
-				timer_Simple(FayLib.IGC.GetSharedKey(addonName, "musicFade") + 1, function()
-					if musicStation != "" then
-						musicStation:Stop()
-						musicStation = ""
-					end
-				end)
-			else
-				musicStation:Stop()
-				musicStation = ""
-			end
+			stopMusicStation()
 		end
 
 		-- destroy main menu GUI panels
@@ -119,7 +144,7 @@ local function openMenu()
 
 		-- Reinstate DarkRP Scoreboard if needed
 		if DarkRP && FAdmin then
-			hook_Add("ScoreboardShow", "FAdmin_scoreboard", function()
+			hook.Add("ScoreboardShow", "FAdmin_scoreboard", function()
 				if FAdmin.GlobalSetting.FAdmin || OverrideScoreboard:GetBool() then -- Don't show scoreboard when FAdmin is not installed on server
 					return FAdmin.ScoreBoard.ShowScoreBoard()
 				end
@@ -127,9 +152,9 @@ local function openMenu()
 		end
 
 		-- related hooks
-		hook_Remove("Think","FMainMenu_DarkRPThink")
-		hook_Remove( "OnPlayerChangedTeam", "FMainMenu_OPCT")
-		hook_Run( "FMainMenu_Client_MenuClosed" )
+		hook.Remove("Think","FMainMenu_DarkRPThink")
+		hook.Remove( "OnPlayerChangedTeam", "FMainMenu_OPCT")
+		hook.Run( "FMainMenu_Client_MenuClosed" )
 
 		-- signal server
 		net_Start("FMainMenu_CloseMainMenu")
@@ -140,7 +165,7 @@ local function openMenu()
 
 	--DarkRP Support
 	if DarkRP then
-		hook_Add( "OnPlayerChangedTeam", "FMainMenu_OPCT", function()
+		hook.Add( "OnPlayerChangedTeam", "FMainMenu_OPCT", function()
 			closePanelGlobal()
 		end )
 	end
@@ -236,28 +261,22 @@ local function openMenu()
 	end
 
 	--Music Support
+	musicPlaying = false
 	if musicStation != "" then
-		musicStation:Stop()
-		musicStation = ""
+		killMusicStation()
 	end
 
 	if FayLib.IGC.GetSharedKey(addonName, "musicToggle") == 1 then
 		--file
+		musicPlaying = true
 		sound_PlayFile( FayLib.IGC.GetSharedKey(addonName, "musicContent") , "noblock", function( station, errCode, errStr )
-			if ( IsValid( station ) ) then
-				station:EnableLooping(FayLib.IGC.GetSharedKey(addonName, "musicLooping"))
-				station:SetVolume(FayLib.IGC.GetSharedKey(addonName, "musicVolume"))
-				musicStation = station
-			end
+			musicStationSetup(station)
 		end)
 	elseif FayLib.IGC.GetSharedKey(addonName, "musicToggle") == 2 then
 		--url
+		musicPlaying = true
 		sound_PlayURL( FayLib.IGC.GetSharedKey(addonName, "musicContent") , "noblock", function( station, errCode, errStr )
-			if ( IsValid( station ) ) then
-				station:EnableLooping(FayLib.IGC.GetSharedKey(addonName, "musicLooping"))
-				station:SetVolume(FayLib.IGC.GetSharedKey(addonName, "musicVolume"))
-				musicStation = station
-			end
+			musicStationSetup(station)
 		end)
 	end
 
@@ -273,7 +292,7 @@ local function openMenu()
 	end
 
 	--Take care of various things that may occur while main menu is active
-	hook_Add( "Think", "FMainMenu_KMV", function()
+	hook.Add( "Think", "FMainMenu_KMV", function()
 		--some addons may interfere by disabling the cursor
 		gui_EnableScreenClicker( true )
 
@@ -303,7 +322,7 @@ end )
 
 --Detect Player Spawn
 gameevent_Listen( "player_spawn" )
-hook_Add("player_spawn", "FMainMenu_PlayerSpawn", function( data )
+hook.Add("player_spawn", "FMainMenu_PlayerSpawn", function( data )
 	if data.userid != LocalPlayer():UserID() then return end
 	if Player( data.userid ):IsBot() then return end
 	if varTable[1] then varTable[1] = false return end
@@ -313,7 +332,7 @@ hook_Add("player_spawn", "FMainMenu_PlayerSpawn", function( data )
 end)
 
 --Detect First Time Spawn
-hook_Add("FMainMenu_OpenMenuInitial", "FMainMenu_IPE", function( )
+hook.Add("FMainMenu_OpenMenuInitial", "FMainMenu_IPE", function( )
 	-- check for Murder gamemode
 	if GAMEMODE && GAMEMODE.RoundStage != nil && GAMEMODE.LootCollected != nil && GAMEMODE.RoundSettings != nil && FMainMenu.EverySpawn then
 		FMainMenu.EverySpawn = false
@@ -325,28 +344,28 @@ hook_Add("FMainMenu_OpenMenuInitial", "FMainMenu_IPE", function( )
 end)
 
 --Don't Draw HUD if in menu
-hook_Add("HUDShouldDraw", "FMainMenu_HSD", function( name )
+hook.Add("HUDShouldDraw", "FMainMenu_HSD", function( name )
 	if LocalPlayer():GetNWBool("FMainMenu_InMenu",false) then
 		return false
 	end
 end)
 
 --Don't show context menu if in menu
-hook_Add("ContextMenuOpen", "FMainMenu_CMO", function( name )
+hook.Add("ContextMenuOpen", "FMainMenu_CMO", function( name )
 	if LocalPlayer():GetNWBool("FMainMenu_InMenu",false) then
 		return false
 	end
 end)
 
 --Don't show spawn menu if in menu
-hook_Add( "SpawnMenuOpen", "FMainMenu_SMO", function()
+hook.Add( "SpawnMenuOpen", "FMainMenu_SMO", function()
 	if LocalPlayer():GetNWBool("FMainMenu_InMenu",false) then
 		return false
 	end
 end )
 
 --Don't apply mouse input to player movemenu if in menu
-hook_Add("InputMouseApply", "FMainMenu_IMA", function( cmd )
+hook.Add("InputMouseApply", "FMainMenu_IMA", function( cmd )
 	if LocalPlayer():GetNWBool("FMainMenu_InMenu",false) then
 		cmd:SetMouseX(0)
 		cmd:SetMouseY(0)
@@ -356,7 +375,7 @@ hook_Add("InputMouseApply", "FMainMenu_IMA", function( cmd )
 end)
 
 --Don't apply keyboard input to player movement or actions if in menu
-hook_Add("PlayerBindPress", "FMainMenu_PBPress", function( ply, bind, pressed )
+hook.Add("PlayerBindPress", "FMainMenu_PBPress", function( ply, bind, pressed )
 	if bind != "messagemode" && bind != "messagemode2" && bind != "+showscores" then
 		return
 	end

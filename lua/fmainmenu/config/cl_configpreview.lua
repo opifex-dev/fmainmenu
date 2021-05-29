@@ -44,6 +44,7 @@ local cachedMusicContent = ""
 local cachedMusicOption = nil
 local cachedMusicVolume = nil
 local cachedMusicLooping = nil
+local musicActive = false
 local cachedLogoFont = ""
 local cachedLogoFontSize = -1
 local cachedLogoFontShadow = -1
@@ -87,9 +88,13 @@ end
 -- common setup code between URL and File based background music previews
 local function musicStationSetup(station, previewCopy)
 	if ( IsValid( station ) ) then
-		station:EnableLooping(previewCopy["_musicLooping"])
-		station:SetVolume(previewCopy["_musicVolume"])
-		musicStation = station
+		if musicActive then
+			station:EnableLooping(previewCopy["_musicLooping"])
+			station:SetVolume(previewCopy["_musicVolume"])
+			musicStation = station
+		else
+			station:Stop()
+		end
 	end
 end
 
@@ -111,6 +116,51 @@ local customLayoutSetup = {
 		return curYPos + ((2 / 3) * previewCopy["_textButtonFontSize"])
 	end,
 }
+
+-- Destructor for music station
+local function destroyMusicStation()
+	musicActive = false
+	if musicStation != nil then -- music stops when no longer needed
+		cachedMusicContent = ""
+		cachedMusicOption = nil
+		cachedMusicVolume = nil
+		cachedMusicLooping = nil
+		musicStation:Stop()
+		musicStation = nil
+	end
+end
+
+-- Destructor for welcome box
+local function destroyWelcomeBox()
+	if welcomerBox != nil then
+		welcomerBox:Close()
+		welcomerBox = nil
+		welcomerBoxButton = nil
+		welcomerBoxLeftText = nil
+		welcomerBoxPanel = nil
+		welcomerBoxScrollPanel = nil
+		wBBPanel = nil
+	end
+end
+
+-- Destructor for changelog
+local function destroyChangelog()
+	if ChangelogBox != nil then
+		CLText:Remove()
+		ChangelogBox:Remove()
+		ChangelogBox = nil
+		CLText = nil
+	end
+end
+
+-- Destructor for HTML Logo
+local function destroyHTMLLogo()
+	if HTMLLogo != nil then
+		HTMLLogo:Remove()
+		HTMLLogo = nil
+		cachedLink = ""
+	end
+end
 
 --[[
 	Preview Hooks
@@ -139,11 +189,7 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 
 		-- Logo
 		if previewCopy["_logoIsText"] then
-			if HTMLLogo != nil then
-				HTMLLogo:Remove()
-				HTMLLogo = nil
-				cachedLink = ""
-			end
+			destroyHTMLLogo()
 
 			-- position adjustment for gmod style
 			local titleH = (height * 0.5) - previewCopy["_logoFontSize"] - 64
@@ -297,12 +343,7 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			CLText:SetText(previewCopy["_changeLogText"])
 			previewFrameSettings(ChangelogBox, previewCopy["_commonPanelColor"], 0, false, previewCopy["_commonTextColor"])
 		else
-			if ChangelogBox != nil then
-				CLText:Remove()
-				ChangelogBox:Remove()
-				ChangelogBox = nil
-				CLText = nil
-			end
+			destroyChangelog()
 		end
 
 		-- First Time Welcome
@@ -349,15 +390,7 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			welcomerBoxScrollPanel:SetButtonColor(previewCopy["_commonScrollPanelButtonColor"])
 			previewFrameSettings(welcomerBox, previewCopy["_commonFrameColor"], previewCopy["_commonFrameBevelRadius"], true, previewCopy["_commonTextColor"])
 		else
-			if welcomerBox != nil then
-				welcomerBox:Close()
-				welcomerBox = nil
-				welcomerBoxButton = nil
-				welcomerBoxLeftText = nil
-				welcomerBoxPanel = nil
-				welcomerBoxScrollPanel = nil
-				wBBPanel = nil
-			end
+			destroyWelcomeBox()
 		end
 
 		-- Music Preview
@@ -369,6 +402,7 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 				cachedMusicVolume = previewCopy["_musicVolume"]
 				cachedMusicLooping = previewCopy["_musicLooping"]
 
+				musicActive = false
 				if musicStation != nil then
 					musicStation:Stop()
 					musicStation = nil
@@ -376,61 +410,27 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 
 				if previewCopy["_musicToggle"] == 1 then
 					--file
+					musicActive = true
 					sound_PlayFile( previewCopy["_musicContent"] , "noblock", function( station, errCode, errStr )
 						musicStationSetup(station, previewCopy)
 					end)
 				elseif previewCopy["_musicToggle"] == 2 then
 					--url
+					musicActive = true
 					sound_PlayURL( previewCopy["_musicContent"] , "noblock", function( station, errCode, errStr )
 						musicStationSetup(station, previewCopy)
 					end)
 				end
 			end
 		else
-			if musicStation != nil then -- music stops when no longer needed
-				cachedMusicContent = ""
-				cachedMusicOption = nil
-				cachedMusicVolume = nil
-				cachedMusicLooping = nil
-
-				musicStation:Stop()
-				musicStation = nil
-			end
+			destroyMusicStation()
 		end
 	else
 		-- cleanup when we no longer want the preview to render
-		if HTMLLogo != nil then
-			HTMLLogo:Remove()
-			HTMLLogo = nil
-			cachedLink = ""
-		end
-
-		if ChangelogBox != nil then
-			CLText:Remove()
-			ChangelogBox:Remove()
-			ChangelogBox = nil
-			CLText = nil
-		end
-
-		if welcomerBox != nil then
-			welcomerBox:Close()
-			welcomerBox = nil
-			welcomerBoxButton = nil
-			welcomerBoxLeftText = nil
-			welcomerBoxPanel = nil
-			welcomerBoxScrollPanel = nil
-			wBBPanel = nil
-		end
-
-		if musicStation != nil then
-			cachedMusicContent = ""
-			cachedMusicOption = nil
-			cachedMusicVolume = nil
-			cachedMusicLooping = nil
-
-			musicStation:Stop()
-			musicStation = nil
-		end
+		destroyHTMLLogo()
+		destroyChangelog()
+		destroyWelcomeBox()
+		destroyMusicStation()
 	end
 end)
 
