@@ -7,7 +7,6 @@ FMainMenu.Lang = FMainMenu.Lang || {}
 local net_Receive = net.Receive
 local net_ReadInt = net.ReadInt
 local net_ReadBool = net.ReadBool
-local DarkRP = DarkRP
 local gui_EnableScreenClicker = gui.EnableScreenClicker
 local timer_Create = timer.Create
 local FAdmin = FAdmin
@@ -47,15 +46,51 @@ net_Receive( "FMainMenu_VarChange", function( len )
 	varTable[varID] = net_ReadBool()
 end )
 
+-- returns whether or not the gamemode is murder
+local function isServerGMMurder()
+	return GAMEMODE && GAMEMODE.Name == "MURDER"
+end
+
+-- disables every spawn if gamemode is murder
+local function everySpawnMurderCheck()
+	if isServerGMMurder() && FMainMenu.EverySpawn then
+		FMainMenu.EverySpawn = false
+		FMainMenu.Log(FMainMenu.GetPhrase("LogMurderEverySpawn"), false)
+	end
+end
+
+-- returns whether or not the gamemode is zombie survival
+local function isServerGMZombieSurvival()
+	return GAMEMODE && GAMEMODE.Name == "Zombie Survival"
+end
+
+-- disables every spawn if gamemode is zombie survival
+local function everySpawnZombieSurvivalCheck()
+	if isServerGMZombieSurvival() && FMainMenu.EverySpawn then
+		FMainMenu.EverySpawn = false
+		FMainMenu.Log(FMainMenu.GetPhrase("LogZSEverySpawn"), false)
+	end
+end
+
+-- returns whether or not the gamemode is prop hunt
+local function isServerGMPropHunt()
+	return GAMEMODE && GAMEMODE.Name == "Prop Hunt"
+end
+
+-- disables every spawn if gamemode is prop hunt
+local function everySpawnPropHuntCheck()
+	if isServerGMPropHunt() && FMainMenu.EverySpawn then
+		FMainMenu.EverySpawn = false
+		FMainMenu.Log(FMainMenu.GetPhrase("LogPropHuntEverySpawn"), false)
+	end
+end
+
 --Config Refresh Handler
 local function refreshMM()
 	FMainMenu.RefreshDetect = false
 
 	-- check for Murder gamemode
-	if GAMEMODE && GAMEMODE.RoundStage != nil && GAMEMODE.LootCollected != nil && GAMEMODE.RoundSettings != nil && FMainMenu.EverySpawn then
-		FMainMenu.EverySpawn = false
-		FMainMenu.Log(FMainMenu.GetPhrase("LogMurderEverySpawn"), false)
-	end
+	everySpawnMurderCheck()
 end
 
 -- Force Kills active background music
@@ -127,8 +162,37 @@ local function openMenu()
 		end)
 	end
 
+	--Zombie Survival Support
+	if isServerGMZombieSurvival() then
+		GAMEMODE.XPHUD:SetVisible(false)
+		GAMEMODE.GameStatePanel:SetVisible(false)
+		GAMEMODE.HealthHUD:SetVisible(false)
+		GAMEMODE.StatusHUD:SetVisible(false)
+
+		hook.Add("Think","FMainMenu_ZombieSurvivalThink", function()
+			if pWorth && pWorth:IsValid() then
+				pWorth:Remove()
+				pWorth = nil
+			end
+
+			if GAMEMODE.SkillWeb && GAMEMODE.SkillWeb:IsValid() then
+				GAMEMODE.SkillWeb:Remove()
+			end
+
+			if pOptions && pOptions:IsValid() then
+				pOptions:Remove()
+				pOptions = nil
+			end
+		end)
+	end
+
+	--Prop Hunt support
+	if isServerGMPropHunt() then
+		RunConsoleCommand( "changeteam", TEAM_SPECTATOR )
+	end
+
 	--Creates function that can close panel
-	function closePanelGlobal()
+	closePanelGlobal = function()
 		-- cleanup
 		hook.Remove("Think", "FMainMenu_KMV")
 		gui_EnableScreenClicker( false )
@@ -151,8 +215,29 @@ local function openMenu()
 			end)
 		end
 
+		-- undo Zombie Survival workarounds
+		if isServerGMZombieSurvival() then
+			GAMEMODE.XPHUD:SetVisible(true)
+			GAMEMODE.GameStatePanel:SetVisible(true)
+			GAMEMODE.HealthHUD:SetVisible(true)
+			GAMEMODE.StatusHUD:SetVisible(true)
+			MakepWorth()
+		end
+
+		-- undo Prop Hunt workarounds
+		if isServerGMPropHunt() then
+			timer.Simple(0, function()
+				for i = 1, 3 do
+					RunConsoleCommand( "spec_mode" )
+				end
+			end)
+
+			GAMEMODE:ShowTeam()
+		end
+
 		-- related hooks
 		hook.Remove("Think","FMainMenu_DarkRPThink")
+		hook.Remove("Think","FMainMenu_ZombieSurvivalThink")
 		hook.Remove( "OnPlayerChangedTeam", "FMainMenu_OPCT")
 		hook.Run( "FMainMenu_Client_MenuClosed" )
 
@@ -299,6 +384,21 @@ local function openMenu()
 		--Take care of some GUIs that can open and draw on top of the menu
 		local VGUIWorld = vgui_GetWorldPanel()
 
+		--Hide Zombie Survival F1 Menu (unlike the other panels, this one stores no global reference for some reason)
+		if isServerGMZombieSurvival() then
+			for _,panel in ipairs(VGUIWorld:GetChildren()) do
+				if panel:GetClassName() == "Panel" && panel.Created != nil then
+					for _,subPanel in ipairs(panel:GetChildren()) do
+						if subPanel:GetClassName() == "Label" && subPanel:GetFont() == "ZSHUDFont" || subPanel:GetClassName() == "Button" && subPanel:GetFont() == "ZSHUDFontSmall" then
+							panel:Remove()
+						end
+					end
+				elseif panel:GetClassName() == "Panel" && panel.ClassTypeButton != nil then
+					panel:Remove()
+				end
+			end
+		end
+
 		--Hide DarkRP Votes
 		if DarkRP then
 			for _,panel in ipairs(VGUIWorld:GetChildren()) do
@@ -307,11 +407,20 @@ local function openMenu()
 				end
 			end
 		end
+
+		--Hide prop hunt splash screens
+		if isServerGMPropHunt() then
+			for _,panel in ipairs(VGUIWorld:GetChildren()) do
+				if (panel.lblGamemodeName != nil && panel.lblIP != nil  && panel.lblServerName != nil) || panel.lblMain != nil then
+					panel:Remove()
+				end
+			end
+		end
 	end )
 end
 
 -- Let server force main menu to close
-net_Receive( "FMainMenu_CloseMainMenu", function( len, ply )
+net_Receive( "FMainMenu_CloseMainMenu", function( len )
 	if closePanelGlobal != "" then
 		local message = net_ReadString()
 		LocalPlayer():ChatPrint(message)
@@ -323,6 +432,7 @@ end )
 --Detect Player Spawn
 gameevent_Listen( "player_spawn" )
 hook.Add("player_spawn", "FMainMenu_PlayerSpawn", function( data )
+	if !IsValid(LocalPlayer()) then return end
 	if data.userid != LocalPlayer():UserID() then return end
 	if Player( data.userid ):IsBot() then return end
 	if varTable[1] then varTable[1] = false return end
@@ -334,10 +444,13 @@ end)
 --Detect First Time Spawn
 hook.Add("FMainMenu_OpenMenuInitial", "FMainMenu_IPE", function( )
 	-- check for Murder gamemode
-	if GAMEMODE && GAMEMODE.RoundStage != nil && GAMEMODE.LootCollected != nil && GAMEMODE.RoundSettings != nil && FMainMenu.EverySpawn then
-		FMainMenu.EverySpawn = false
-		FMainMenu.Log(FMainMenu.GetPhrase("LogMurderEverySpawn"), false)
-	end
+	everySpawnMurderCheck()
+
+	-- check for Zombie Survival gamemode
+	everySpawnZombieSurvivalCheck()
+
+	-- check for Prop Hunt gamemode
+	everySpawnPropHuntCheck()
 
 	oneTimeFlag = true
 	openMenu()

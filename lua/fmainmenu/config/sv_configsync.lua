@@ -42,7 +42,7 @@ FayLib.IGC.DefineKey(addonName, "CameraPosition", {
 	["gm_valley"] = Vector(-2523.905, 6557.433, -901.93),
 	["cinema_theatron"] = Vector(6.35, -553.92, 46.165),
 	["ttt_minecraft_b5"] = Vector(-2308.407, -247.849, 1075.52),
-	["ttt_clue_se"] = Vector(9.009, -490.066, 152.318),
+	["clue"] = Vector(17.58, -494.774, 179.068),
 }, false)
 FayLib.IGC.DefineKey(addonName, "CameraAngle", {
 	["gm_flatgrass"] = Angle(42.586422, -40.820980, 0.000000),
@@ -54,7 +54,7 @@ FayLib.IGC.DefineKey(addonName, "CameraAngle", {
 	["gm_valley"] = Angle(-8.473, -121.394, 0),
 	["cinema_theatron"] = Angle(1.461, 90.681, 0),
 	["ttt_minecraft_b5"] = Angle(29.543, 16.836, 0),
-	["ttt_clue_se"] = Angle(9.29, 45.155, 0),
+	["clue"] = Angle(10.296, 57.838, 0),
 }, false)
 FayLib.IGC.DefineKey(addonName, "EverySpawn", true, true)
 FayLib.IGC.DefineKey(addonName, "AdvancedSpawn", false, false)

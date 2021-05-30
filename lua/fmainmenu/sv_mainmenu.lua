@@ -83,6 +83,21 @@ net_Receive( "FMainMenu_CloseMainMenu", function( len, ply )
 	end
 end )
 
+-- return whether the gamemode is murder
+local function isServerGMMurder()
+	return GAMEMODE && GAMEMODE.Name == "Murder"
+end
+
+-- return whether the gamemode is zombie survival
+local function isServerGMZombieSurvival()
+	return GAMEMODE && GAMEMODE.Name == "Zombie Survival"
+end
+
+-- return whether the gamemode is prop hunt
+local function isServerGMPropHunt()
+	return GAMEMODE && GAMEMODE.Name == "Prop Hunt"
+end
+
 --Sets up physical camera object for players' views to be set to
 local function setupCam()
 	cam = ents_Create("prop_dynamic")
@@ -123,9 +138,21 @@ local function refreshMM()
 	cam = ""
 
 	-- check for Murder gamemode
-	if GAMEMODE && GAMEMODE.RoundStage != nil && GAMEMODE.RoundCount != nil && FMainMenu.EverySpawn then
+	if isServerGMMurder() then
 		FMainMenu.EverySpawn = false
 		FMainMenu.Log(FMainMenu.GetPhrase("LogMurderEverySpawn"), false)
+	end
+
+	-- check for Murder gamemode
+	if isServerGMZombieSurvival() then
+		FMainMenu.EverySpawn = false
+		FMainMenu.Log(FMainMenu.GetPhrase("LogZombieSurvivalEverySpawn"), false)
+	end
+
+	-- check for Prop Hunt gamemode
+	if isServerGMPropHunt() then
+		FMainMenu.EverySpawn = false
+		FMainMenu.Log(FMainMenu.GetPhrase("LogPropHuntEverySpawn"), false)
 	end
 end
 
@@ -269,7 +296,7 @@ hook_Add( "InitPostEntity", "FMainMenu_IPE", function()
 	setupCam()
 
 	-- check for Murder gamemode
-	if GAMEMODE && GAMEMODE.RoundStage != nil && GAMEMODE.RoundCount != nil then
+	if isServerGMMurder() then
 		local murderTrigger = false
 
 		if FMainMenu.EverySpawn then
@@ -277,7 +304,7 @@ hook_Add( "InitPostEntity", "FMainMenu_IPE", function()
 			FMainMenu.Log(FMainMenu.GetPhrase("LogMurderEverySpawn"), false)
 		end
 
-		hook_Add( "Think", "FMainMenu_Murder_Think", function()
+		hook.Add( "Think", "FMainMenu_Murder_Think", function()
 			if GAMEMODE:GetRound() == GAMEMODE.Round.Playing && murderCache != GAMEMODE.Round.Playing && !murderTrigger then
 				murderTrigger = true
 				for _,ply in ipairs(player_GetHumans()) do
@@ -291,6 +318,56 @@ hook_Add( "InitPostEntity", "FMainMenu_IPE", function()
 				murderTrigger = false
 			end
 			murderCache = GAMEMODE:GetRound()
+		end )
+	end
+
+	-- check for Murder gamemode
+	if isServerGMZombieSurvival() then
+		local zsTrigger = false
+
+		if FMainMenu.EverySpawn then
+			FMainMenu.EverySpawn = false
+			FMainMenu.Log(FMainMenu.GetPhrase("LogZSEverySpawn"), false)
+		end
+
+		hook.Add( "Think", "FMainMenu_ZombieSurvival_Think", function()
+			if GAMEMODE:GetWaveActive() && !zsTrigger then
+				zsTrigger = true
+				for _,ply in ipairs(player_GetHumans()) do
+					if ply:GetNWBool("FMainMenu_InMenu",false) then
+						net_Start("FMainMenu_CloseMainMenu")
+							net_WriteString( FMainMenu.GetPhrase("ZSRoundStarted") )
+						net_Send(ply)
+					end
+				end
+			elseif !GAMEMODE:GetWaveActive() then
+				zsTrigger = false
+			end
+		end )
+	end
+
+	-- check for Prop Hunt gamemode
+	if isServerGMPropHunt() then
+		local phTrigger = false
+
+		if FMainMenu.EverySpawn then
+			FMainMenu.EverySpawn = false
+			FMainMenu.Log(FMainMenu.GetPhrase("LogPropHuntEverySpawn"), false)
+		end
+
+		hook.Add( "Think", "FMainMenu_PropHunt_Think", function()
+			if GAMEMODE:InRound() && !phTrigger then
+				phTrigger = true
+				for _,ply in ipairs(player_GetHumans()) do
+					if ply:GetNWBool("FMainMenu_InMenu",false) then
+						net_Start("FMainMenu_CloseMainMenu")
+							net_WriteString( FMainMenu.GetPhrase("PropHuntRoundStarted") )
+						net_Send(ply)
+					end
+				end
+			elseif !GAMEMODE:InRound() then
+				phTrigger = false
+			end
 		end )
 	end
 end )
@@ -544,7 +621,7 @@ end )
 hook_Add( "TTTBeginRound", "FMainMenu_TTTBeginRound", function( )
 	for _,ply in ipairs(player_GetHumans()) do
 		if ply:GetNWBool("FMainMenu_InMenu",false) then
-			net_Start("FMainMenu_CanEditMenu")
+			net_Start("FMainMenu_CloseMainMenu")
 				net_WriteString( FMainMenu.GetPhrase("TTTRoundStarted") )
 			net_Send(ply)
 		end
