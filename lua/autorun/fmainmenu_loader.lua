@@ -1,3 +1,8 @@
+--[[
+	Fay's Main Menu
+	version 1.0.0
+]]--
+
 FMainMenu = FMainMenu || {}
 
 local print = print

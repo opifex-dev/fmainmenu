@@ -6,10 +6,17 @@
 
 local FMainMenu = FMainMenu
 
+-- localized global calls
+surface_PlaySound = surface.PlaySound
+
 FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 
 local propertyCode = 51
 local configPropList = {"configCanEdit"}
+
+local function isUsingCustomAdminSystem()
+	return ulx || FAdmin
+end
 
 FMainMenu.ConfigModules[propertyCode] = {}
 FMainMenu.ConfigModules[propertyCode].previewLevel = 0
@@ -22,13 +29,26 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	--Property Panel Setup
 	local mainPropPanel = FMainMenu.ConfigModulesHelper.generatePropertyHeader(FMainMenu.GetPhrase("ConfigPropertiesConfigAccessPropName"), FMainMenu.GetPhrase("ConfigPropertiesConfigAccessPropDesc"))
 
-	-- Config Access Group Toggle
-	mainPropPanel.toggleOption = FMainMenu.ConfigModulePanels.createComboBox(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesConfigAccessToggleLabel"), "superadmin")
-	mainPropPanel.toggleOption:AddChoice( "admin" )
-	mainPropPanel.toggleOption:AddChoice( "user" )
+	-- Config Access Group Toggle, applicable only if using gmod built-in admin system
+	if !isUsingCustomAdminSystem() then
+		mainPropPanel.toggleOption = FMainMenu.ConfigModulePanels.createComboBox(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesConfigAccessToggleLabel"), "superadmin")
+		mainPropPanel.toggleOption:AddChoice( "admin" )
+		mainPropPanel.toggleOption:AddChoice( "user" )
+	elseif ulx != nil then
+		FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesConfigAccessNoteControlULX"))
+		FMainMenu.ConfigModulePanels.createLabel(mainPropPanel, "")
+	elseif FAdmin != nil then
+		FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesConfigAccessNoteControlFAdmin"))
+		FMainMenu.ConfigModulePanels.createLabel(mainPropPanel, "")
+	end
 
-	-- Note about CAMI functionality
-	FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesConfigAccessCAMILabel"))
+	-- Note about Admin System functionality
+	FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesConfigAccessNoteLabel"))
+	local informationButton = FMainMenu.ConfigModulePanels.createTextButtonLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesConfigAccessNoteButtonLabel"))
+	informationButton.DoClick = function(button)
+		surface_PlaySound("garrysmod/ui_click.wav")
+		FMainMenu.ConfigModulesHelper.doInformationalWindow(FMainMenu.GetPhrase("ConfigPropertiesConfigAccessNoteWindowText"), FMainMenu.GetPhrase("ConfigPropertiesConfigAccessNoteText"))
+	end
 
 	return {configPropList, mainPropPanel}
 end
@@ -37,7 +57,7 @@ end
 FMainMenu.ConfigModules[propertyCode].isVarChanged = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
-	if parentPanel.toggleOption:GetText() != parentPanel.lastRecVariable[1] then
+	if !isUsingCustomAdminSystem() && parentPanel.toggleOption:GetText() != parentPanel.lastRecVariable[1] then
 		return true
 	end
 
@@ -48,13 +68,17 @@ end
 FMainMenu.ConfigModules[propertyCode].updatePreview = function() end
 
 -- Called when property is closed, allows for additional clean up if needed
-FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function() end
+FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function()
+	FMainMenu.ConfigModulesHelper.closeOpenExtraWindows()
+end
 
 -- Handles saving changes to a property
 FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
-	parentPanel.lastRecVariable[1] = parentPanel.toggleOption:GetValue()
+	if !isUsingCustomAdminSystem() then
+		parentPanel.lastRecVariable[1] = parentPanel.toggleOption:GetValue()
+	end
 
 	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, configPropList)
 end
@@ -63,7 +87,9 @@ end
 FMainMenu.ConfigModules[propertyCode].varFetch = function(receivedVarTable)
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
-	parentPanel.toggleOption:SetValue(receivedVarTable[1])
+	if !isUsingCustomAdminSystem() then
+		parentPanel.toggleOption:SetValue(receivedVarTable[1])
+	end
 end
 
 -- Called when the player wishes to reset the property values to those of the server

@@ -459,14 +459,18 @@ FMainMenu.ConfigModulesHelper.doInformationalWindow = function(windowTitle, info
 	mainPanel:AlignLeft(5)
 	mainPanel:AlignTop(25)
 
+	local mainScrollPanel = vgui_Create("fmainmenu_config_editor_scrollpanel", mainPanel)
+	mainScrollPanel:SetSize( 350, 205 )
+
 	-- information label
-	local mainLabel = vgui_Create("fmainmenu_config_editor_label", mainPanel)
+	local mainLabel = vgui_Create("fmainmenu_config_editor_label", mainScrollPanel)
 	mainLabel:SetText(infoText)
-	mainLabel:SetSize(350,210)
+	mainLabel:SetSize(330,210)
 	mainLabel:AlignLeft(5)
 	mainLabel:AlignTop(3)
 	mainLabel:SetContentAlignment(7)
 	mainLabel:SetWrap( true )
+	mainLabel:SetAutoStretchVertical(true)
 
 	-- close button
 	local closeButton = vgui_Create("fmainmenu_config_editor_button", mainPanel)
