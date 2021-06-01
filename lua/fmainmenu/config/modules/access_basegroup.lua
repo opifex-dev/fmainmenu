@@ -12,11 +12,8 @@ surface_PlaySound = surface.PlaySound
 FMainMenu.ConfigModules = FMainMenu.ConfigModules || {}
 
 local propertyCode = 51
-local configPropList = {"configCanEdit"}
-
-local function isUsingCustomAdminSystem()
-	return ulx || FAdmin
-end
+local configPropList = {"configCanEdit","adminModPref"}
+local allAM = {}
 
 FMainMenu.ConfigModules[propertyCode] = {}
 FMainMenu.ConfigModules[propertyCode].previewLevel = 0
@@ -29,18 +26,29 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	--Property Panel Setup
 	local mainPropPanel = FMainMenu.ConfigModulesHelper.generatePropertyHeader(FMainMenu.GetPhrase("ConfigPropertiesConfigAccessPropName"), FMainMenu.GetPhrase("ConfigPropertiesConfigAccessPropDesc"))
 
-	-- Config Access Group Toggle, applicable only if using gmod built-in admin system
-	if !isUsingCustomAdminSystem() then
-		mainPropPanel.toggleOption = FMainMenu.ConfigModulePanels.createComboBox(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesConfigAccessToggleLabel"), "superadmin")
-		mainPropPanel.toggleOption:AddChoice( "admin" )
-		mainPropPanel.toggleOption:AddChoice( "user" )
-	elseif ulx != nil then
-		FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesConfigAccessNoteControlULX"))
-		FMainMenu.ConfigModulePanels.createLabel(mainPropPanel, "")
-	elseif FAdmin != nil then
-		FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesConfigAccessNoteControlFAdmin"))
-		FMainMenu.ConfigModulePanels.createLabel(mainPropPanel, "")
+	-- config access preferred admin mod toggle
+	mainPropPanel.AMToggleOption = FMainMenu.ConfigModulePanels.createComboBox(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesConfigAccessAMToggleLabel"), "gmod")
+	allAM = FayLib.Perms.getAvailableAdminMods()
+	for _,adminMod in ipairs(allAM) do
+		if adminMod != "gmod" then
+			mainPropPanel.AMToggleOption:AddChoice( adminMod )
+		end
 	end
+
+	-- Config Access Group Toggle, applicable only if using gmod built-in admin system
+	mainPropPanel.toggleOption, mainPropPanel.toggleLabel = FMainMenu.ConfigModulePanels.createComboBox(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesConfigAccessToggleLabel"), "superadmin")
+	mainPropPanel.toggleOption:AddChoice( "admin" )
+	mainPropPanel.toggleOption:AddChoice( "user" )
+	mainPropPanel.tempYPos = mainPropPanel.tempYPos - 18
+
+	mainPropPanel.ULXControlLabel = FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesConfigAccessNoteControlULX"))
+	mainPropPanel.ULXControlLabel:SetVisible(false)
+	mainPropPanel.tempYPos = mainPropPanel.tempYPos - 33
+
+	mainPropPanel.FAdminControlLabel = FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesConfigAccessNoteControlFAdmin"))
+	mainPropPanel.FAdminControlLabel:SetVisible(false)
+
+	FMainMenu.ConfigModulePanels.createLabel(mainPropPanel, "")
 
 	-- Note about Admin System functionality
 	FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesConfigAccessNoteLabel"))
@@ -57,7 +65,11 @@ end
 FMainMenu.ConfigModules[propertyCode].isVarChanged = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
-	if !isUsingCustomAdminSystem() && parentPanel.toggleOption:GetText() != parentPanel.lastRecVariable[1] then
+	if parentPanel.toggleOption:GetText() != parentPanel.lastRecVariable[1] then
+		return true
+	end
+
+	if parentPanel.AMToggleOption:GetText() != parentPanel.lastRecVariable[2] then
 		return true
 	end
 
@@ -65,7 +77,26 @@ FMainMenu.ConfigModules[propertyCode].isVarChanged = function()
 end
 
 -- Updates necessary live preview options
-FMainMenu.ConfigModules[propertyCode].updatePreview = function() end
+FMainMenu.ConfigModules[propertyCode].updatePreview = function()
+	local parentPanel = FMainMenu.configPropertyWindow.currentProp
+
+	if parentPanel.AMToggleOption:GetText() == "gmod" then
+		parentPanel.toggleOption:SetVisible(true)
+		parentPanel.toggleLabel:SetVisible(true)
+		parentPanel.ULXControlLabel:SetVisible(false)
+		parentPanel.FAdminControlLabel:SetVisible(false)
+	elseif parentPanel.AMToggleOption:GetText() == "ulx" then
+		parentPanel.toggleOption:SetVisible(false)
+		parentPanel.toggleLabel:SetVisible(false)
+		parentPanel.ULXControlLabel:SetVisible(true)
+		parentPanel.FAdminControlLabel:SetVisible(false)
+	elseif parentPanel.AMToggleOption:GetText() == "fadmin" then
+		parentPanel.toggleOption:SetVisible(false)
+		parentPanel.toggleLabel:SetVisible(false)
+		parentPanel.ULXControlLabel:SetVisible(false)
+		parentPanel.FAdminControlLabel:SetVisible(true)
+	end
+end
 
 -- Called when property is closed, allows for additional clean up if needed
 FMainMenu.ConfigModules[propertyCode].onClosePropFunc = function()
@@ -76,9 +107,12 @@ end
 FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
-	if !isUsingCustomAdminSystem() then
-		parentPanel.lastRecVariable[1] = parentPanel.toggleOption:GetValue()
+	if parentPanel.AMToggleOption:GetValue() != "gmod" then
+		parentPanel.toggleOption:SetValue("superadmin")
 	end
+
+	parentPanel.lastRecVariable[1] = parentPanel.toggleOption:GetValue()
+	parentPanel.lastRecVariable[2] = parentPanel.AMToggleOption:GetValue()
 
 	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, configPropList)
 end
@@ -87,9 +121,8 @@ end
 FMainMenu.ConfigModules[propertyCode].varFetch = function(receivedVarTable)
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
-	if !isUsingCustomAdminSystem() then
-		parentPanel.toggleOption:SetValue(receivedVarTable[1])
-	end
+	parentPanel.toggleOption:SetValue(receivedVarTable[1])
+	parentPanel.AMToggleOption:SetValue(receivedVarTable[2])
 end
 
 -- Called when the player wishes to reset the property values to those of the server

@@ -17,7 +17,6 @@ local FMainMenu = FMainMenu
 local Vector = Vector
 local Angle = Angle
 local Color = Color
-local CAMI = CAMI
 local file_Find = file.Find
 local pairs = pairs
 local include = include
@@ -195,6 +194,7 @@ FayLib.IGC.DefineKey(addonName, "commonButtonColor", Color(75,75,75), true)
 FayLib.IGC.DefineKey(addonName, "commonTextColor", Color(255,255,255), true)
 
 --Configuration GUI Settings
+FayLib.IGC.DefineKey(addonName, "adminModPref", "gmod", false)
 FayLib.IGC.DefineKey(addonName, "configCanEdit", "superadmin", false)
 
 -- Advanced Settings
@@ -245,11 +245,9 @@ FayLib.IGC.DefineKey(addonName, "MenuSetup", {
 FayLib.IGC.LoadConfig(addonName, "config", "fmainmenu")
 FMainMenu.EverySpawn = FayLib.IGC.GetKey(addonName, "EverySpawn")
 
--- Setup CAMI Privs
-CAMI.RegisterPrivilege( {
-	Name = "FMainMenu_CanEditMenu",
-	MinAccess = FayLib.IGC.GetKey(addonName, "configCanEdit") or "superadmin",
-})
+-- Setup Access Privs
+FayLib.Perms.SetAdminMod( addonName, FayLib.IGC.GetKey(addonName, "adminModPref") or "gmod" )
+FayLib.Perms.AddPrivilege( addonName, "FMainMenu_EditMenu", FayLib.IGC.GetKey(addonName, "configCanEdit") or "superadmin" )
 
 --Language Loader
 FMainMenu.languageLookup = {}
@@ -278,13 +276,14 @@ hook_Add("IGCConfigUpdate", "FMainMenu_IGCCU", function(addonName)
 	-- EverySpawn update
 	FMainMenu.EverySpawn = FayLib.IGC.GetKey(addonName, "EverySpawn")
 
+	--AdminModPref update
+	if FayLib.Perms["AdminMod"][addonName] != FayLib.IGC.GetKey(addonName, "adminModPref") then
+		FayLib.Perms.SetAdminMod( addonName, FayLib.IGC.GetKey(addonName, "adminModPref") or "gmod" )
+	end
+
 	--CanEditConfig update
-	if CAMI.GetPrivilege("FMainMenu_CanEditMenu").MinAccess != FayLib.IGC.GetKey(addonName, "configCanEdit") then
-		CAMI.UnregisterPrivilege("FMainMenu_CanEditMenu")
-		CAMI.RegisterPrivilege( {
-			Name = "FMainMenu_CanEditMenu",
-			MinAccess = FayLib.IGC.GetKey(addonName, "configCanEdit") or "superadmin",
-		})
+	if FayLib.Perms["PrivList"][addonName]["FMainMenu_EditMenu"] != FayLib.IGC.GetKey(addonName, "configCanEdit") then
+		FayLib.Perms.UpdatePrivilege( addonName, "FMainMenu_EditMenu", FayLib.IGC.GetKey(addonName, "configCanEdit") or "superadmin" )
 	end
 
 	-- Language update

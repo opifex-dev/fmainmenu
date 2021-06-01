@@ -29,7 +29,6 @@ local player_GetHumans = player.GetHumans
 local net_WriteString = net.WriteString
 local bit_band = bit.band
 local bit_bnot = bit.bnot
-local CAMI = CAMI
 local table_Copy = table.Copy
 local pairs = pairs
 local net_ReadTable = net.ReadTable
@@ -709,51 +708,47 @@ local tVarUpdateHandler = {
 
 -- If player has access to config, then instruct client editor to open
 net_Receive( "FMainMenu_Config_OpenMenu", function( len, ply )
-	CAMI.PlayerHasAccess(ply, "FMainMenu_CanEditMenu", function(hasPriv, reason)
-		if hasPriv then
-			playerTempConfigs[ply:UserID()] = table_Copy(FayLib["IGC"]["Config"]["Server"][addonName])
+	if FayLib.Perms.PlayerHasAccess(addonName, "FMainMenu_EditMenu", ply) then
+		playerTempConfigs[ply:UserID()] = table_Copy(FayLib["IGC"]["Config"]["Server"][addonName])
 
-			-- don't allow to open if currently in main menu
-			net_Start("FMainMenu_Config_OpenMenu")
-				if ply:GetNWBool("FMainMenu_InMenu",false) then
-					net_WriteBool(true)
-				end
-			net_Send(ply)
-
-			-- change player camera to what main menu has set
-			for _,updFunc in pairs(tVarUpdateHandler) do
-				updFunc(ply)
+		-- don't allow to open if currently in main menu
+		net_Start("FMainMenu_Config_OpenMenu")
+			if ply:GetNWBool("FMainMenu_InMenu",false) then
+				net_WriteBool(true)
 			end
+		net_Send(ply)
 
-			-- Fix for HudPaint not getting called when camera is out
-			if ply:GetActiveWeapon():GetClass() == "gmod_camera" then
-				ply:StripWeapon( "gmod_camera" )
-				ply.CamStripped = true
-			end
+		-- change player camera to what main menu has set
+		for _,updFunc in pairs(tVarUpdateHandler) do
+			updFunc(ply)
 		end
-	end)
+
+		-- Fix for HudPaint not getting called when camera is out
+		if ply:GetActiveWeapon():GetClass() == "gmod_camera" then
+			ply:StripWeapon( "gmod_camera" )
+			ply.CamStripped = true
+		end
+	end
 end)
 
 -- If player has access to config, then send server-side variables they request
 net_Receive( "FMainMenu_Config_ReqVar", function( len, ply )
 	local variableNames = net_ReadTable()
-	CAMI.PlayerHasAccess(ply, "FMainMenu_CanEditMenu", function(hasPriv, reason)
-		if hasPriv then
-			-- get all requested variables into a single table
-			local sendTable = {}
-			local counter = 1
-			for _,varName in ipairs(variableNames) do
-				if FayLib.IGC.GetKey(addonName, varName) == nil then return end
-				sendTable[counter] = FayLib.IGC.GetKey(addonName, varName)
-				counter = counter + 1
-			end
-
-			-- send var to player
-			net_Start("FMainMenu_Config_ReqVar")
-				net_WriteString(util_TableToJSON(sendTable))
-			net_Send(ply)
+	if FayLib.Perms.PlayerHasAccess(addonName, "FMainMenu_EditMenu", ply) then
+		-- get all requested variables into a single table
+		local sendTable = {}
+		local counter = 1
+		for _,varName in ipairs(variableNames) do
+			if FayLib.IGC.GetKey(addonName, varName) == nil then return end
+			sendTable[counter] = FayLib.IGC.GetKey(addonName, varName)
+			counter = counter + 1
 		end
-	end)
+
+		-- send var to player
+		net_Start("FMainMenu_Config_ReqVar")
+			net_WriteString(util_TableToJSON(sendTable))
+		net_Send(ply)
+	end
 end)
 
 net_Receive( "FMainMenu_Config_UpdateVar", function( len, ply )
@@ -765,43 +760,39 @@ net_Receive( "FMainMenu_Config_UpdateVar", function( len, ply )
 	fixTableColors(varTable)
 
 	-- If player has access to config, then save changes to config
-	CAMI.PlayerHasAccess(ply, "FMainMenu_CanEditMenu", function(hasPriv, reason)
-		if hasPriv then
-			local counter = 1
-			for _,varName in ipairs(variableNames) do
-				if FayLib.IGC.GetKey(addonName, varName) == nil then return end
-				FayLib.IGC.SetKey(addonName, varName, varTable[counter])
-				counter = counter + 1
-			end
-
-			FayLib.IGC.SaveConfig(addonName, "config", "fmainmenu")
-			FayLib.IGC.SyncShared(addonName)
+	if FayLib.Perms.PlayerHasAccess(addonName, "FMainMenu_EditMenu", ply) then
+		local counter = 1
+		for _,varName in ipairs(variableNames) do
+			if FayLib.IGC.GetKey(addonName, varName) == nil then return end
+			FayLib.IGC.SetKey(addonName, varName, varTable[counter])
+			counter = counter + 1
 		end
-	end)
+
+		FayLib.IGC.SaveConfig(addonName, "config", "fmainmenu")
+		FayLib.IGC.SyncShared(addonName)
+	end
 end)
 
 -- If player has access to config, then adjust relative live-preview settings
 net_Receive( "FMainMenu_Config_UpdateTempVariable", function(len, ply)
-	CAMI.PlayerHasAccess(ply, "FMainMenu_CanEditMenu", function(hasPriv, reason)
-		if hasPriv then
-			local varNames = net_ReadTable()
-			local varTable = util_JSONToTable(net_ReadString())
+	if FayLib.Perms.PlayerHasAccess(addonName, "FMainMenu_EditMenu", ply) then
+		local varNames = net_ReadTable()
+		local varTable = util_JSONToTable(net_ReadString())
 
-			-- fix for "Colors will not have the color metatable" bug
-			fixTableColors(varTable)
+		-- fix for "Colors will not have the color metatable" bug
+		fixTableColors(varTable)
 
-			-- update temp variables as needed for player
-			local counter = 1
-			for _,varName in ipairs(varNames) do
-				if playerTempConfigs[ply:UserID()]["_" .. varName] then
-					playerTempConfigs[ply:UserID()]["_" .. varName] = varTable[counter]
-					tVarUpdateHandler[varName](ply)
-				end
-
-				counter = counter + 1
+		-- update temp variables as needed for player
+		local counter = 1
+		for _,varName in ipairs(varNames) do
+			if playerTempConfigs[ply:UserID()]["_" .. varName] then
+				playerTempConfigs[ply:UserID()]["_" .. varName] = varTable[counter]
+				tVarUpdateHandler[varName](ply)
 			end
+
+			counter = counter + 1
 		end
-	end)
+	end
 end)
 
 -- Remove player from live-preview when closing config editor
