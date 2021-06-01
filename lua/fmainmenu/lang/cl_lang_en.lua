@@ -226,7 +226,7 @@ translationList.ConfigPropertiesConfigAccessAMToggleLabel = "Preferred Admin Mod
 translationList.ConfigPropertiesConfigAccessNoteLabel = "NOTE: This setting can have different\neffects depending on your admin mod."
 translationList.ConfigPropertiesConfigAccessNoteButtonLabel = "More Information"
 translationList.ConfigPropertiesConfigAccessNoteWindowText = "Config Access - Admin System Differences"
-translationList.ConfigPropertiesConfigAccessNoteText = "By default, only superadmins will be able to edit the config, but the access system works through the following ways:\n\nNo Admin Mod: Usergroup set in config and above can make edits\nULX: Permission is created (FMainMenu_EditMenu). Groups who have it can make edits.\nFAdmin: Permission is created (FMainMenu_EditMenu). Groups who have it can make edits."
+translationList.ConfigPropertiesConfigAccessNoteText = "By default, only superadmins will be able to edit the config, and it will use the gmod built-in admin system to determine who is allowed to edit. Here is how each admin mod will function:\n\ngmod: Usergroup set in config and above can make edits\n\nULX: Groups who have the FMainMenu_EditMenu ULX permission can make edits.\n\nFAdmin: Groups who have the FMainMenu_EditMenu FAdmin permission can make edits."
 translationList.ConfigPropertiesConfigAccessNoteControlULX = "Config access is controlled by ULX."
 translationList.ConfigPropertiesConfigAccessNoteControlFAdmin = "Config access is controlled by FAdmin."
 

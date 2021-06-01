@@ -4,11 +4,7 @@ You will find that setting this up is quite different from most addons.
 Simply open the console once connected to a server and run "fmainmenu_config"
 A GUI will then open to let you edit values and preview changes before saving.
 
-By default, only superadmins will be able to edit the config, but the access system works through the following ways:
-
-No Admin Mod: 	Usergroup set in config and above can make edits
-ULX: 		Permission is created (FMainMenu_CanEditMenu). Groups who have it can make edits.
-FAdmin:		Permission is created (FMainMenu_CanEditMenu). Groups who have it can make edits.
+By default, only superadmins will be able to edit the config, and it will use the gmod built-in admin system to determine who is allowed to edit, but these can both be changed in the configuration menu.
 
 If you need any assistance, do not hesitate to make a support ticket or join my support discord at https://discord.gg/87rBPFa (proof of purchase will be required)
 

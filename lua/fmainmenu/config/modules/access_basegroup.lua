@@ -41,10 +41,12 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	mainPropPanel.toggleOption:AddChoice( "user" )
 	mainPropPanel.tempYPos = mainPropPanel.tempYPos - 18
 
+	-- ULX info label
 	mainPropPanel.ULXControlLabel = FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesConfigAccessNoteControlULX"))
 	mainPropPanel.ULXControlLabel:SetVisible(false)
 	mainPropPanel.tempYPos = mainPropPanel.tempYPos - 33
 
+	-- FAdmin info label
 	mainPropPanel.FAdminControlLabel = FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesConfigAccessNoteControlFAdmin"))
 	mainPropPanel.FAdminControlLabel:SetVisible(false)
 
