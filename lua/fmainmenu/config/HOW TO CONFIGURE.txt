@@ -1,0 +1,4 @@
+!!! CONFIGURATION IS HANDLED IN-GAME !!!
+
+By default, any superadmin can edit the config by running the console command "fmainmenu_config"
+Access permissions can be changed through the config if needed
