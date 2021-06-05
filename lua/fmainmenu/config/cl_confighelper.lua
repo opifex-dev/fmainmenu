@@ -220,6 +220,14 @@ end
 FMainMenu.ConfigModulesHelper.setUnsaved = function(state)
 	FMainMenu.CurConfigMenu.unsavedVar = state
 	FMainMenu.CurConfigMenu.configUnsavedBlocker:SetVisible(state)
+
+	if state then
+		FMainMenu.CurConfigMenu:SetTitle(FMainMenu.GetPhrase("ConfigPropertiesSelectorTitleUnsaved"))
+		FMainMenu.configPropertyWindow:SetTitle(FMainMenu.GetPhrase("ConfigPropertiesWindowTitleUnsaved"))
+	else
+		FMainMenu.CurConfigMenu:SetTitle(FMainMenu.GetPhrase("ConfigPropertiesSelectorTitle"))
+		FMainMenu.configPropertyWindow:SetTitle(FMainMenu.GetPhrase("ConfigPropertiesWindowTitle"))
+	end
 end
 
 FMainMenu.ConfigModulesHelper.setExternalBlock = function(state)
@@ -237,10 +245,12 @@ ADJUSTMENT TYPES
 local panelScrollAjustments = {
 	[1] = function(panel) end,
 	[2] = function(panel)
-		panel:AlignLeft(panel:GetX() - 15)
+		local xPos = panel:GetPos()
+		panel:AlignLeft(xPos - 15)
 	end,
 	[3] = function(panel)
-		panel:AlignLeft(panel:GetX() - 7.5)
+		local xPos = panel:GetPos()
+		panel:AlignLeft(xPos - 7.5)
 	end,
 	[4] = function(panel)
 		local oldX, oldY = panel:GetSize()
