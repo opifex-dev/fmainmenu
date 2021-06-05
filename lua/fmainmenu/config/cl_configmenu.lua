@@ -146,8 +146,11 @@ net_Receive( "FMainMenu_Config_OpenMenu", function( len )
 				FMainMenu.ConfigModulesHelper.requestVariables(varsList[1])
 				FMainMenu.ConfigModulesHelper.setupGeneralPropPanels()
 				FMainMenu.ConfigModulesHelper.setPropPanel(varsList[2])
-				FMainMenu.ConfigModulesHelper.scrollBarAdjustments()
 				FMainMenu.ConfigPreview.previewLevel = propButton.previewLevel
+
+				timer.Simple(0, function()
+					FMainMenu.ConfigModulesHelper.scrollBarAdjustments()
+				end)
 			end
 			FMainMenu.Derma.SetPanelHover(propButton, 1)
 
