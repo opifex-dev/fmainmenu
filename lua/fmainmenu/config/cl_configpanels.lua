@@ -129,6 +129,33 @@ FMainMenu.ConfigModulePanels.createComboBox = function(mainPropPanel, text, defa
 	return newComboBox, newLabel
 end
 
+-- combination of small label and a check box, where the label can be aligned to the left or right of the panel
+FMainMenu.ConfigModulePanels.createCheckBoxCombo = function(mainPropPanel, text, defaultValue, textOnLeft)
+	local newLabel = vgui_Create("fmainmenu_config_editor_label", mainPropPanel)
+	newLabel:SetText(text)
+	if textOnLeft then
+		newLabel:SetPos(2, 70 + mainPropPanel.tempYPos)
+		newLabel.scrollAdjustmentType = 1
+	else
+		newLabel:SetPos(200, 70 + mainPropPanel.tempYPos)
+		newLabel.scrollAdjustmentType = 2
+	end
+
+	local newCheckBox = vgui_Create("fmainmenu_config_editor_checkbox", mainPropPanel)
+	newCheckBox:SetSize( 16, 16 )
+	newCheckBox:SetPos( 220, 71 + mainPropPanel.tempYPos )
+	newCheckBox.scrollAdjustmentType = 2
+	newCheckBox:SetChecked( defaultValue )
+	function newCheckBox:OnChange(self)
+		FMainMenu.ConfigModulesHelper.setUnsaved(FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].isVarChanged())
+		FMainMenu.ConfigModules[FMainMenu.configPropertyWindow.propertyCode].updatePreview()
+	end
+
+	mainPropPanel.tempYPos = mainPropPanel.tempYPos + 18
+
+	return newCheckBox, newLabel
+end
+
 -- centered button with text in it
 FMainMenu.ConfigModulePanels.createTextButtonLarge = function(mainPropPanel, text)
 	mainPropPanel.tempYPos = mainPropPanel.tempYPos + 9

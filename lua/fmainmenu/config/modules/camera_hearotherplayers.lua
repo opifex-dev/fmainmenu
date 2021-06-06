@@ -54,6 +54,9 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 	-- Maximum Voice Distance
 	mainPropPanel.distanceBox = FMainMenu.ConfigModulePanels.createLabelBoxComboSmall(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesHearOtherPlayersDistanceLabel"), true)
 
+	-- note about distance
+	FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesHearOtherPlayersDistanceNote"))
+
 	-- Sphere setup
 	topHalfSphere = createSphereHalf()
 	topHalfSphere:SetAngles( Angle(0, 0, 180) )
@@ -89,6 +92,9 @@ FMainMenu.ConfigModules[propertyCode].updatePreview = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 
 	if tonumber(parentPanel.distanceBox:GetText()) == nil then return end
+	if tonumber(parentPanel.distanceBox:GetText()) < 0 then
+		parentPanel.distanceBox:SetText(0)
+	end
 
 	if parentPanel.toggleOption:GetText() != FMainMenu.GetPhrase("ConfigCommonValueEnabled") then
 		topHalfSphere:SetModelScale( 0 )

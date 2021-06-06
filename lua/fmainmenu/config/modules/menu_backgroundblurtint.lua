@@ -54,6 +54,9 @@ FMainMenu.ConfigModules[propertyCode].updatePreview = function()
 	local previewCopy = FMainMenu.ConfigPreview.previewCopy
 
 	if tonumber(parentPanel.blurBox:GetText()) == nil then return end
+	if tonumber(parentPanel.blurBox:GetText()) < 0 then
+		parentPanel.blurBox:SetText(0)
+	end
 
 	previewCopy["_" .. configPropList[1]] = tonumber(parentPanel.blurBox:GetText())
 	previewCopy["_" .. configPropList[2]] = parentPanel.tintBox:GetColor()

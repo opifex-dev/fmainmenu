@@ -97,7 +97,16 @@ FMainMenu.ConfigModules[propertyCode].updatePreview = function()
 	local previewCopy = FMainMenu.ConfigPreview.previewCopy
 
 	if tonumber(parentPanel.fontSize:GetText()) == nil then return end
+	if tonumber(parentPanel.fontSize:GetText()) < 1 then
+		parentPanel.fontSize:SetText(1)
+	end
+
 	if tonumber(parentPanel.fontThickness:GetText()) == nil then return end
+	if tonumber(parentPanel.fontThickness:GetText()) < 0 then
+		parentPanel.fontThickness:SetText(0)
+	elseif tonumber(parentPanel.fontThickness:GetText()) > 10 then
+		parentPanel.fontThickness:SetText(10)
+	end
 
 	previewCopy["_" .. configPropList[1]] = parentPanel.logoColor:GetColor()
 	previewCopy["_" .. configPropList[2]] = parentPanel.logoFontOption:GetText()

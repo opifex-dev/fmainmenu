@@ -253,10 +253,30 @@ function FMainMenu.Panels.SetupBasics()
 			draw_SimpleTextOutlined( FayLib.IGC.GetSharedKey(addonName, "logoContent"), FMainMenu.CurrentLogoFont, 0, 0, FayLib.IGC.GetSharedKey(addonName, "textLogoColor"), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, FayLib.IGC.GetSharedKey(addonName, "logoOutlineThickness"), FayLib.IGC.GetSharedKey(addonName, "logoOutlineColor") )
 		end
 	else
+		-- used for scaling
+		local aspectSetting = [[
+			width: 100%;
+			height: 100%;
+			max-width: 100%;
+			max-height: 100%;
+		]]
+		local scaleX = FayLib.IGC.GetSharedKey(addonName, "logoImageScaleX")
+		local scaleY = FayLib.IGC.GetSharedKey(addonName, "logoImageScaleY")
+		if FayLib.IGC.GetSharedKey(addonName, "logoImageKeppAspectRatio") then
+			scaleX = FayLib.IGC.GetSharedKey(addonName, "logoImageScaleAL")
+			scaleY = FayLib.IGC.GetSharedKey(addonName, "logoImageScaleAL")
+			aspectSetting = [[
+				width: auto;
+				height: 100%;
+				max-width: 100%;
+			]]
+		end
+
+		-- create logo
 		local logo = vgui_Create("DHTML", m_border)
-		logo:SetSize(ScrW() * 0.5, 192)
+		logo:SetSize(ScrW() * 0.25 * scaleX, 192 * scaleY)
 		if !FayLib.IGC.GetSharedKey(addonName, "GarrysModStyle") then
-			logo:SetPos(ScrW() * 0.04, (ScrH() * 0.5) - 256)
+			logo:SetPos(ScrW() * 0.04, (ScrH() * 0.5) - 64 - (192 * scaleY))
 		else
 			logo:SetPos(ScrW() * 0.04, 32)
 		end
@@ -278,8 +298,7 @@ function FMainMenu.Panels.SetupBasics()
 					position: absolute;
 					bottom: 0px;
 					left: 0px;
-					max-width: 100%;
-					max-height: 100%;
+					]] .. aspectSetting .. [[
 					disTextButton: block;
 				}
 				</style>

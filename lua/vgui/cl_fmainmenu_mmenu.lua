@@ -110,7 +110,7 @@ function FMainMenu.Derma.SetPanelHover(frame, hoverType, arg)
 		end
 	elseif hoverType == 2 then
 		frame.POHover = false
-		 function frame:Paint(wid, height)
+		function frame:Paint(wid, height)
 			if frame:IsHovered() then
 				if frame.POHover == false then
 					frame.POHover = true

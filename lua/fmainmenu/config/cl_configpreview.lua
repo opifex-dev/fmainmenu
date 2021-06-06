@@ -55,6 +55,10 @@ local cachedButtonFontSize = -1
 local cachedButtonFontShadow = -1
 local previewButtonFont = nil
 local previewButtonFontCounter = 1
+local cachedScaleX = -1
+local cachedScaleY = -1
+local cachedScaleAL = -1
+local cachedScaleLock = nil
 
 --Adds custom paint function for custom backgrounds and rounding edges
 local function previewFrameSettings(frame, color, radius, isFrame, commonTextColor)
@@ -210,14 +214,33 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			-- draw the text
 			draw_SimpleTextOutlined( previewCopy["_logoContent"], previewLogoFont, width * 0.04, titleH, previewCopy["_textLogoColor"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, previewCopy["_logoOutlineThickness"], previewCopy["_logoOutlineColor"] )
 		else
+			-- used for scaling
+			local aspectSetting = [[
+				width: 100%;
+				height: 100%;
+				max-width: 100%;
+				max-height: 100%;
+			]]
+			local scaleX = previewCopy["_logoImageScaleX"]
+			local scaleY = previewCopy["_logoImageScaleY"]
+			if previewCopy["_logoImageKeppAspectRatio"] then
+				scaleX = previewCopy["_logoImageScaleAL"]
+				scaleY = previewCopy["_logoImageScaleAL"]
+				aspectSetting = [[
+					width: auto;
+					height: 100%;
+					max-width: 100%;
+				]]
+			end
+
 			-- recreate HTML panel if content box changed
-			if HTMLLogo == nil || cachedLink != previewCopy["_logoContent"] then
+			if HTMLLogo == nil || cachedLink != previewCopy["_logoContent"] || cachedScaleX != previewCopy["_logoImageScaleX"] || cachedScaleY != previewCopy["_logoImageScaleY"] || cachedScaleAL != previewCopy["_logoImageScaleAL"] || cachedScaleLock != previewCopy["_logoImageKeppAspectRatio"] then
 				if HTMLLogo != nil then HTMLLogo:Remove() end
 				HTMLLogo = vgui_Create("DHTML")
 				HTMLLogo:SetZPos(1)
-				HTMLLogo:SetSize(width * 0.5, 192)
+				HTMLLogo:SetSize(width * 0.25 * scaleX, 192 * scaleY)
 				if !previewCopy["_GarrysModStyle"] then
-					HTMLLogo:SetPos(width * 0.04, (height * 0.5) - 256)
+					HTMLLogo:SetPos(width * 0.04, (height * 0.5) - 64 - (192 * scaleY))
 				else
 					HTMLLogo:SetPos(width * 0.04, 32)
 				end
@@ -231,7 +254,7 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 						body, html {
 							padding: 0;
 							margin: 0;
-							height:100%;
+							height: 100%;
 							overflow: hidden;
 							position: relative;
 						}
@@ -239,8 +262,7 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 							position: absolute;
 							bottom: 0px;
 							left: 0px;
-							max-width: 100%;
-							max-height: 100%;
+							]] .. aspectSetting .. [[
 							disTextButton: block;
 						}
 						</style>
@@ -255,9 +277,14 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 				</html>
 				]])
 				cachedLink = previewCopy["_logoContent"]
+				cachedScaleX = previewCopy["_logoImageScaleX"]
+				cachedScaleY = previewCopy["_logoImageScaleY"]
+				cachedScaleAL = previewCopy["_logoImageScaleAL"]
+				cachedScaleLock = previewCopy["_logoImageKeppAspectRatio"]
 			else
+				HTMLLogo:SetSize(width * 0.25 * scaleX, 192 * scaleY)
 				if !previewCopy["_GarrysModStyle"] then
-					HTMLLogo:SetPos(width * 0.04, (height * 0.5) - 256)
+					HTMLLogo:SetPos(width * 0.04, (height * 0.5) - 64 - (192 * scaleY))
 				else
 					HTMLLogo:SetPos(width * 0.04, 32)
 				end
@@ -277,6 +304,12 @@ hook_Add( "HUDPaint", "ExampleMenu_FMainMenu_ConfigEditor", function()
 			local additive = 64
 			if previewCopy["_logoIsText"] then
 				additive = 104
+			else
+				if previewCopy["_logoImageKeppAspectRatio"] then
+					normalSize = 192 * previewCopy["_logoImageScaleAL"]
+				else
+					normalSize = 192 * previewCopy["_logoImageScaleY"]
+				end
 			end
 			curYPos = additive + normalSize
 		end

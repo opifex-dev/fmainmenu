@@ -269,6 +269,12 @@ local function openMenu()
 		local additive = 64
 		if FayLib.IGC.GetSharedKey(addonName, "logoIsText") then
 			additive = 104
+		else
+			if FayLib.IGC.GetSharedKey(addonName, "logoImageKeppAspectRatio") then
+				normalSize = 192 * FayLib.IGC.GetSharedKey(addonName, "logoImageScaleAL")
+			else
+				normalSize = 192 * FayLib.IGC.GetSharedKey(addonName, "logoImageScaleY")
+			end
 		end
 		curYPos = additive + normalSize
 	end

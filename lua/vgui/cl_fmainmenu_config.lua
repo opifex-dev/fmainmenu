@@ -170,6 +170,14 @@ end
 
 derma_DefineControl("fmainmenu_config_editor_label", nil, PANEL, "DLabel")
 
+-- custom checkbox
+local PANEL = {}
+function PANEL:Init()
+	self:SetSize( 18, 18 )
+end
+
+derma_DefineControl("fmainmenu_config_editor_checkbox", nil, PANEL, "DCheckBox")
+
 -- custom text button
 local PANEL = {}
 function PANEL:Init()

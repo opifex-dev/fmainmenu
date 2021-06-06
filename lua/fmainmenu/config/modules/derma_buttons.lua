@@ -149,7 +149,16 @@ FMainMenu.ConfigModules[propertyCode].updatePreview = function()
 	local previewCopy = FMainMenu.ConfigPreview.previewCopy
 
 	if tonumber(parentPanel.textOutlineThickness:GetText()) == nil then return end
+	if tonumber(parentPanel.textOutlineThickness:GetText()) < 0 then
+		parentPanel.textOutlineThickness:SetText(0)
+	elseif tonumber(parentPanel.textOutlineThickness:GetText()) > 10 then
+		parentPanel.textOutlineThickness:SetText(10)
+	end
+
 	if tonumber(parentPanel.textFontSize:GetText()) == nil then return end
+	if tonumber(parentPanel.textFontSize:GetText()) < 1 then
+		parentPanel.textFontSize:SetText(1)
+	end
 
 	previewCopy["_" .. configPropList[1]] = parentPanel.textColor:GetColor()
 	previewCopy["_" .. configPropList[2]] = parentPanel.textOutlineColor:GetColor()

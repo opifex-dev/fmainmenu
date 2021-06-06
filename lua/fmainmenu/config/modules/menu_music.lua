@@ -92,12 +92,6 @@ FMainMenu.ConfigModules[propertyCode].isVarChanged = function()
 		return true
 	end
 
-	-- Dropbox Link Patch
-	local curContentLink = parentPanel.contentBox:GetText()
-	if string_find(curContentLink, "dropbox") != nil then
-		parentPanel.contentBox:SetText(string_Replace(curContentLink, "?dl=0", "?dl=1"))
-	end
-
 	if parentPanel.contentBox:GetText() != parentPanel.lastRecVariable[5] then
 		return true
 	end
@@ -110,8 +104,23 @@ FMainMenu.ConfigModules[propertyCode].updatePreview = function()
 	local parentPanel = FMainMenu.configPropertyWindow.currentProp
 	local previewCopy = FMainMenu.ConfigPreview.previewCopy
 
+	-- Dropbox Link Patch
+	local curContentLink = parentPanel.contentBox:GetText()
+	if string_find(curContentLink, "dropbox") != nil then
+		parentPanel.contentBox:SetText(string_Replace(curContentLink, "?dl=0", "?dl=1"))
+	end
+
 	if tonumber(parentPanel.textBox:GetText()) == nil then return true end
+	if tonumber(parentPanel.textBox:GetText()) > 1 then
+		parentPanel.textBox:SetText(1.0)
+	elseif tonumber(parentPanel.textBox:GetText()) < 0 then
+		parentPanel.textBox:SetText(0.0)
+	end
+
 	if tonumber(parentPanel.fadeBox:GetText()) == nil then return true end
+	if tonumber(parentPanel.fadeBox:GetText()) < 0 then
+		parentPanel.fadeBox:SetText(0)
+	end
 
 	if parentPanel.toggleOption:GetValue() == FMainMenu.GetPhrase("ConfigPropertiesMusicTypeOptionOneLabel") then
 		previewCopy["_" .. configPropList[1]] = 1

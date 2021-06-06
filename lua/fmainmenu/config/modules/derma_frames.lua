@@ -55,6 +55,9 @@ FMainMenu.ConfigModules[propertyCode].updatePreview = function()
 	local previewCopy = FMainMenu.ConfigPreview.previewCopy
 
 	if tonumber(parentPanel.dermaFrameBevel:GetText()) == nil then return end
+	if tonumber(parentPanel.dermaFrameBevel:GetText()) < 0 then
+		parentPanel.dermaFrameBevel:SetText(0)
+	end
 
 	previewCopy["_" .. configPropList[1]] = parentPanel.dermaFrameColor:GetColor()
 	previewCopy["_" .. configPropList[2]] = tonumber(parentPanel.dermaFrameBevel:GetText())
