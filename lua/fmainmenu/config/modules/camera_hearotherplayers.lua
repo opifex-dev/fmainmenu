@@ -103,8 +103,8 @@ FMainMenu.ConfigModules[propertyCode].updatePreview = function()
 	end
 	local boxText = parentPanel.distanceBox:GetText()
 
-	topHalfSphere:SetModelScale( boxText / 96 )
-	bottomHalfSphere:SetModelScale( boxText / 96 )
+	topHalfSphere:SetModelScale( boxText / 45 )
+	bottomHalfSphere:SetModelScale( boxText / 45 )
 end
 
 -- Called when property is closed, allows for additional clean up if needed
