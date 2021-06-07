@@ -8,6 +8,5 @@ By default, only superadmins will be able to edit the config, and it will use th
 
 If you need any assistance, do not hesitate to make a support ticket or join my support discord at https://discord.gg/87rBPFa (proof of purchase will be required)
 
-This is my first commercially sold addon, and I have spent hundreds of hours devloping all the systems
-needed from scratch and bringing them all together, so I hope you enjoy this addon!
+This is my first commercially sold addon, and I have spent hundreds of hours devloping all the systems needed from scratch and bringing them all together, so I hope you enjoy!
  - Fay

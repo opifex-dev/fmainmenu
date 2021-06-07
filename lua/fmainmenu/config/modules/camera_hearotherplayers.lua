@@ -131,7 +131,6 @@ FMainMenu.ConfigModules[propertyCode].saveFunc = function()
 	parentPanel.lastRecVariable[2] = newPHDist * newPHDist
 
 	FMainMenu.ConfigModulesHelper.updateVariables(parentPanel.lastRecVariable, {"HearOtherPlayers","PlayerVoiceDistance"})
-	parentPanel.lastRecVariable[2] = newPHDist
 end
 
 -- Called when the current values are being overwritten by the server

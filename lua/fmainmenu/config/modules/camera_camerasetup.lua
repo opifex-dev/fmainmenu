@@ -70,6 +70,9 @@ FMainMenu.ConfigModules[propertyCode].GeneratePanel = function(configSheet)
 		surface_PlaySound("garrysmod/content_downloaded.wav")
 	end
 
+	-- note about camera locations
+	FMainMenu.ConfigModulePanels.createLabelLarge(mainPropPanel, FMainMenu.GetPhrase("ConfigPropertiesCameraSetupNote"))
+
 	LocalPlayer():SetNoDraw( true )
 
 	return {configPropList, mainPropPanel}

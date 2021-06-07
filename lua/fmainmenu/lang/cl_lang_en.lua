@@ -85,6 +85,7 @@ translationList.ConfigPropertiesCameraSetupPropDesc = "Allows you to set where t
 translationList.ConfigPropertiesCameraSetupPosLabel = "Position (Current Map): "
 translationList.ConfigPropertiesCameraSetupAngLabel = "Orientation (Current Map): "
 translationList.ConfigPropertiesCameraSetupCaptureLabel = "Capture Current Location"
+translationList.ConfigPropertiesCameraSetupNote = "NOTE: You must add a camera location\nfor each map!"
 
 translationList.ConfigPropertiesEverySpawnPropName = "Menu Frequency"
 translationList.ConfigPropertiesEverySpawnPropDesc = "Whether the menu should appear on\nevery spawn or only once"
@@ -248,7 +249,7 @@ translationList.ConfigPropertiesAdvancedSpawnOptLabel = "Advanced Spawn: "
 translationList.ConfigPropertiesAdvancedSpawnPosLabel = "Position (Current Map): "
 translationList.ConfigPropertiesAdvancedSpawnCaptureLabel = "Capture Current Location"
 translationList.ConfigPropertiesAdvancedSpawnInfoLabel = "For more information on advanced\nspawn, click the button below"
-translationList.ConfigPropertiesAdvancedSpawnInfo = "In Garry's Mod, soundscapes in a map can only be triggered when the player is physically in that part of the map. Advanced Spawn works by physically moving the player to the specified location.\n\nWARNING: This will result in the player no longer physically existing in the world until they press the play button. Please take this into consideration when deciding whether to enable this feature or not. This WILL break some aspects of certain gamemodes."
+translationList.ConfigPropertiesAdvancedSpawnInfo = "In Garry's Mod, soundscapes in a map can only be triggered when the player is physically in that part of the map. Advanced Spawn works by physically moving the player to the specified location.\n\nWARNING: This will result in the player no longer physically existing in the world until they press the play button. Please take this into consideration when deciding whether to enable this feature or not. This WILL break some aspects of certain gamemodes.\n\nNOTE: If enabled, you must add an advanced spawn location for each map!"
 translationList.ConfigPropertiesAdvancedSpawnInfoWindowTitle = "Advanced Spawn Information"
 
 translationList.ConfigPropertiesConfigFirstJoinSeedPropName = "First Join Seed"
