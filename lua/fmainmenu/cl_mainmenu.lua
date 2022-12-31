@@ -39,6 +39,7 @@ local oneTimeFlag = false
 local varTable = {false}
 local addonName = "fmainmenu"
 local musicPlaying = false
+local scoreboardShowTable = {}
 
 --Used to sync server menu state with client
 net_Receive( "FMainMenu_VarChange", function( len )
@@ -154,12 +155,18 @@ local function openMenu()
 
 	--DarkRP Support
 	if DarkRP then
-		hook.Remove("ScoreboardShow", "FAdmin_scoreboard")
 		DarkRP.openF1Menu()
 		hook.Add("Think","FMainMenu_DarkRPThink", function()
 			DarkRP.closeF4Menu()
 			DarkRP.closeF1Menu()
 		end)
+	end
+	
+	-- Stop Scoreboard from showing
+	scoreboardShowTable = {}
+	for hookName, hookFunc in pairs(hook.GetTable()["ScoreboardShow"]) do
+		scoreboardShowTable[hookName] = hookFunc
+		hook.Remove("ScoreboardShow", hookName)
 	end
 
 	--Zombie Survival Support
@@ -206,13 +213,9 @@ local function openMenu()
 		-- destroy main menu GUI panels
 		FMainMenu.Panels.Destroy()
 
-		-- Reinstate DarkRP Scoreboard if needed
-		if DarkRP && FAdmin then
-			hook.Add("ScoreboardShow", "FAdmin_scoreboard", function()
-				if FAdmin.GlobalSetting.FAdmin || OverrideScoreboard:GetBool() then -- Don't show scoreboard when FAdmin is not installed on server
-					return FAdmin.ScoreBoard.ShowScoreBoard()
-				end
-			end)
+		-- Reinstate Scoreboard if needed
+		for hookName, hookFunc in pairs(scoreboardShowTable) do
+			hook.Add("ScoreboardShow", hookName, hookFunc)
 		end
 
 		-- undo Zombie Survival workarounds

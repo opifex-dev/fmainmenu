@@ -38,7 +38,7 @@ end
 FMainMenu.Lang = FMainMenu.LangPresets["en"]
 
 -- set initial values needed when shared config is synced for first time
-hook_Add("IGCSharedConfigReady", "FMainMenu_IGSCR", function()
+hook_Add("FMainMenu_SharedConfigReady", "FMainMenu_InternalSCR", function()
 	-- every spawn and first join seed
 	FMainMenu.EverySpawn = FayLib.IGC.GetSharedKey(addonName, "EverySpawn")
 	FMainMenu.firstJoinSeed = FayLib.IGC.GetSharedKey(addonName, "firstJoinSeed")
@@ -47,7 +47,11 @@ hook_Add("IGCSharedConfigReady", "FMainMenu_IGSCR", function()
 	if FMainMenu.LangPresets[string_lower(FayLib.IGC.GetSharedKey(addonName, "LangSetting"))] != nil then
 		FMainMenu.Lang = FMainMenu.LangPresets[string_lower(FayLib.IGC.GetSharedKey(addonName, "LangSetting"))]
 	end
+end)
 
+-- Sequence out the shared config setup to prevent race conditions before opening menu
+hook_Add("IGCSharedConfigReady", "FMainMenu_IGSCR", function()
+	hook_Run("FMainMenu_SharedConfigReady")
 	hook_Run("FMainMenu_OpenMenuInitial")
 end)
 

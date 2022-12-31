@@ -52,7 +52,7 @@ function FMainMenu.Panels.createNewFont(fontName, fontBase, fontSize, fontShadow
 end
 
 -- Create initial fonts when config first synced from server
-hook_Add("IGCSharedConfigReady", "FMainMenu_Panels_SharedReady", function()
+hook_Add("FMainMenu_SharedConfigReady", "FMainMenu_Panels_SharedReady", function()
 	FMainMenu.Panels.createNewFont("FMM_LogoFont",
 		FayLib.IGC.GetSharedKey(addonName, "logoFont"),
 		FayLib.IGC.GetSharedKey(addonName, "logoFontSize"),
