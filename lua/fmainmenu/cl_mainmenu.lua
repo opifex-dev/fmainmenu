@@ -164,9 +164,15 @@ local function openMenu()
 	
 	-- Stop Scoreboard from showing
 	scoreboardShowTable = {}
-	for hookName, hookFunc in pairs(hook.GetTable()["ScoreboardShow"]) do
-		scoreboardShowTable[hookName] = hookFunc
-		hook.Remove("ScoreboardShow", hookName)
+	local allHooksList = hook.GetTable()
+	if allHooksList != nil then
+		local scoreboardShowHooks = allHooksList["ScoreboardShow"]
+		if scoreboardShowHooks != nil then
+			for hookName, hookFunc in pairs(scoreboardShowHooks) do
+				scoreboardShowTable[hookName] = hookFunc
+				hook.Remove("ScoreboardShow", hookName)
+			end
+		end
 	end
 
 	--Zombie Survival Support
