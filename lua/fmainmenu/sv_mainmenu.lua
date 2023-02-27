@@ -58,10 +58,26 @@ util_PrecacheModel( "models/props_phx/construct/wood/wood_dome360.mdl" )
 --Response to player attempting to leave menu
 net_Receive( "FMainMenu_CloseMainMenu", function( len, ply )
 	if ply:GetNWBool("FMainMenu_InMenu",false) then
+
 		ply:SetNWBool("FMainMenu_InMenu",false)
 		ply:UnLock()
 		ply:SetMoveType(MOVETYPE_WALK)
 		ply:SetViewEntity(ply)
+
+		local playerHasJob = net.ReadBool()
+		if playerHasJob then
+			local jobResolve = {
+				["TEAM_VISITOR"] = TEAM_VISITOR,
+				["TEAM_WORKER_ENGINEER"] = TEAM_WORKER_ENGINEER,
+				["TEAM_WORKER_MECHANIC"] = TEAM_WORKER_MECHANIC,
+				["TEAM_SECURITY_CADET"] = TEAM_SECURITY_CADET,
+				["TEAM_SCIENTIST_INTERN"] = TEAM_SCIENTIST_INTERN,
+				["TEAM_WORKER_JANITOR"] = TEAM_WORKER_JANITOR,
+			}
+
+			local teamName = net.ReadString()
+			ply:changeTeam( jobResolve[teamName] || TEAM_VISITOR, true )
+		end
 
 		if FayLib.IGC.GetKey(addonName, "AdvancedSpawn") && FayLib.IGC.GetKey(addonName, "AdvancedSpawnPos") then
 			ply:SetRenderMode(RENDERMODE_NORMAL)

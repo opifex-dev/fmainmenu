@@ -274,11 +274,11 @@ function FMainMenu.Panels.SetupBasics()
 
 		-- create logo
 		local logo = vgui_Create("DHTML", m_border)
-		logo:SetSize(ScrW() * 0.25 * scaleX, 192 * scaleY)
+		logo:SetSize(1920 * 0.25 * scaleX * (ScrW() / 1920), 192 * scaleY * (ScrH() / 1080))
 		if !FayLib.IGC.GetSharedKey(addonName, "GarrysModStyle") then
-			logo:SetPos(ScrW() * 0.04, (ScrH() * 0.5) - 64 - (192 * scaleY))
+			logo:SetPos(1920 * 0.04 * (ScrW() / 1920), (ScrH() * 0.5) - 64 - (192 * scaleY * (ScrH() / 1080)))
 		else
-			logo:SetPos(ScrW() * 0.04, 32)
+			logo:SetPos(1920 * 0.04 * (ScrW() / 1920), 32)
 		end
 		logo:SetMouseInputEnabled(false)
 		function logo:ConsoleMessage(msg) end

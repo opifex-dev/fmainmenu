@@ -3,6 +3,53 @@ local FayLib = FayLib
 
 FMainMenu.Lang = FMainMenu.Lang || {}
 
+local isPlyReady = false
+
+local jobLookup = {
+	[1] = {
+		["NAME"] = "VISITOR",
+		["DESC"] = "Be unemployed.",
+		["DIFF"] = "Easy",
+		["JOB"] = "TEAM_VISITOR",
+		["JOBTITLE"] = "Visitor",
+	},
+	[2] = {
+		["NAME"] = "PLANT JANITOR",
+		["DESC"] = "A low responsibility job that lets you explore the facility.",
+		["DIFF"] = "Easy",
+		["JOB"] = "TEAM_WORKER_JANITOR",
+		["JOBTITLE"] = "Plant Janitor",
+	},
+	[3] = {
+		["NAME"] = "PLANT MECHANIC",
+		["DESC"] = "Do various facility-related repair work.",
+		["DIFF"] = "Easy",
+		["JOB"] = "TEAM_WORKER_MECHANIC",
+		["JOBTITLE"] = "Plant Mechanic",
+	},
+	[4] = {
+		["NAME"] = "PLANT SECURITY",
+		["DESC"] = "Do various facility-related security work.",
+		["DIFF"] = "Medium",
+		["JOB"] = "TEAM_SECURITY_CADET",
+		["JOBTITLE"] = "Plant Security",
+	},
+	[5] = {
+		["NAME"] = "PLANT OPERATOR",
+		["DESC"] = "Do various facility-related operational work.",
+		["DIFF"] = "Medium",
+		["JOB"] = "TEAM_WORKER_ENGINEER",
+		["JOBTITLE"] = "Plant Operator",
+	},
+	[6] = {
+		["NAME"] = "SCIENTIST",
+		["DESC"] = "Do various facility-related research.",
+		["DIFF"] = "Hard",
+		["JOB"] = "TEAM_SCIENTIST_INTERN",
+		["JOBTITLE"] = "Scientist",
+	},
+}
+
 -- localized global calls
 local net_Receive = net.Receive
 local net_ReadInt = net.ReadInt
@@ -39,7 +86,6 @@ local oneTimeFlag = false
 local varTable = {false}
 local addonName = "fmainmenu"
 local musicPlaying = false
-local scoreboardShowTable = {}
 
 --Used to sync server menu state with client
 net_Receive( "FMainMenu_VarChange", function( len )
@@ -155,24 +201,12 @@ local function openMenu()
 
 	--DarkRP Support
 	if DarkRP then
+		hook.Remove("ScoreboardShow", "FAdmin_scoreboard")
 		DarkRP.openF1Menu()
 		hook.Add("Think","FMainMenu_DarkRPThink", function()
 			DarkRP.closeF4Menu()
 			DarkRP.closeF1Menu()
 		end)
-	end
-	
-	-- Stop Scoreboard from showing
-	scoreboardShowTable = {}
-	local allHooksList = hook.GetTable()
-	if allHooksList != nil then
-		local scoreboardShowHooks = allHooksList["ScoreboardShow"]
-		if scoreboardShowHooks != nil then
-			for hookName, hookFunc in pairs(scoreboardShowHooks) do
-				scoreboardShowTable[hookName] = hookFunc
-				hook.Remove("ScoreboardShow", hookName)
-			end
-		end
 	end
 
 	--Zombie Survival Support
@@ -205,7 +239,7 @@ local function openMenu()
 	end
 
 	--Creates function that can close panel
-	closePanelGlobal = function()
+	closePanelGlobal = function(jobTitle)
 		-- cleanup
 		hook.Remove("Think", "FMainMenu_KMV")
 		gui_EnableScreenClicker( false )
@@ -219,9 +253,13 @@ local function openMenu()
 		-- destroy main menu GUI panels
 		FMainMenu.Panels.Destroy()
 
-		-- Reinstate Scoreboard if needed
-		for hookName, hookFunc in pairs(scoreboardShowTable) do
-			hook.Add("ScoreboardShow", hookName, hookFunc)
+		-- Reinstate DarkRP Scoreboard if needed
+		if DarkRP && FAdmin then
+			hook.Add("ScoreboardShow", "FAdmin_scoreboard", function()
+				if FAdmin.GlobalSetting.FAdmin || OverrideScoreboard:GetBool() then -- Don't show scoreboard when FAdmin is not installed on server
+					return FAdmin.ScoreBoard.ShowScoreBoard()
+				end
+			end)
 		end
 
 		-- undo Zombie Survival workarounds
@@ -252,9 +290,106 @@ local function openMenu()
 
 		-- signal server
 		net_Start("FMainMenu_CloseMainMenu")
+			if jobTitle ~= nil then
+				net.WriteBool(true)
+				net.WriteString(jobTitle)
+			else
+				net.WriteBool(false)
+			end
 		net_SendToServer()
 
 		closePanelGlobal = ""
+	end
+
+	local function classSelect()
+		local blocker = PPRP.Derma.CreateDPanel(nil, ScrW(), ScrH(), false )
+		blocker:SetDrawBackground( false )
+		blocker:ClearPaint()
+		blocker:Background(Color(0,0,0,0))
+		local bChung = 1080/2.5
+		local troubleFrame = PPRP.Derma.CreateDFrame("Job Selection", nil, 1920/3, bChung	)
+		troubleFrame:Center()
+		troubleFrame:ShowCloseButton( false )
+		troubleFrame:SetDraggable( false )
+		local initTroublePanel = PPRP.Derma.CreateDPanel(troubleFrame, 1920/3-15, bChung-25, false )
+		initTroublePanel:SetPos(5, 15)
+		initTroublePanel.Paint = function()
+			surface.SetDrawColor(55,55,55,255)
+			surface.DrawRect( 5, 15, 1920/3-5, bChung-15 )
+			surface.SetDrawColor( 100, 100, 100, 255 )
+			surface.DrawLine( 2*(1920/3)/3-1, 15, 2*(1920/3)/3-1, bChung )
+			surface.DrawLine( 2*(1920/3)/3, 15, 2*(1920/3)/3, bChung )
+			surface.DrawLine( 2*(1920/3)/3+1, 15, 2*(1920/3)/3+1, bChung )
+		end
+		local leftText = PPRP.Derma.CreateDLabel(initTroublePanel, 2*(1920/3)/3-11, bChung-5, false, "Select A Starter Job")
+		leftText:SetFont("Trebuchet24")
+		leftText:SetPos(10, 20)
+		leftText:SetTextColor( Color(200,200,200,255) )
+		leftText:SetContentAlignment( 8 )
+		local PageCounterT = PPRP.Derma.CreateDLabel(initTroublePanel, (1920/3-15)/3-20, 20	, false, "Visitor")
+		PageCounterT:SetFont("HudHintTextLarge")
+		PageCounterT:SetPos((2*(1920/3)/3)+10, bChung/3 + 20)
+		PageCounterT:SetTextColor( Color(200,200,200,255) )
+		PageCounterT:SetContentAlignment( 5 )
+		local PageCounterB = PPRP.Derma.CreateDLabel(initTroublePanel, (1920/3-15)/3-20, 20	, false, "Easy")
+		PageCounterB:SetFont("HudHintTextLarge")
+		PageCounterB:SetPos((2*(1920/3)/3)+10, bChung/3 + 85)
+		PageCounterB:SetTextColor( Color(200,200,200,255) )
+		PageCounterB:SetContentAlignment( 5 )
+		local bOffset = 0
+		local curSelect = 1
+		for i=1,#jobLookup do
+			local firstButton = PPRP.Derma.CreateDButton(initTroublePanel, (2*(1920/3)/3)-20, 50, jobLookup[i]["NAME"].."\n\n"..jobLookup[i]["DESC"], "Removes the inserted fuel from this cell.")
+			firstButton:SetPos(10+3, (1080/25)+10 + bOffset)
+			firstButton:SetWrap(true)
+			firstButton:SetFont("HudHintTextLarge")
+			firstButton:SetTextColor( Color(200,200,200,255) )
+			firstButton:SetContentAlignment( 7 )
+			firstButton:ClearPaint():Background(Color(40,40,40,255))
+			firstButton:SetTextInset( 3, 3 )
+			firstButton.DoClick = function()
+				surface.PlaySound("garrysmod/ui_click.wav")
+				curSelect = i
+				PageCounterT:SetText(jobLookup[curSelect]["JOBTITLE"])
+				PageCounterB:SetText(jobLookup[curSelect]["DIFF"])
+			end
+			bOffset = bOffset + 1080/20 + 5
+		end
+		local PageCounter = PPRP.Derma.CreateDLabel(initTroublePanel, (1920/3-15)/3-20, 20, false, "Selected Job:")
+		PageCounter:SetFont("HudHintTextLarge")
+		PageCounter:SetPos((2*(1920/3)/3)+10, bChung/3)
+		PageCounter:SetTextColor( Color(200,200,200,255) )
+		PageCounter:SetContentAlignment( 5 )
+		PageCounter = PPRP.Derma.CreateDLabel(initTroublePanel, (1920/3-15)/3-20, 20, false, "Job Difficulty:")
+		PageCounter:SetFont("HudHintTextLarge")
+		PageCounter:SetPos((2*(1920/3)/3)+10, bChung/3 + 65)
+		PageCounter:SetTextColor( Color(200,200,200,255) )
+		PageCounter:SetContentAlignment( 5 )
+		local firstButton = PPRP.Derma.CreateDButton(initTroublePanel, ((1920/3)/3)/2-20, ScrH()/40, "Cancel", "Removes the inserted fuel from this cell.")
+		firstButton:SetPos((2*(1920/3)/3)+5+3, (bChung-25)-(ScrH()/40)-5)
+		firstButton:SetFont("HudHintTextLarge")
+		firstButton:SetTextColor( Color(200,200,200,255) )
+		firstButton:FillHover()
+		firstButton:SetContentAlignment( 5 )
+		firstButton:ClearPaint():Background(Color(40,40,40,255))
+		firstButton.DoClick = function()
+			surface.PlaySound("garrysmod/ui_click.wav")
+			troubleFrame:Close()
+			blocker:Remove()
+		end
+		secondButton = PPRP.Derma.CreateDButton(initTroublePanel, ((1920/3)/3)/2-20, ScrH()/40, "Play", "Removes the inserted fuel from this cell.")
+		secondButton:SetPos((1920/3)-5-10-5-(((1920/3)/3)/2-20), (bChung-25)-(ScrH()/40)-5)
+		secondButton:SetFont("HudHintTextLarge")
+		secondButton:SetTextColor( Color(200,200,200,255) )
+		secondButton:FillHover()
+		secondButton:SetContentAlignment( 5 )
+		secondButton:ClearPaint():Background(Color(40,40,40,255))
+		secondButton.DoClick = function()
+			surface.PlaySound("garrysmod/ui_click.wav")
+			closePanelGlobal(jobLookup[curSelect]["JOB"])
+			troubleFrame:Remove()
+			blocker:Remove()
+		end
 	end
 
 	--DarkRP Support
@@ -267,22 +402,22 @@ local function openMenu()
 	FMainMenu.Panels.SetupBasics()
 
 	--Positioning for menu items
-	local xPos = ScrW() * 0.05
-	local normalSize = 192
+	local xPos = 1920 * 0.05 * (ScrW() / 1920)
+	local normalSize = 192 * (ScrW() / 1920)
 	if FayLib.IGC.GetSharedKey(addonName, "logoIsText") then
 		normalSize = FayLib.IGC.GetSharedKey(addonName, "logoFontSize")
 	end
 
 	local curYPos = (ScrH() * 0.5) - 32
 	if FayLib.IGC.GetSharedKey(addonName, "GarrysModStyle") then
-		local additive = 64
+		local additive = 64 * (ScrH() / 1080)
 		if FayLib.IGC.GetSharedKey(addonName, "logoIsText") then
-			additive = 104
+			additive = 104 * (ScrH() / 1080)
 		else
 			if FayLib.IGC.GetSharedKey(addonName, "logoImageKeppAspectRatio") then
-				normalSize = 192 * FayLib.IGC.GetSharedKey(addonName, "logoImageScaleAL")
+				normalSize = 192 * FayLib.IGC.GetSharedKey(addonName, "logoImageScaleAL") * (ScrH() / 1080)
 			else
-				normalSize = 192 * FayLib.IGC.GetSharedKey(addonName, "logoImageScaleY")
+				normalSize = 192 * FayLib.IGC.GetSharedKey(addonName, "logoImageScaleY") * (ScrH() / 1080)
 			end
 		end
 		curYPos = additive + normalSize
@@ -329,7 +464,7 @@ local function openMenu()
 		curYPos = curYPos + FayLib.IGC.GetSharedKey(addonName, "textButtonFontSize") + 36
 		playButton.DoClick = function()
 			surface_PlaySound(FayLib.IGC.GetSharedKey(addonName, "textButtonClickSound"))
-			closePanelGlobal()
+			classSelect()
 		end
 
 		for _,btn in ipairs(FayLib.IGC.GetSharedKey(addonName, "URLButtons")) do
@@ -391,6 +526,126 @@ local function openMenu()
 		FMainMenu.Panels.CreateWelcomer()
 	end
 
+	-- Troubleshooter
+	if not file.Exists( "pprp_remastered/init_troubleshoot_flag.txt", "DATA" ) then
+		local blocker = PPRP.Derma.CreateDPanel(nil, ScrW(), ScrH(), false )
+		blocker:SetDrawBackground( false )
+		blocker:ClearPaint()
+		blocker:Background(Color(0,0,0,0))
+		local initSTR = ""
+		if first then
+			initSTR = "Initial Join "
+		end
+		local troubleFrame = PPRP.Derma.CreateDFrame("Troubleshooter", nil, ScrW()/3, ScrH()/3	)
+		troubleFrame:Center()
+		troubleFrame:ShowCloseButton( false )
+		troubleFrame:SetDraggable( false )
+		local initTroublePanel = PPRP.Derma.CreateDPanel(troubleFrame, ScrW()/3-15, ScrH()/3-25, false )
+		initTroublePanel:SetPos(5, 15)
+		initTroublePanel.Paint = function()
+			surface.SetDrawColor(55,55,55,255)
+			surface.DrawRect( 5, 15, ScrW()/3-5, ScrH()/3-15 )
+			surface.SetDrawColor( 100, 100, 100, 255 )
+			surface.DrawLine( 2*(ScrW()/3)/3-1, 15, 2*(ScrW()/3)/3-1, ScrH()/3 )
+			surface.DrawLine( 2*(ScrW()/3)/3, 15, 2*(ScrW()/3)/3, ScrH()/3 )
+			surface.DrawLine( 2*(ScrW()/3)/3+1, 15, 2*(ScrW()/3)/3+1, ScrH()/3 )
+		end
+		local firstSTR = ""
+		if first then
+			firstSTR = "We've noticed that the troubleshooter hasn't been run on this client yet! "
+		end
+		local secondSTR = "if you have decided against using the troubleshooter, you can close it by clicking the \"Cancel\" button."
+		if first then
+			secondSTR = "if you would like to skip the troubleshooter and get right into the game, click the \"Cancel\" button.\n\nNOTE: If you decide to cancel the troubleshooter, it will no longer open."
+		end
+		local leftText = PPRP.Derma.CreateDLabel(initTroublePanel, 2*(ScrW()/3)/3-11, ScrH()/3-5, false, firstSTR.."This troubleshooter is designed to allow for the best experience possible while playing Power Plant Roleplay.\n\nIf you would like to get started, simply click the \"Next\" button to proceed.\n\nAlternatively, "..secondSTR)
+		leftText:SetFont("HudHintTextLarge")
+		leftText:SetPos(10, 20)
+		leftText:SetTextColor( Color(200,200,200,255) )
+		leftText:SetWrap( true )
+		leftText:SetContentAlignment( 7 )
+		local PageCounter = PPRP.Derma.CreateDLabel(initTroublePanel, ScrW()/3-20, 20	, false, "")
+		PageCounter:SetFont("HudHintTextLarge")
+		PageCounter:SetPos(0, 15)
+		PageCounter:SetTextColor( Color(200,200,200,255) )
+		PageCounter:SetContentAlignment( 6 )
+		local firstButton = PPRP.Derma.CreateDButton(initTroublePanel, ((ScrW()/3)/3)/2-20, ScrH()/40, "Cancel", "Removes the inserted fuel from this cell.")
+		firstButton:SetPos((2*(ScrW()/3)/3)+5+3, (ScrH()/3-25)-(ScrH()/40)-5)
+		firstButton:SetFont("HudHintTextLarge")
+		firstButton:SetTextColor( Color(200,200,200,255) )
+		firstButton:FillHover()
+		firstButton:SetContentAlignment( 5 )
+		firstButton:ClearPaint():Background(Color(40,40,40,255))
+		firstButton.DoClick = function()
+			surface.PlaySound("garrysmod/ui_click.wav")
+			file.Write("pprp_remastered/init_troubleshoot_flag.txt", "true")
+			troubleFrame:Close()
+			blocker:Remove()
+		end
+		secondButton = PPRP.Derma.CreateDButton(initTroublePanel, ((ScrW()/3)/3)/2-20, ScrH()/40, "Next", "Removes the inserted fuel from this cell.")
+		secondButton:SetPos((ScrW()/3)-5-10-5-(((ScrW()/3)/3)/2-20), (ScrH()/3-25)-(ScrH()/40)-5)
+		secondButton:SetFont("HudHintTextLarge")
+		secondButton:SetTextColor( Color(200,200,200,255) )
+		secondButton:FillHover()
+		secondButton:SetContentAlignment( 5 )
+		secondButton:ClearPaint():Background(Color(40,40,40,255))
+		secondButton.DoClick = function()
+			surface.PlaySound("garrysmod/ui_click.wav")
+			leftText:SetText("MAT_SPECULAR\n\nThe command \"mat_specular\" is a setting used by the engine to determine whether it should render cubemap reflections on reflective surfaces. It is much cheaper on the engine than, say, a mirror or a body of reflective water (which are not affected by cubemaps or \"mat_specular\").\n\nThis map does not contain any built cubemaps, meaning you may see purple checkerboard textures reflected behind some surfaces. To prevent this, we suggest allowing the troubleshooter to disable cubemap reflections.\n\nWould you like to allow the troubleshooter to disable cubemap reflections? (\"mat_specular 0\")\n\nClick \"Accept\" to allow, or \"Deny\" to skip this suggested fix.\n\nNOTE: when \"mat_specular\" is changed, it may trigger a material reload. This may cause the game to freeze for a certain amount of time (10-30 seconds).")
+			firstButton:SetText("Deny")
+			secondButton:SetText("Accept")
+			PageCounter:SetText("1/3")
+			
+			local function nextPageOne()
+				leftText:SetText("CONTENT PACK\n\nPower Plant Roleplay, like many roleplay servers, relies on players downloading custom content to enjoy it to the fullest.\n\nWhile many clients have downloaded the required files automatically while joining, you will not be able to place any custom props unless you manually subscribe to it. In some cases, clients may also fail to mount the required addons that were downloaded automatically. For this reason, we recommend that all players manually subscribe to the content pack regardless.\n\nClick \"Accept\" to open the content pack page on the Garry's Mod Workshop, or \"Deny\" to skip this suggested fix.\n\nNOTE: when the content pack is fully downloaded, you will likely have to restart the game one or two times for it to properly mount. You will have to do this manually.")
+				PageCounter:SetText("2/3")
+				
+				local function nextPageTwo()
+					surface.PlaySound("garrysmod/save_load4.wav")
+					file.Write("pprp_remastered/init_troubleshoot_flag.txt", "true")
+					firstButton:Remove()
+					secondButton:SetText("Close")
+					local thirdSTR = ""
+					if first then
+						thirdSTR = "You are now ready to play Power Plant Roleplay."
+					end
+					leftText:SetText("The troubleshooter is complete!\n\n"..thirdSTR.."Press the \"Close\" button to return to the menu.")
+					PageCounter:SetText("3/3")
+					
+					local function nextPageTwo()
+						troubleFrame:Close()
+						blocker:Remove()
+					end
+					
+					secondButton.DoClick = function()
+						surface.PlaySound("garrysmod/ui_click.wav")
+						nextPageTwo()
+					end
+				end
+				
+				firstButton.DoClick = function()
+					surface.PlaySound("garrysmod/ui_click.wav")
+					nextPageTwo()
+				end
+				secondButton.DoClick = function()
+					surface.PlaySound("garrysmod/ui_click.wav")
+					gui.OpenURL( "https://steamcommunity.com/sharedfiles/filedetails/?id=2163326110" )
+					nextPageTwo()
+				end
+			end
+			
+			firstButton.DoClick = function()
+				surface.PlaySound("garrysmod/ui_click.wav")
+				nextPageOne()
+			end
+			secondButton.DoClick = function()
+				surface.PlaySound("garrysmod/ui_click.wav")
+				RunConsoleCommand("mat_specular","0")
+				nextPageOne()
+			end
+		end
+	end
+
 	--Take care of various things that may occur while main menu is active
 	hook.Add( "Think", "FMainMenu_KMV", function()
 		--some addons may interfere by disabling the cursor
@@ -432,6 +687,47 @@ local function openMenu()
 			end
 		end
 	end )
+
+	local blocker = PPRP.Derma.CreateDPanel(nil, ScrW(), ScrH(), false )
+	blocker:ClearPaint()
+	blocker:Background(Color(0,0,0,255))
+
+	local FadeText = PPRP.Derma.CreateDLabel(blocker, ScrW(), ScrH(), false, "Fay & The Opifex Network")
+	FadeText:SetPos(0,-30)
+	FadeText:SetFont("DermaLarge")
+	FadeText:SetTextColor( Color(200,200,200,255) )
+	FadeText:SetContentAlignment( 5 )
+	local FadeTextTwo = PPRP.Derma.CreateDLabel(blocker, ScrW(), ScrH(), false, "Present...")
+
+	FadeTextTwo:SetPos(0,30)
+	FadeTextTwo:SetFont("DermaLarge")
+	FadeTextTwo:SetTextColor( Color(200,200,200,255) )
+	FadeTextTwo:SetContentAlignment( 5 )
+
+	local fade = 255
+	timer.Create("fmainmenu_fade_checker", 0.5, 0, function()
+		if isPlyReady then
+			timer.Remove("fmainmenu_fade_checker")
+
+			timer.Simple(5, function() 
+				timer.Create("main_menu_fade", 0.01, 255/5, function()
+					fade = fade - 5
+					FadeText:SetTextColor(Color(200,200,200,fade))
+					FadeTextTwo:SetTextColor(Color(200,200,200,fade))
+					blocker:ClearPaint()
+					blocker:Background(Color(0,0,0,fade))
+					if fade <= 0 then
+						FadeText:Remove()
+						blocker:Remove()
+						gui.EnableScreenClicker( true )
+						if zfs then
+							zfs.ClosePurchase_Cancel()
+						end
+					end
+				end)
+			end)
+		end
+	end)
 end
 
 -- Let server force main menu to close
@@ -473,6 +769,8 @@ end)
 
 --Don't Draw HUD if in menu
 hook.Add("HUDShouldDraw", "FMainMenu_HSD", function( name )
+	isPlyReady = true
+
 	if LocalPlayer():GetNWBool("FMainMenu_InMenu",false) then
 		return false
 	end
